@@ -5,12 +5,12 @@
   "type": "module",
   "description": "Functional programming utilities library for TypeScript",
   "main": "./dist/fp-kit.umd.js",
-  "module": "./dist/fp-kit.mjs",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/fp-kit.mjs",
+      "import": "./dist/index.mjs",
       "require": "./dist/fp-kit.umd.js"
     }
   },

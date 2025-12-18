@@ -16,15 +16,26 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'FpKit',
       formats: ['es', 'umd'],
-      fileName: (format) => {
-        return format === 'umd' ? 'fp-kit.umd.js' : 'fp-kit.mjs';
-      },
     },
     rollupOptions: {
-      // 외부 의존성이 있다면 여기에 추가
       external: [],
-      output: {
-        globals: {},
+      output: [
+        {
+          format: 'es',
+          preserveModules: true,
+          preserveModulesRoot: 'src',
+          entryFileNames: '[name].mjs',
+          chunkFileNames: '[name].mjs',
+        },
+        {
+          format: 'umd',
+          name: 'FpKit',
+          entryFileNames: 'fp-kit.umd.js',
+          globals: {},
+        },
+      ],
+      treeshake: {
+        moduleSideEffects: false,
       },
     },
     sourcemap: true,
