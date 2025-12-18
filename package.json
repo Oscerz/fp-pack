@@ -3,13 +3,31 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "Functional programming utilities library for TypeScript",
+  "main": "./dist/fp-kit.umd.js",
+  "module": "./dist/fp-kit.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/fp-kit.mjs",
+      "require": "./dist/fp-kit.umd.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/node": "^22.10.2",
     "typescript": "~5.9.3",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vite-plugin-dts": "^4.3.0"
   }
 }

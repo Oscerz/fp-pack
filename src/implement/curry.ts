@@ -1,5 +1,13 @@
-// Curry function with proper TypeScript types
-// Supports functions with 2-5 parameters with full type inference
+/**
+ * Curry function with proper TypeScript types
+ * Supports functions with 2-5 parameters with full type inference
+ *
+ * Why these explicit overloads?
+ * A fully "dynamic" curry type needs recursive conditional + variadic tuple types.
+ * That looks clever, but often turns type inference mushy, slows the compiler,
+ * and makes error messages hard to read. These 2–5 arity overloads keep the API
+ * crisp, fast, and predictable while preserving rich partial-application types.
+*/
 
 type Curry2<A, B, R> = {
   (a: A): (b: B) => R;
