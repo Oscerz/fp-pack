@@ -25,7 +25,13 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "docs:dev": "pnpm --filter docs dev",
+    "docs:build": "pnpm --filter docs build",
+    "docs:preview": "pnpm --filter docs preview",
+    "docs:lint": "pnpm --filter docs lint",
+    "docs:lint:fix": "pnpm --filter docs lint:fix",
+    "docs:format": "pnpm --filter docs format"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
