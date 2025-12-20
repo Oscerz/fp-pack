@@ -10,12 +10,22 @@ import { Compose } from '@/pages/Compose';
 import { Compose_ko } from '@/pages/Compose_ko';
 import { Curry } from '@/pages/Curry';
 import { Curry_ko } from '@/pages/Curry_ko';
+import { Partial } from '@/pages/Partial';
+import { Partial_ko } from '@/pages/Partial_ko';
 import { Flip } from '@/pages/Flip';
 import { Flip_ko } from '@/pages/Flip_ko';
 import { Identity } from '@/pages/Identity';
 import { Identity_ko } from '@/pages/Identity_ko';
+import { Constant } from '@/pages/Constant';
+import { Constant_ko } from '@/pages/Constant_ko';
 import { Memoize } from '@/pages/Memoize';
 import { Memoize_ko } from '@/pages/Memoize_ko';
+import { Once } from '@/pages/Once';
+import { Once_ko } from '@/pages/Once_ko';
+import { Tap } from '@/pages/Tap';
+import { Tap_ko } from '@/pages/Tap_ko';
+import { Chunk } from '@/pages/Chunk';
+import { Chunk_ko } from '@/pages/Chunk_ko';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PageComponent = () => any;
@@ -34,12 +44,22 @@ const routes: Record<string, PageComponent> = {
   '/ko/composition/compose': Compose_ko,
   '/composition/curry': Curry,
   '/ko/composition/curry': Curry_ko,
+  '/composition/partial': Partial,
+  '/ko/composition/partial': Partial_ko,
   '/composition/flip': Flip,
   '/ko/composition/flip': Flip_ko,
   '/composition/identity': Identity,
   '/ko/composition/identity': Identity_ko,
+  '/composition/constant': Constant,
+  '/ko/composition/constant': Constant_ko,
   '/composition/memoize': Memoize,
   '/ko/composition/memoize': Memoize_ko,
+  '/composition/once': Once,
+  '/ko/composition/once': Once_ko,
+  '/composition/tap': Tap,
+  '/ko/composition/tap': Tap_ko,
+  '/array/chunk': Chunk,
+  '/ko/array/chunk': Chunk_ko,
 };
 
 const resolveRoute = (path: string): PageComponent => {

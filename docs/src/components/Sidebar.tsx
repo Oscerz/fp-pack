@@ -20,9 +20,19 @@ export const Sidebar = mount(renew => {
           { title: 'pipe', path: '/composition/pipe' },
           { title: 'compose', path: '/composition/compose' },
           { title: 'curry', path: '/composition/curry' },
+          { title: 'partial', path: '/composition/partial' },
           { title: 'flip', path: '/composition/flip' },
           { title: 'identity', path: '/composition/identity' },
+          { title: 'constant', path: '/composition/constant' },
           { title: 'memoize', path: '/composition/memoize' },
+          { title: 'once', path: '/composition/once' },
+          { title: 'tap', path: '/composition/tap' },
+        ],
+      },
+      {
+        title: isKorean ? '배열' : 'Array',
+        items: [
+          { title: 'chunk', path: '/array/chunk' },
         ],
       },
     ];
