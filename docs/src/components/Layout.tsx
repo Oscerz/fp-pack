@@ -26,6 +26,10 @@ import { Tap } from '@/pages/Tap';
 import { Tap_ko } from '@/pages/Tap_ko';
 import { Chunk } from '@/pages/Chunk';
 import { Chunk_ko } from '@/pages/Chunk_ko';
+import { Drop } from '@/pages/Drop';
+import { Drop_ko } from '@/pages/Drop_ko';
+import { Maybe } from '@/pages/Maybe';
+import { Maybe_ko } from '@/pages/Maybe_ko';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PageComponent = () => any;
@@ -60,6 +64,10 @@ const routes: Record<string, PageComponent> = {
   '/ko/composition/tap': Tap_ko,
   '/array/chunk': Chunk,
   '/ko/array/chunk': Chunk_ko,
+  '/array/drop': Drop,
+  '/ko/array/drop': Drop_ko,
+  '/maybe/maybe': Maybe,
+  '/ko/maybe/maybe': Maybe_ko,
 };
 
 const resolveRoute = (path: string): PageComponent => {

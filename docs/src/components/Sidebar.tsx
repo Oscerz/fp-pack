@@ -33,6 +33,13 @@ export const Sidebar = mount(renew => {
         title: isKorean ? '배열' : 'Array',
         items: [
           { title: 'chunk', path: '/array/chunk' },
+          { title: 'drop', path: '/array/drop' },
+        ],
+      },
+      {
+        title: 'Maybe',
+        items: [
+          { title: 'maybe', path: '/maybe/maybe' },
         ],
       },
     ];
