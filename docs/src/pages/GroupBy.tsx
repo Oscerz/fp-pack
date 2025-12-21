@@ -147,4 +147,3 @@ const byDate = groupBy((m: Message) => m.date, messages);
     </div>
   </div>
 );
-

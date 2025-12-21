@@ -84,6 +84,7 @@ Functions for working with arrays and iterables.
 - **chunk** - Split array into chunks of specified size
 - **zip** - Combine two arrays into pairs
 - **unzip** - Split array of pairs into two arrays
+- **zipIndex** - Pair each element with its index
 - **uniq** - Remove duplicate values
 - **uniqBy** - Remove duplicates by comparison function
 - **sortBy** - Sort by comparison function

@@ -35,10 +35,13 @@ export const Sidebar = mount(renew => {
           { title: 'chunk', path: '/array/chunk' },
           { title: 'drop', path: '/array/drop' },
           { title: 'every', path: '/array/every' },
+          { title: 'map', path: '/array/map' },
           { title: 'filter', path: '/array/filter' },
           { title: 'find', path: '/array/find' },
           { title: 'flatMap', path: '/array/flatMap' },
           { title: 'groupBy', path: '/array/groupBy' },
+          { title: 'reduce', path: '/array/reduce' },
+          { title: 'zipIndex', path: '/array/zipIndex' },
         ],
       },
       {

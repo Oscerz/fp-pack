@@ -1,42 +1,50 @@
 import { CodeBlock } from '@/components/CodeBlock';
 import { navigateTo } from '@/store';
 
-export const FlatMap_ko = () => (
+export const Reduce_ko = () => (
   <div class="prose prose-lg dark:prose-invert max-w-none">
     <h1 class="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6">
-      flatMap
+      reduce
     </h1>
 
     <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
-      매핑 후 1단계 평탄화(flatten)
+      배열을 하나의 값으로 누적(접기)
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      flatMap이란 무엇인가?
+      reduce란 무엇인가?
     </h2>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <strong class="font-semibold text-pink-700 dark:text-pink-300 bg-pink-100 dark:bg-pink-900/20 px-2 py-1 rounded">
-        flatMap
+        reduce
       </strong>{' '}
-      는 <strong>map</strong>과 <strong>flatten</strong>을 한 번에 수행합니다. 각 요소를 배열로 변환한 뒤,
-      결과를 한 단계로 이어붙여(flatten) 단일 배열로 만듭니다.
+      는 accumulator(누적값)과 각 요소를 반복적으로 결합해 배열을 단 하나의 값으로 만듭니다.
+      이 유틸은 항상 초기값(initial)을 받습니다.
       <br />
       <br />
-      <strong>확장(1→N)</strong>, <strong>리스트 생성</strong>, <strong>데이터 전개</strong>에 유용합니다.
+      <strong>합계</strong>, <strong>집계</strong>, <strong>객체/맵 생성</strong>,{' '}
+      <strong>카운팅</strong>에 유용합니다.
     </p>
 
     <CodeBlock
       language="typescript"
-      code={`import { flatMap } from 'fp-kit';
+      code={`import { reduce } from 'fp-kit';
 
-flatMap((n: number) => [n, n * 2], [1, 2, 3]);
-// [1, 2, 2, 4, 3, 6]
+reduce((acc: number, n: number) => acc + n, 0, [1, 2, 3, 4]);
+// 10
 
-flatMap((s: string) => s.split(''), ['ab', 'cd']);
-// ['a', 'b', 'c', 'd']`}
+reduce(
+  (acc: Record<string, number>, n: number) => {
+    acc[String(n)] = n * 10;
+    return acc;
+  },
+  {},
+  [1, 2]
+);
+// { '1': 10, '2': 20 }`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -47,7 +55,11 @@ flatMap((s: string) => s.split(''), ['ab', 'cd']);
 
     <CodeBlock
       language="typescript"
-      code={`function flatMap<T, R>(fn: (value: T) => R[], arr: T[]): R[];`}
+      code={`function reduce<T, R>(
+  fn: (acc: R, value: T) => R,
+  initial: R,
+  arr: T[]
+): R;`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -57,43 +69,51 @@ flatMap((s: string) => s.split(''), ['ab', 'cd']);
     </h2>
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4">
-      중첩 리스트 펼치기
+      등장 횟수 세기
     </h3>
 
     <CodeBlock
       language="typescript"
-      code={`import { flatMap } from 'fp-kit';
+      code={`import { reduce } from 'fp-kit';
 
-interface Order {
-  id: string;
-  items: string[];
-}
+const words = ['a', 'b', 'a', 'c', 'b', 'a'];
 
-const orders: Order[] = [
-  { id: 'o1', items: ['apple', 'banana'] },
-  { id: 'o2', items: ['orange'] },
-];
-
-const allItems = flatMap((o: Order) => o.items, orders);
-// ['apple', 'banana', 'orange']`}
+const counts = reduce(
+  (acc: Record<string, number>, w: string) => {
+    acc[w] = (acc[w] ?? 0) + 1;
+    return acc;
+  },
+  {},
+  words
+);
+// { a: 3, b: 2, c: 1 }`}
     />
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
-      조합(쌍) 만들기
+      요약 값 만들기
     </h3>
 
     <CodeBlock
       language="typescript"
-      code={`import { flatMap } from 'fp-kit';
+      code={`import { reduce } from 'fp-kit';
 
-const letters = ['a', 'b'];
-const numbers = [1, 2, 3];
+type Item = { price: number; inStock: boolean };
+const items: Item[] = [
+  { price: 10, inStock: true },
+  { price: 20, inStock: false },
+  { price: 5, inStock: true },
+];
 
-const pairs = flatMap(
-  (l: string) => numbers.map(n => [l, n] as const),
-  letters
+const summary = reduce(
+  (acc: { total: number; available: number }, item: Item) => {
+    acc.total += item.price;
+    if (item.inStock) acc.available += 1;
+    return acc;
+  },
+  { total: 0, available: 0 },
+  items
 );
-// [['a', 1], ['a', 2], ['a', 3], ['b', 1], ['b', 2], ['b', 3]]`}
+// { total: 35, available: 2 }`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -104,34 +124,34 @@ const pairs = flatMap(
 
     <div class="grid gap-6 mt-6">
       <a
+        href="/array/map"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/map');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          map →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          배열의 각 요소를 변환합니다.
+        </p>
+      </a>
+
+      <a
         href="/array/groupBy"
         onClick={(e: Event) => {
           e.preventDefault();
           navigateTo('/array/groupBy');
         }}
-        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
       >
-        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
           groupBy →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
           키 함수로 요소를 그룹화합니다.
-        </p>
-      </a>
-
-      <a
-        href="/composition/pipe"
-        onClick={(e: Event) => {
-          e.preventDefault();
-          navigateTo('/composition/pipe');
-        }}
-        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
-      >
-        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
-          pipe →
-        </h3>
-        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          flatMap을 다른 변환과 조합합니다.
         </p>
       </a>
     </div>

@@ -30,6 +30,8 @@ import { Drop } from '@/pages/Drop';
 import { Drop_ko } from '@/pages/Drop_ko';
 import { Every } from '@/pages/Every';
 import { Every_ko } from '@/pages/Every_ko';
+import { Map } from '@/pages/Map';
+import { Map_ko } from '@/pages/Map_ko';
 import { Filter } from '@/pages/Filter';
 import { Filter_ko } from '@/pages/Filter_ko';
 import { Find } from '@/pages/Find';
@@ -38,6 +40,10 @@ import { FlatMap } from '@/pages/FlatMap';
 import { FlatMap_ko } from '@/pages/FlatMap_ko';
 import { GroupBy } from '@/pages/GroupBy';
 import { GroupBy_ko } from '@/pages/GroupBy_ko';
+import { Reduce } from '@/pages/Reduce';
+import { Reduce_ko } from '@/pages/Reduce_ko';
+import { ZipIndex } from '@/pages/ZipIndex';
+import { ZipIndex_ko } from '@/pages/ZipIndex_ko';
 import { Maybe } from '@/pages/Maybe';
 import { Maybe_ko } from '@/pages/Maybe_ko';
 
@@ -78,6 +84,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/array/drop': Drop_ko,
   '/array/every': Every,
   '/ko/array/every': Every_ko,
+  '/array/map': Map,
+  '/ko/array/map': Map_ko,
   '/array/filter': Filter,
   '/ko/array/filter': Filter_ko,
   '/array/find': Find,
@@ -86,6 +94,10 @@ const routes: Record<string, PageComponent> = {
   '/ko/array/flatMap': FlatMap_ko,
   '/array/groupBy': GroupBy,
   '/ko/array/groupBy': GroupBy_ko,
+  '/array/reduce': Reduce,
+  '/ko/array/reduce': Reduce_ko,
+  '/array/zipIndex': ZipIndex,
+  '/ko/array/zipIndex': ZipIndex_ko,
   '/maybe/maybe': Maybe,
   '/ko/maybe/maybe': Maybe_ko,
 };

@@ -144,4 +144,3 @@ const activeUsers = filter((u: User) => u.active, users);
     </div>
   </div>
 );
-
