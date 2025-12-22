@@ -1,0 +1,389 @@
+import { CodeBlock } from '@/components/CodeBlock';
+import { navigateTo } from '@/store';
+
+export const Unless_ko = () => (
+  <div class="prose prose-lg dark:prose-invert max-w-none">
+    <h1 class="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6">
+      unless
+    </h1>
+
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+      조건이 거짓일 때만 함수 적용
+    </p>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      unless란 무엇인가?
+    </h2>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      <strong class="font-semibold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded">
+        unless
+      </strong>{' '}
+      는{' '}
+      <code class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">when</code>의 반대입니다.
+      조건이 false를 반환할 때만 변환을 적용하는 함수를 생성합니다.
+      조건이 true를 반환하면 원래 값을 변경하지 않고 반환합니다.
+      <br />
+      <br />
+      이는 <strong>부정 조건</strong>, <strong>대체 변환</strong>,
+      <strong>기본값 처리</strong>, 그리고 <strong>오류 수정</strong>에 유용합니다.
+      <br />
+      <br />
+      "이 조건이 아닐 때만 이 값을 변환하라"는 의미로 생각하면 됩니다.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { unless } from 'fp-kit';
+
+const abs = unless(
+  (n: number) => n > 0,
+  (n) => n * -1
+);
+
+abs(5);    // 5  (양수이므로 변경 없음)
+abs(-3);   // 3  (음수이므로 양수로 변환)
+abs(0);    // 0  (0이므로 변경 없음)`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      타입 시그니처
+    </h2>
+
+    <CodeBlock
+      language="typescript"
+      code={`function unless<T>(
+  predicate: (value: T) => boolean,
+  fn: (value: T) => T
+): (value: T) => T;
+
+// 조건 함수와 변환 함수를 받음
+// 조건이 거짓일 때 변환을 적용하는 함수를 반환`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      기본 사용법
+    </h2>
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4">
+      간단한 변환
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { unless } from 'fp-kit';
+
+// 값이 없을 때만 기본값 제공
+const withDefault = unless(
+  (s: string) => s.length > 0,
+  () => 'default'
+);
+
+withDefault('hello');  // 'hello'
+withDefault('');       // 'default'
+
+// 양수가 아닐 때만 양수로 변환
+const ensurePositive = unless(
+  (n: number) => n > 0,
+  (n) => Math.abs(n)
+);
+
+ensurePositive(5);    // 5
+ensurePositive(-3);   // 3`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      기본값 처리
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { unless } from 'fp-kit';
+
+interface Config {
+  timeout?: number;
+  retries?: number;
+}
+
+// 지정되지 않았을 때만 기본 타임아웃 설정
+const withDefaultTimeout = unless(
+  (config: Config) => config.timeout !== undefined,
+  (config) => ({ ...config, timeout: 5000 })
+);
+
+withDefaultTimeout({ retries: 3 });
+// { retries: 3, timeout: 5000 }
+
+withDefaultTimeout({ timeout: 10000, retries: 3 });
+// { timeout: 10000, retries: 3 } (변경 없음)`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      실전 예시
+    </h2>
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4">
+      입력 검증 및 수정
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { unless } from 'fp-kit';
+import { pipe } from 'fp-kit';
+
+// 최소값 미만일 때만 최소값으로 설정
+const ensureMinimum = (min: number) =>
+  unless(
+    (n: number) => n >= min,
+    () => min
+  );
+
+// 최대값 초과일 때만 최대값으로 설정
+const ensureMaximum = (max: number) =>
+  unless(
+    (n: number) => n <= max,
+    () => max
+  );
+
+// 값을 범위로 제한
+const clamp = (min: number, max: number) =>
+  pipe(
+    ensureMinimum(min),
+    ensureMaximum(max)
+  );
+
+const clamp0to100 = clamp(0, 100);
+clamp0to100(150);   // 100
+clamp0to100(-10);   // 0
+clamp0to100(50);    // 50`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      오류 복구
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { unless } from 'fp-kit';
+
+interface Result {
+  success: boolean;
+  data?: any;
+  error?: string;
+}
+
+// 성공하지 않았을 때만 재시도
+const retryUnlessSuccess = unless(
+  (result: Result) => result.success,
+  (result) => ({
+    ...result,
+    error: '재시도 중...',
+    retryCount: (result as any).retryCount ? (result as any).retryCount + 1 : 1
+  })
+);
+
+retryUnlessSuccess({ success: true, data: 'done' });
+// { success: true, data: 'done' }
+
+retryUnlessSuccess({ success: false, error: 'failed' });
+// { success: false, error: '재시도 중...', retryCount: 1 }`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      배열 처리
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { unless } from 'fp-kit';
+
+// 배열이 아닐 때만 배열로 변환
+const ensureArray = unless(
+  <T>(value: T | T[]): value is T[] => Array.isArray(value),
+  <T>(value: T | T[]): T[] => [value] as T[]
+);
+
+ensureArray([1, 2, 3]);   // [1, 2, 3]
+ensureArray(42);          // [42]
+ensureArray('hello');     // ['hello']
+
+// 빈 배열이 있을 때만 필터링
+const removeEmptyArrays = unless(
+  (arr: any[][]) => arr.every(a => a.length > 0),
+  (arr) => arr.filter(a => a.length > 0)
+);
+
+removeEmptyArrays([[1], [2], [3]]);        // [[1], [2], [3]]
+removeEmptyArrays([[1], [], [3]]);         // [[1], [3]]`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      상태 정규화
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { unless } from 'fp-kit';
+import { pipe } from 'fp-kit';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  verified: boolean;
+}
+
+const normalizeUser = pipe(
+  // verified 플래그가 없을 때만 추가
+  unless(
+    (user: User) => 'verified' in user,
+    (user) => ({ ...user, verified: false })
+  ),
+  // 이름이 trim되지 않았을 때만 trim
+  unless(
+    (user: User) => user.name === user.name.trim(),
+    (user) => ({ ...user, name: user.name.trim() })
+  ),
+  // 이메일이 소문자가 아닐 때만 소문자로 변환
+  unless(
+    (user: User) => user.email === user.email.toLowerCase(),
+    (user) => ({ ...user, email: user.email.toLowerCase() })
+  )
+);
+
+normalizeUser({ id: 1, name: '  John  ', email: 'JOHN@EXAMPLE.COM', verified: false });
+// { id: 1, name: 'John', email: 'john@example.com', verified: false }`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      왜 unless를 사용하나요?
+    </h2>
+
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          1. 부정 조건 로직
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+          "~이 아닐 때 실행"하는 로직을 자연스럽게 표현하며, 조건을 부정하는 것보다 읽기 쉬운 경우가 많습니다.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          2. when의 보완
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+          when과 반대 동작을 제공하여 조건부 로직 표현에 유연성을 제공합니다.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          3. 기본값 패턴
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+          조건이 충족되지 않을 때 기본값이나 대체값을 설정하는 데 완벽합니다.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          4. 조합 가능
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+          pipe 및 다른 함수형 유틸리티와 완벽하게 작동하여 복잡한 변환을 만들 수 있습니다.
+        </p>
+      </div>
+    </div>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      구현 세부사항
+    </h2>
+
+    <CodeBlock
+      language="typescript"
+      code={`function unless<T>(
+  predicate: (value: T) => boolean,
+  fn: (value: T) => T
+): (value: T) => T {
+  return (value: T) => (predicate(value) ? value : fn(value));
+}`}
+    />
+
+    <div class="mt-6 space-y-4">
+      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+        <strong>작동 방식:</strong>
+      </p>
+      <ol class="list-decimal list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
+        <li>조건 함수와 변환 함수를 받습니다</li>
+        <li>조건을 테스트하는 새 함수를 반환합니다</li>
+        <li>조건이 false를 반환하면 변환을 적용합니다</li>
+        <li>조건이 true를 반환하면 원래 값을 반환합니다</li>
+        <li>부수 효과가 없는 순수 함수입니다</li>
+      </ol>
+    </div>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      다음 단계
+    </h2>
+
+    <div class="space-y-4">
+      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+        관련된 제어 흐름 함수들을 시도해보세요:
+      </p>
+      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
+        <li>
+          <a
+            onClick={(e: Event) => {
+              e.preventDefault();
+              navigateTo('/control/when');
+            }}
+            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+          >
+            when
+          </a>{' '}
+          - 조건이 참일 때만 함수 적용 (unless의 반대)
+        </li>
+        <li>
+          <a
+            onClick={(e: Event) => {
+              e.preventDefault();
+              navigateTo('/control/guard');
+            }}
+            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+          >
+            guard
+          </a>{' '}
+          - 조건 실패 시 기본값 반환
+        </li>
+        <li>
+          <a
+            onClick={(e: Event) => {
+              e.preventDefault();
+              navigateTo('/control/cond');
+            }}
+            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+          >
+            cond
+          </a>{' '}
+          - 여러 조건 분기 처리
+        </li>
+      </ul>
+    </div>
+  </div>
+);

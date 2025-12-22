@@ -1,0 +1,485 @@
+import { CodeBlock } from '@/components/CodeBlock';
+import { navigateTo } from '@/store';
+
+export const Guard = () => (
+  <div class="prose prose-lg dark:prose-invert max-w-none">
+    <h1 class="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6">
+      guard
+    </h1>
+
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+      Return default value when predicate fails (early return pattern)
+    </p>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      What is guard?
+    </h2>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      <strong class="font-semibold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded">
+        guard
+      </strong>{' '}
+      creates a function that validates input against a predicate and returns a default value when validation fails.
+      If the predicate returns true, it returns the original value. Otherwise, it returns the default value.
+      <br />
+      <br />
+      This implements the <strong>early return pattern</strong> functionally, making it ideal for
+      <strong>input validation</strong>, <strong>boundary checking</strong>, <strong>fallback values</strong>,
+      and <strong>ensuring constraints</strong>.
+      <br />
+      <br />
+      Think of it as "use this value, but only if it's valid. Otherwise, use this safe default."
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { guard } from 'fp-kit';
+
+// Ensure number is positive, default to 0
+const ensurePositive = guard(
+  (n: number) => n > 0,
+  0
+);
+
+ensurePositive(5);   // 5 (valid, returns original)
+ensurePositive(-3);  // 0 (invalid, returns default)
+ensurePositive(0);   // 0 (invalid, returns default)`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      Type Signature
+    </h2>
+
+    <CodeBlock
+      language="typescript"
+      code={`function guard<T>(
+  predicate: (value: T) => boolean,
+  defaultValue: T
+): (value: T) => T;
+
+// Takes a predicate and a default value
+// Returns a function that validates and falls back to default
+// Always returns the same type`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      Basic Usage
+    </h2>
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4">
+      Simple Validation
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { guard } from 'fp-kit';
+
+// Ensure string is not empty
+const ensureNonEmpty = guard(
+  (s: string) => s.length > 0,
+  'default'
+);
+
+ensureNonEmpty('hello');  // 'hello'
+ensureNonEmpty('');        // 'default'
+
+// Ensure number is within range
+const ensureInRange = guard(
+  (n: number) => n >= 0 && n <= 100,
+  50
+);
+
+ensureInRange(75);   // 75
+ensureInRange(150);  // 50 (out of range)
+ensureInRange(-10);  // 50 (out of range)`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      Object Validation
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { guard } from 'fp-kit';
+
+interface Config {
+  timeout: number;
+  retries: number;
+}
+
+const defaultConfig: Config = {
+  timeout: 5000,
+  retries: 3
+};
+
+// Ensure config has valid timeout
+const ensureValidConfig = guard(
+  (config: Config) => config.timeout > 0 && config.retries > 0,
+  defaultConfig
+);
+
+ensureValidConfig({ timeout: 3000, retries: 5 });
+// { timeout: 3000, retries: 5 }
+
+ensureValidConfig({ timeout: -1, retries: 5 });
+// { timeout: 5000, retries: 3 } (invalid, returns default)`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      Practical Examples
+    </h2>
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4">
+      User Input Sanitization
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { guard } from 'fp-kit';
+
+// Ensure age is reasonable
+const sanitizeAge = guard(
+  (age: number) => age >= 0 && age <= 150,
+  18  // default to adult age
+);
+
+sanitizeAge(25);    // 25
+sanitizeAge(200);   // 18 (unrealistic)
+sanitizeAge(-5);    // 18 (invalid)
+
+// Ensure username meets requirements
+const sanitizeUsername = guard(
+  (username: string) => username.length >= 3 && username.length <= 20,
+  'anonymous'
+);
+
+sanitizeUsername('john_doe');  // 'john_doe'
+sanitizeUsername('ab');         // 'anonymous' (too short)
+sanitizeUsername('a'.repeat(25)); // 'anonymous' (too long)`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      API Response Validation
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { guard } from 'fp-kit';
+
+interface ApiResponse {
+  status: number;
+  data: unknown;
+}
+
+const fallbackResponse: ApiResponse = {
+  status: 500,
+  data: { error: 'Invalid response' }
+};
+
+// Ensure response has valid status code
+const ensureValidResponse = guard(
+  (response: ApiResponse) => response.status >= 200 && response.status < 300,
+  fallbackResponse
+);
+
+ensureValidResponse({ status: 200, data: { user: 'John' } });
+// { status: 200, data: { user: 'John' } }
+
+ensureValidResponse({ status: 404, data: null });
+// { status: 500, data: { error: 'Invalid response' } }`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      Configuration with Defaults
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { guard, pipe } from 'fp-kit';
+
+interface AppSettings {
+  theme: 'light' | 'dark';
+  fontSize: number;
+  language: string;
+}
+
+const defaultSettings: AppSettings = {
+  theme: 'light',
+  fontSize: 14,
+  language: 'en'
+};
+
+// Validate multiple constraints
+const ensureValidSettings = guard(
+  (settings: AppSettings) =>
+    (settings.theme === 'light' || settings.theme === 'dark') &&
+    settings.fontSize >= 10 && settings.fontSize <= 24 &&
+    settings.language.length === 2,
+  defaultSettings
+);
+
+ensureValidSettings({ theme: 'dark', fontSize: 16, language: 'ko' });
+// { theme: 'dark', fontSize: 16, language: 'ko' }
+
+ensureValidSettings({ theme: 'dark', fontSize: 30, language: 'ko' });
+// { theme: 'light', fontSize: 14, language: 'en' } (fontSize out of range)`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      Array Bounds Checking
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { guard } from 'fp-kit';
+
+// Ensure array index is valid
+const createSafeIndexGetter = <T>(arr: T[], defaultValue: T) =>
+  guard(
+    (index: number) => index >= 0 && index < arr.length,
+    defaultValue
+  );
+
+const numbers = [10, 20, 30, 40, 50];
+const getSafeNumber = createSafeIndexGetter(numbers, -1);
+
+// Using with map
+const indices = [0, 2, 10, -5, 4];
+indices.map(getSafeNumber);
+// [10, 30, -1, -1, 50]
+
+// Ensure minimum array length
+const ensureMinLength = guard(
+  (arr: number[]) => arr.length >= 3,
+  [0, 0, 0]
+);
+
+ensureMinLength([1, 2, 3, 4]);  // [1, 2, 3, 4]
+ensureMinLength([1, 2]);         // [0, 0, 0]`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      With pipe for Data Processing
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, guard } from 'fp-kit';
+
+interface Price {
+  amount: number;
+  currency: string;
+}
+
+const defaultPrice: Price = { amount: 0, currency: 'USD' };
+
+// Chain validations
+const processPrice = pipe(
+  // Ensure valid currency
+  guard(
+    (price: Price) => ['USD', 'EUR', 'GBP'].includes(price.currency),
+    defaultPrice
+  ),
+  // Ensure positive amount
+  guard(
+    (price: Price) => price.amount > 0,
+    defaultPrice
+  )
+);
+
+processPrice({ amount: 100, currency: 'USD' });
+// { amount: 100, currency: 'USD' }
+
+processPrice({ amount: 100, currency: 'JPY' });
+// { amount: 0, currency: 'USD' } (invalid currency)
+
+processPrice({ amount: -50, currency: 'USD' });
+// { amount: 0, currency: 'USD' } (negative amount)`}
+    />
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      Form Validation
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { guard } from 'fp-kit';
+
+interface FormData {
+  email: string;
+  password: string;
+  age: number;
+}
+
+const emptyForm: FormData = {
+  email: '',
+  password: '',
+  age: 0
+};
+
+// Email validation
+const ensureValidEmail = guard(
+  (form: FormData) => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(form.email),
+  emptyForm
+);
+
+// Password strength
+const ensureStrongPassword = guard(
+  (form: FormData) => form.password.length >= 8,
+  emptyForm
+);
+
+// Process form with guards
+const validateForm = (form: FormData) => {
+  const emailChecked = ensureValidEmail(form);
+  if (emailChecked === emptyForm) return { error: 'Invalid email' };
+
+  const passwordChecked = ensureStrongPassword(emailChecked);
+  if (passwordChecked === emptyForm) return { error: 'Password too weak' };
+
+  return { success: true, data: passwordChecked };
+};
+
+validateForm({ email: 'user@example.com', password: 'securepass123', age: 25 });
+// { success: true, data: {...} }
+
+validateForm({ email: 'invalid', password: 'securepass123', age: 25 });
+// { error: 'Invalid email' }`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      Why Use guard?
+    </h2>
+
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          1. Safe Defaults
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+          Ensure your application never processes invalid data by automatically falling back
+          to safe default values.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          2. Declarative Validation
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+          Express validation logic and fallback behavior in a single, clear function call
+          instead of verbose if-else chains.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          3. Composable
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+          Chain multiple guards together with pipe to create multi-step validation pipelines.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          4. Type Safety
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+          Always returns the same type (T), making it safe to use in any context that expects
+          that type.
+        </p>
+      </div>
+    </div>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      Implementation Details
+    </h2>
+
+    <CodeBlock
+      language="typescript"
+      code={`function guard<T>(
+  predicate: (value: T) => boolean,
+  defaultValue: T
+): (value: T) => T {
+  return (value: T) => (predicate(value) ? value : defaultValue);
+}`}
+    />
+
+    <div class="mt-6 space-y-4">
+      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+        <strong>How it works:</strong>
+      </p>
+      <ol class="list-decimal list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
+        <li>Takes a predicate function and a default value of type T</li>
+        <li>Returns a new function that validates the input</li>
+        <li>If predicate returns true, returns the original value</li>
+        <li>If predicate returns false, returns the default value</li>
+        <li>Pure function with no side effects</li>
+        <li>Default value should be a safe, valid instance of type T</li>
+      </ol>
+    </div>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      Next Steps
+    </h2>
+
+    <div class="space-y-4">
+      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+        Try these related control flow functions:
+      </p>
+      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
+        <li>
+          <a
+            onClick={(e: Event) => {
+              e.preventDefault();
+              navigateTo('/control/when');
+            }}
+            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+          >
+            when
+          </a>{' '}
+          - Apply a function only when a condition is true
+        </li>
+        <li>
+          <a
+            onClick={(e: Event) => {
+              e.preventDefault();
+              navigateTo('/control/ifElse');
+            }}
+            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+          >
+            ifElse
+          </a>{' '}
+          - Choose between two different transformations based on a condition
+        </li>
+        <li>
+          <a
+            onClick={(e: Event) => {
+              e.preventDefault();
+              navigateTo('/control/tryCatch');
+            }}
+            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+          >
+            tryCatch
+          </a>{' '}
+          - Handle exceptions in a functional way
+        </li>
+      </ul>
+    </div>
+  </div>
+);

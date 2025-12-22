@@ -32,6 +32,11 @@ export const Sidebar = mount(renew => {
       {
         title: isKorean ? '제어' : 'Control',
         items: [
+          { title: 'when', path: '/control/when' },
+          { title: 'unless', path: '/control/unless' },
+          { title: 'ifElse', path: '/control/ifElse' },
+          { title: 'guard', path: '/control/guard' },
+          { title: 'tryCatch', path: '/control/tryCatch' },
           { title: 'cond', path: '/control/cond' },
         ],
       },

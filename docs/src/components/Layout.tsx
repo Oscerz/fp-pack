@@ -28,6 +28,16 @@ import { Chunk } from '@/pages/Chunk';
 import { Chunk_ko } from '@/pages/Chunk_ko';
 import { Cond } from '@/pages/Cond';
 import { Cond_ko } from '@/pages/Cond_ko';
+import { When } from '@/pages/When';
+import { When_ko } from '@/pages/When_ko';
+import { Unless } from '@/pages/Unless';
+import { Unless_ko } from '@/pages/Unless_ko';
+import { IfElse } from '@/pages/IfElse';
+import { IfElse_ko } from '@/pages/IfElse_ko';
+import { Guard } from '@/pages/Guard';
+import { Guard_ko } from '@/pages/Guard_ko';
+import { TryCatch } from '@/pages/TryCatch';
+import { TryCatch_ko } from '@/pages/TryCatch_ko';
 import { Drop } from '@/pages/Drop';
 import { Drop_ko } from '@/pages/Drop_ko';
 import { Every } from '@/pages/Every';
@@ -96,6 +106,16 @@ const routes: Record<string, PageComponent> = {
   '/ko/composition/once': Once_ko,
   '/composition/tap': Tap,
   '/ko/composition/tap': Tap_ko,
+  '/control/when': When,
+  '/ko/control/when': When_ko,
+  '/control/unless': Unless,
+  '/ko/control/unless': Unless_ko,
+  '/control/ifElse': IfElse,
+  '/ko/control/ifElse': IfElse_ko,
+  '/control/guard': Guard,
+  '/ko/control/guard': Guard_ko,
+  '/control/tryCatch': TryCatch,
+  '/ko/control/tryCatch': TryCatch_ko,
   '/control/cond': Cond,
   '/ko/control/cond': Cond_ko,
   '/array/chunk': Chunk,
