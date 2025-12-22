@@ -41,6 +41,15 @@ export const Sidebar = mount(renew => {
         ],
       },
       {
+        title: isKorean ? '디버그' : 'Debug',
+        items: [
+          { title: 'assert', path: '/debug/assert' },
+          { title: 'invariant', path: '/debug/invariant' },
+          { title: 'log', path: '/debug/log' },
+          { title: 'trace', path: '/debug/trace' },
+        ],
+      },
+      {
         title: isKorean ? '배열' : 'Array',
         items: [
           { title: 'chunk', path: '/array/chunk' },

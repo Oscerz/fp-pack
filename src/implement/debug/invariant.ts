@@ -1,5 +1,7 @@
 /** invariant - 계약 위반 체크 */
 function invariant(condition: boolean, message?: string): void {
-  // TODO: implement
+  if (!condition) {
+    throw new Error(message ?? 'Invariant failed');
+  }
 }
 export default invariant;

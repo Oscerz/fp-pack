@@ -2,7 +2,15 @@ import { describe, it, expect } from 'vitest';
 import invariant from './invariant';
 
 describe('invariant', () => {
-  it('should pass', () => {
-    expect(true).toBe(true);
+  it('does nothing when condition is true', () => {
+    expect(() => invariant(true)).not.toThrow();
+  });
+
+  it('throws when condition is false', () => {
+    expect(() => invariant(false)).toThrow('Invariant failed');
+  });
+
+  it('uses a custom message when provided', () => {
+    expect(() => invariant(false, 'broken')).toThrow('broken');
   });
 });
