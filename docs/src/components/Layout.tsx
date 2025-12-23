@@ -54,6 +54,8 @@ import { IsNil } from '@/pages/IsNil';
 import { IsNil_ko } from '@/pages/IsNil_ko';
 import { IsType } from '@/pages/IsType';
 import { IsType_ko } from '@/pages/IsType_ko';
+import { Includes } from '@/pages/Includes';
+import { Includes_ko } from '@/pages/Includes_ko';
 import { Gt } from '@/pages/Gt';
 import { Gt_ko } from '@/pages/Gt_ko';
 import { Gte } from '@/pages/Gte';
@@ -98,6 +100,8 @@ import { Zip } from '@/pages/Zip';
 import { Zip_ko } from '@/pages/Zip_ko';
 import { Maybe } from '@/pages/Maybe';
 import { Maybe_ko } from '@/pages/Maybe_ko';
+import { EndsWith } from '@/pages/EndsWith';
+import { EndsWith_ko } from '@/pages/EndsWith_ko';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PageComponent = () => any;
@@ -154,6 +158,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/equality/isNil': IsNil_ko,
   '/equality/isType': IsType,
   '/ko/equality/isType': IsType_ko,
+  '/equality/includes': Includes,
+  '/ko/equality/includes': Includes_ko,
   '/equality/clamp': Clamp,
   '/ko/equality/clamp': Clamp_ko,
   '/equality/equals': Equals,
@@ -202,6 +208,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/array/zip': Zip_ko,
   '/array/zipIndex': ZipIndex,
   '/ko/array/zipIndex': ZipIndex_ko,
+  '/string/endsWith': EndsWith,
+  '/ko/string/endsWith': EndsWith_ko,
   '/maybe/maybe': Maybe,
   '/ko/maybe/maybe': Maybe_ko,
 };

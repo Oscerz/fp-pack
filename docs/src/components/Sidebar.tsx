@@ -51,6 +51,7 @@ export const Sidebar = mount(renew => {
       {
         title: isKorean ? '동등성' : 'Equality',
         items: [
+          { title: 'includes', path: '/equality/includes' },
           { title: 'isType', path: '/equality/isType' },
           { title: 'isNil', path: '/equality/isNil' },
           { title: 'isEmpty', path: '/equality/isEmpty' },
@@ -83,6 +84,12 @@ export const Sidebar = mount(renew => {
           { title: 'unzip', path: '/array/unzip' },
           { title: 'zip', path: '/array/zip' },
           { title: 'zipIndex', path: '/array/zipIndex' },
+        ],
+      },
+      {
+        title: isKorean ? '문자열' : 'String',
+        items: [
+          { title: 'endsWith', path: '/string/endsWith' },
         ],
       },
       {

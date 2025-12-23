@@ -6,5 +6,4 @@ export { default as toUpper } from './toUpper';
 export { default as toLower } from './toLower';
 export { default as startsWith } from './startsWith';
 export { default as endsWith } from './endsWith';
-export { default as includes } from './includes';
 export { default as match } from './match';

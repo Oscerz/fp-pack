@@ -149,6 +149,7 @@ Functions for comparing and checking values.
 - **isNil** - Check if value is null or undefined
 - **isEmpty** - Check if value is empty
 - **isType** - Check value type
+- **includes** - Check containment (string) or deep equality in arrays
 - **gt** - Greater than comparison
 - **gte** - Greater than or equal comparison
 - **lt** - Less than comparison
@@ -184,7 +185,6 @@ Functions for string manipulation.
 - **toLower** - Convert to lowercase
 - **startsWith** - Check if string starts with prefix
 - **endsWith** - Check if string ends with suffix
-- **includes** - Check if string contains substring
 - **match** - Match string against regex
 
 ### Async

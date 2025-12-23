@@ -7,3 +7,4 @@ export { default as gte } from './gte';
 export { default as lt } from './lt';
 export { default as lte } from './lte';
 export { default as clamp } from './clamp';
+export { default as includes } from './includes';
