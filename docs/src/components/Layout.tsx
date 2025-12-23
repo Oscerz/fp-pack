@@ -46,6 +46,8 @@ import { Log } from '@/pages/Log';
 import { Log_ko } from '@/pages/Log_ko';
 import { Clamp } from '@/pages/Clamp';
 import { Clamp_ko } from '@/pages/Clamp_ko';
+import { Equals } from '@/pages/Equals';
+import { Equals_ko } from '@/pages/Equals_ko';
 import { Drop } from '@/pages/Drop';
 import { Drop_ko } from '@/pages/Drop_ko';
 import { Every } from '@/pages/Every';
@@ -134,6 +136,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/debug/log': Log_ko,
   '/equality/clamp': Clamp,
   '/ko/equality/clamp': Clamp_ko,
+  '/equality/equals': Equals,
+  '/ko/equality/equals': Equals_ko,
   '/array/chunk': Chunk,
   '/ko/array/chunk': Chunk_ko,
   '/array/drop': Drop,
