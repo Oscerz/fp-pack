@@ -103,6 +103,9 @@ export const Sidebar = mount(renew => {
         title: isKorean ? '객체' : 'Object',
         items: [
           { title: 'assoc', path: '/object/assoc' },
+          { title: 'assocPath', path: '/object/assocPath' },
+          { title: 'dissoc', path: '/object/dissoc' },
+          { title: 'dissocPath', path: '/object/dissocPath' },
         ],
       },
       {

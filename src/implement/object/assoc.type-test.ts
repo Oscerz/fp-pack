@@ -24,3 +24,15 @@ export type Assoc_UpdateIndex = Expect<Equal<Simplify<typeof updateIndex>, strin
 export type Assoc_UpdateIndexMixed = Expect<
   Equal<Simplify<typeof updateIndexMixed>, Array<string | number>>
 >;
+
+// Generic curry inference (4-5 arity)
+import curry from '../composition/curry';
+
+const generic4 = <A, B, C, D>(a: A, b: B, c: C, d: D) => [a, b, c, d] as const;
+const curried4 = curry(generic4<number, string, boolean, null>);
+export const curry4Result: readonly [number, string, boolean, null] = curried4(1)('two')(true)(null);
+
+const generic5 = <A, B, C, D, E>(a: A, b: B, c: C, d: D, e: E) => [a, b, c, d, e] as const;
+const curried5 = curry(generic5<number, string, boolean, null, undefined>);
+export const curry5Result: readonly [number, string, boolean, null, undefined] =
+  curried5(1)('two')(true)(null)(undefined);

@@ -128,6 +128,12 @@ import { Result } from '@/pages/Result';
 import { Result_ko } from '@/pages/Result_ko';
 import { Assoc } from '@/pages/Assoc';
 import { Assoc_ko } from '@/pages/Assoc_ko';
+import { AssocPath } from '@/pages/AssocPath';
+import { AssocPath_ko } from '@/pages/AssocPath_ko';
+import { DissocPath } from '@/pages/DissocPath';
+import { DissocPath_ko } from '@/pages/DissocPath_ko';
+import { Dissoc } from '@/pages/Dissoc';
+import { Dissoc_ko } from '@/pages/Dissoc_ko';
 import { EndsWith } from '@/pages/EndsWith';
 import { EndsWith_ko } from '@/pages/EndsWith_ko';
 import { StartsWith } from '@/pages/StartsWith';
@@ -344,6 +350,12 @@ const routes: Record<string, PageComponent> = {
   '/ko/maybe/result': Result_ko,
   '/object/assoc': Assoc,
   '/ko/object/assoc': Assoc_ko,
+  '/object/assocPath': AssocPath,
+  '/ko/object/assocPath': AssocPath_ko,
+  '/object/dissoc': Dissoc,
+  '/ko/object/dissoc': Dissoc_ko,
+  '/object/dissocPath': DissocPath,
+  '/ko/object/dissocPath': DissocPath_ko,
 };
 
 const resolveRoute = (path: string): PageComponent => {

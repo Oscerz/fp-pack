@@ -35,6 +35,37 @@ type Curry5<A, B, C, D, E, R> = {
   (a: A, b: B, c: C, d: D, e: E): R;
 };
 
+type Apply2<Fn, A, B> = Fn extends (a: A, b: B) => infer R ? R : never;
+type Apply3<Fn, A, B, C> = Fn extends (a: A, b: B, c: C) => infer R ? R : never;
+type Apply4<Fn, A, B, C, D> = Fn extends (a: A, b: B, c: C, d: D) => infer R ? R : never;
+type Apply5<Fn, A, B, C, D, E> = Fn extends (a: A, b: B, c: C, d: D, e: E) => infer R ? R : never;
+
+type Curry2Generic<Fn> = {
+  <A, B>(a: A): (b: B) => Apply2<Fn, A, B>;
+  <A, B>(a: A, b: B): Apply2<Fn, A, B>;
+};
+
+type Curry3Generic<Fn> = {
+  <A, B, C>(a: A): (b: B) => (c: C) => Apply3<Fn, A, B, C>;
+  <A, B, C>(a: A, b: B): (c: C) => Apply3<Fn, A, B, C>;
+  <A, B, C>(a: A, b: B, c: C): Apply3<Fn, A, B, C>;
+};
+
+type Curry4Generic<Fn> = {
+  <A, B, C, D>(a: A): (b: B) => (c: C) => (d: D) => Apply4<Fn, A, B, C, D>;
+  <A, B, C, D>(a: A, b: B): (c: C) => (d: D) => Apply4<Fn, A, B, C, D>;
+  <A, B, C, D>(a: A, b: B, c: C): (d: D) => Apply4<Fn, A, B, C, D>;
+  <A, B, C, D>(a: A, b: B, c: C, d: D): Apply4<Fn, A, B, C, D>;
+};
+
+type Curry5Generic<Fn> = {
+  <A, B, C, D, E>(a: A): (b: B) => (c: C) => (d: D) => (e: E) => Apply5<Fn, A, B, C, D, E>;
+  <A, B, C, D, E>(a: A, b: B): (c: C) => (d: D) => (e: E) => Apply5<Fn, A, B, C, D, E>;
+  <A, B, C, D, E>(a: A, b: B, c: C): (d: D) => (e: E) => Apply5<Fn, A, B, C, D, E>;
+  <A, B, C, D, E>(a: A, b: B, c: C, d: D): (e: E) => Apply5<Fn, A, B, C, D, E>;
+  <A, B, C, D, E>(a: A, b: B, c: C, d: D, e: E): Apply5<Fn, A, B, C, D, E>;
+};
+
 type CurryVariadic<Fn extends (...args: any[]) => any> = Fn extends (...args: infer P) => infer R
   ? <T extends any[]>(
       ...args: T
@@ -42,6 +73,10 @@ type CurryVariadic<Fn extends (...args: any[]) => any> = Fn extends (...args: in
   : never;
 
 // Overloads for 2-5 parameter functions
+function curry<Fn extends <A, B>(a: A, b: B) => any>(fn: Fn): Curry2Generic<Fn>;
+function curry<Fn extends <A, B, C>(a: A, b: B, c: C) => any>(fn: Fn): Curry3Generic<Fn>;
+function curry<Fn extends <A, B, C, D>(a: A, b: B, c: C, d: D) => any>(fn: Fn): Curry4Generic<Fn>;
+function curry<Fn extends <A, B, C, D, E>(a: A, b: B, c: C, d: D, e: E) => any>(fn: Fn): Curry5Generic<Fn>;
 function curry<A, B, R>(fn: (a: A, b: B) => R): Curry2<A, B, R>;
 function curry<A, B, C, R>(fn: (a: A, b: B, c: C) => R): Curry3<A, B, C, R>;
 function curry<A, B, C, D, R>(fn: (a: A, b: B, c: C, d: D) => R): Curry4<A, B, C, D, R>;
