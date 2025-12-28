@@ -107,6 +107,9 @@ export const Sidebar = mount(renew => {
           { title: 'assocPath', path: '/object/assocPath' },
           { title: 'dissoc', path: '/object/dissoc' },
           { title: 'dissocPath', path: '/object/dissocPath' },
+          { title: 'entries', path: '/object/entries' },
+          { title: 'evolve', path: '/object/evolve' },
+          { title: 'has', path: '/object/has' },
         ],
       },
       {

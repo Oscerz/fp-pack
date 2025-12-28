@@ -7,7 +7,7 @@ describe('evolve', () => {
     const updated = evolve<{ id: number; name: string }>({
       id: (value) => value + 1,
       name: (value) => value.toLowerCase(),
-    })(user);
+    }, user);
 
     expect(updated).toEqual({ id: 2, name: 'a' });
   });
