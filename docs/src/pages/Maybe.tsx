@@ -14,7 +14,7 @@ export const Maybe = () => (
     <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400 p-4 my-6">
       <p class="text-sm md:text-base text-blue-900 dark:text-blue-200 leading-relaxed">
         <strong class="font-semibold">Note:</strong> This is a lightweight helper designed for practical null-safe operations.
-        Unlike full Maybe monad/functor implementations found in academic functional programming libraries,
+      Unlike full Maybe functor implementations found in academic functional programming libraries,
         this provides a simpler, more approachable tool for everyday JavaScript/TypeScript use cases.
       </p>
     </div>
