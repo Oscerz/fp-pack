@@ -58,10 +58,30 @@ import { Timeout } from '@/pages/Timeout';
 import { Timeout_ko } from '@/pages/Timeout_ko';
 import { StreamChunk } from '@/pages/StreamChunk';
 import { StreamChunk_ko } from '@/pages/StreamChunk_ko';
+import { StreamDrop } from '@/pages/StreamDrop';
+import { StreamDrop_ko } from '@/pages/StreamDrop_ko';
+import { StreamEvery } from '@/pages/StreamEvery';
+import { StreamEvery_ko } from '@/pages/StreamEvery_ko';
+import { StreamFilter } from '@/pages/StreamFilter';
+import { StreamFilter_ko } from '@/pages/StreamFilter_ko';
+import { StreamFind } from '@/pages/StreamFind';
+import { StreamFind_ko } from '@/pages/StreamFind_ko';
+import { StreamFlatMap } from '@/pages/StreamFlatMap';
+import { StreamFlatMap_ko } from '@/pages/StreamFlatMap_ko';
+import { StreamMap } from '@/pages/StreamMap';
+import { StreamMap_ko } from '@/pages/StreamMap_ko';
+import { StreamReduce } from '@/pages/StreamReduce';
+import { StreamReduce_ko } from '@/pages/StreamReduce_ko';
+import { StreamSome } from '@/pages/StreamSome';
+import { StreamSome_ko } from '@/pages/StreamSome_ko';
+import { StreamTake } from '@/pages/StreamTake';
+import { StreamTake_ko } from '@/pages/StreamTake_ko';
 import { StreamToArray } from '@/pages/StreamToArray';
 import { StreamToArray_ko } from '@/pages/StreamToArray_ko';
 import { StreamToAsync } from '@/pages/StreamToAsync';
 import { StreamToAsync_ko } from '@/pages/StreamToAsync_ko';
+import { StreamZip } from '@/pages/StreamZip';
+import { StreamZip_ko } from '@/pages/StreamZip_ko';
 import { Clamp } from '@/pages/Clamp';
 import { Clamp_ko } from '@/pages/Clamp_ko';
 import { Equals } from '@/pages/Equals';
@@ -303,6 +323,26 @@ const routes: Record<string, PageComponent> = {
   '/ko/async/debounceLeadingTrailing': DebounceLeadingTrailing_ko,
   '/stream/chunk': StreamChunk,
   '/ko/stream/chunk': StreamChunk_ko,
+  '/stream/map': StreamMap,
+  '/ko/stream/map': StreamMap_ko,
+  '/stream/filter': StreamFilter,
+  '/ko/stream/filter': StreamFilter_ko,
+  '/stream/flatMap': StreamFlatMap,
+  '/ko/stream/flatMap': StreamFlatMap_ko,
+  '/stream/take': StreamTake,
+  '/ko/stream/take': StreamTake_ko,
+  '/stream/drop': StreamDrop,
+  '/ko/stream/drop': StreamDrop_ko,
+  '/stream/zip': StreamZip,
+  '/ko/stream/zip': StreamZip_ko,
+  '/stream/find': StreamFind,
+  '/ko/stream/find': StreamFind_ko,
+  '/stream/some': StreamSome,
+  '/ko/stream/some': StreamSome_ko,
+  '/stream/every': StreamEvery,
+  '/ko/stream/every': StreamEvery_ko,
+  '/stream/reduce': StreamReduce,
+  '/ko/stream/reduce': StreamReduce_ko,
   '/stream/toArray': StreamToArray,
   '/ko/stream/toArray': StreamToArray_ko,
   '/stream/toAsync': StreamToAsync,

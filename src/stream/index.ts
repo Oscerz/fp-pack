@@ -1,3 +1,13 @@
 export { default as chunk } from './chunk';
+export { default as drop } from './drop';
+export { default as every } from './every';
+export { default as filter } from './filter';
+export { default as find } from './find';
+export { default as flatMap } from './flatMap';
+export { default as map } from './map';
+export { default as reduce } from './reduce';
+export { default as some } from './some';
+export { default as take } from './take';
 export { default as toArray } from './toArray';
 export { default as toAsync } from './toAsync';
+export { default as zip } from './zip';

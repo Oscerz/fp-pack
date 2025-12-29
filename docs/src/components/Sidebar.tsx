@@ -65,7 +65,17 @@ export const Sidebar = mount(renew => {
       {
         title: isKorean ? '스트림' : 'Stream',
         items: [
+          { title: 'map', path: '/stream/map' },
+          { title: 'filter', path: '/stream/filter' },
+          { title: 'flatMap', path: '/stream/flatMap' },
+          { title: 'take', path: '/stream/take' },
+          { title: 'drop', path: '/stream/drop' },
           { title: 'chunk', path: '/stream/chunk' },
+          { title: 'zip', path: '/stream/zip' },
+          { title: 'find', path: '/stream/find' },
+          { title: 'some', path: '/stream/some' },
+          { title: 'every', path: '/stream/every' },
+          { title: 'reduce', path: '/stream/reduce' },
           { title: 'toArray', path: '/stream/toArray' },
           { title: 'toAsync', path: '/stream/toAsync' },
         ],

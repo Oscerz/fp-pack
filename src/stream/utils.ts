@@ -18,10 +18,13 @@ const isIterable = (value: unknown): value is Iterable<unknown> =>
   Symbol.iterator in value &&
   typeof (value as Iterable<unknown>)[Symbol.iterator] === 'function';
 
+const isAsyncInput = (value: unknown): value is PromiseLike<AnyIterable<unknown>> | AsyncIterable<unknown> =>
+  isPromiseLike(value) || isAsyncIterable(value);
+
 const resolveIterable = async <T>(input: AnyIterableInput<T>): Promise<AnyIterable<T>> =>
   (isPromiseLike(input) ? await input : input) as AnyIterable<T>;
 
 const awaitValue = async <T>(value: PromiseLikeValue<T>): Promise<T> => (isPromiseLike(value) ? await value : value);
 
 export type { AnyIterable, AnyIterableInput, PromiseLikeValue };
-export { isPromiseLike, isAsyncIterable, isIterable, resolveIterable, awaitValue };
+export { isPromiseLike, isAsyncIterable, isIterable, isAsyncInput, resolveIterable, awaitValue };
