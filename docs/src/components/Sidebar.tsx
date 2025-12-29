@@ -63,6 +63,14 @@ export const Sidebar = mount(renew => {
         ],
       },
       {
+        title: isKorean ? '스트림' : 'Stream',
+        items: [
+          { title: 'chunk', path: '/stream/chunk' },
+          { title: 'toArray', path: '/stream/toArray' },
+          { title: 'toAsync', path: '/stream/toAsync' },
+        ],
+      },
+      {
         title: isKorean ? '동등성' : 'Equality',
         items: [
           { title: 'includes', path: '/equality/includes' },

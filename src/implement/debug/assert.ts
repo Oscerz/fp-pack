@@ -1,7 +1,7 @@
 import curry from '../composition/curry';
 
 /** assert - 조건 검증 */
-function assert(condition: boolean, message?: string): void {
+function assert(condition: boolean, message: string | undefined): void {
   if (!condition) {
     throw new Error(message ?? 'Assertion failed');
   }

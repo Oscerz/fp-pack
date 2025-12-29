@@ -23,8 +23,8 @@ describe('pipeAsync', () => {
 
   it('short-circuits when SideEffect is returned', async () => {
     const effect = new SideEffect(() => 'effect');
-    const stop = async (value: number) => effect;
-    const after = async (value: number) => value + 1;
+    const stop = async (_value: number) => effect;
+    const after = async (_value: number) => _value + 1;
 
     const fn = pipeAsync(async (n: number) => n + 1, stop, after);
     const result = await fn(1);

@@ -31,8 +31,8 @@ describe('pipe', () => {
 
   it('short-circuits when SideEffect is returned', () => {
     const effect = new SideEffect(() => 'effect');
-    const stop = (value: number) => effect;
-    const after = (value: number) => value + 1;
+    const stop = (_value: number) => effect;
+    const after = (_value: number) => _value + 1;
 
     const fn = pipe((n: number) => n + 1, stop, after);
     const result = fn(1);

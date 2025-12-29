@@ -56,6 +56,12 @@ import { Delay } from '@/pages/Delay';
 import { Delay_ko } from '@/pages/Delay_ko';
 import { Timeout } from '@/pages/Timeout';
 import { Timeout_ko } from '@/pages/Timeout_ko';
+import { StreamChunk } from '@/pages/StreamChunk';
+import { StreamChunk_ko } from '@/pages/StreamChunk_ko';
+import { StreamToArray } from '@/pages/StreamToArray';
+import { StreamToArray_ko } from '@/pages/StreamToArray_ko';
+import { StreamToAsync } from '@/pages/StreamToAsync';
+import { StreamToAsync_ko } from '@/pages/StreamToAsync_ko';
 import { Clamp } from '@/pages/Clamp';
 import { Clamp_ko } from '@/pages/Clamp_ko';
 import { Equals } from '@/pages/Equals';
@@ -295,6 +301,12 @@ const routes: Record<string, PageComponent> = {
   '/ko/async/debounceLeading': DebounceLeading_ko,
   '/async/debounceLeadingTrailing': DebounceLeadingTrailing,
   '/ko/async/debounceLeadingTrailing': DebounceLeadingTrailing_ko,
+  '/stream/chunk': StreamChunk,
+  '/ko/stream/chunk': StreamChunk_ko,
+  '/stream/toArray': StreamToArray,
+  '/ko/stream/toArray': StreamToArray_ko,
+  '/stream/toAsync': StreamToAsync,
+  '/ko/stream/toAsync': StreamToAsync_ko,
   '/equality/isEmpty': IsEmpty,
   '/ko/equality/isEmpty': IsEmpty_ko,
   '/equality/isNil': IsNil,
