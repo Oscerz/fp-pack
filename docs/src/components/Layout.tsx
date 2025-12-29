@@ -18,6 +18,8 @@ import { Identity } from '@/pages/Identity';
 import { Identity_ko } from '@/pages/Identity_ko';
 import { Constant } from '@/pages/Constant';
 import { Constant_ko } from '@/pages/Constant_ko';
+import { Complement } from '@/pages/Complement';
+import { Complement_ko } from '@/pages/Complement_ko';
 import { Memoize } from '@/pages/Memoize';
 import { Memoize_ko } from '@/pages/Memoize_ko';
 import { Once } from '@/pages/Once';
@@ -271,6 +273,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/composition/identity': Identity_ko,
   '/composition/constant': Constant,
   '/ko/composition/constant': Constant_ko,
+  '/composition/complement': Complement,
+  '/ko/composition/complement': Complement_ko,
   '/composition/memoize': Memoize,
   '/ko/composition/memoize': Memoize_ko,
   '/composition/once': Once,

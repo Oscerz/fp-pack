@@ -3,6 +3,7 @@ export { default as compose } from './compose';
 export { default as curry } from './curry';
 export { default as partial } from './partial';
 export { default as flip } from './flip';
+export { default as complement } from './complement';
 export { default as identity } from './identity';
 export { default as constant } from './constant';
 export { default as tap } from './tap';
