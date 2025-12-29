@@ -212,16 +212,22 @@ import { MapValues } from '@/pages/MapValues';
 import { MapValues_ko } from '@/pages/MapValues_ko';
 import { Merge } from '@/pages/Merge';
 import { Merge_ko } from '@/pages/Merge_ko';
+import { MergeAll } from '@/pages/MergeAll';
+import { MergeAll_ko } from '@/pages/MergeAll_ko';
 import { MergeDeep } from '@/pages/MergeDeep';
 import { MergeDeep_ko } from '@/pages/MergeDeep_ko';
 import { Omit } from '@/pages/Omit';
 import { Omit_ko } from '@/pages/Omit_ko';
 import { Path } from '@/pages/Path';
 import { Path_ko } from '@/pages/Path_ko';
+import { PathOr } from '@/pages/PathOr';
+import { PathOr_ko } from '@/pages/PathOr_ko';
 import { Pick } from '@/pages/Pick';
 import { Pick_ko } from '@/pages/Pick_ko';
 import { Prop } from '@/pages/Prop';
 import { Prop_ko } from '@/pages/Prop_ko';
+import { PropOr } from '@/pages/PropOr';
+import { PropOr_ko } from '@/pages/PropOr_ko';
 import { Values } from '@/pages/Values';
 import { Values_ko } from '@/pages/Values_ko';
 // mapValues 문서가 없는 상태이므로 주석 처리/임포트 제거
@@ -525,16 +531,22 @@ const routes: Record<string, PageComponent> = {
   '/ko/object/mapValues': MapValues_ko,
   '/object/merge': Merge,
   '/ko/object/merge': Merge_ko,
+  '/object/mergeAll': MergeAll,
+  '/ko/object/mergeAll': MergeAll_ko,
   '/object/mergeDeep': MergeDeep,
   '/ko/object/mergeDeep': MergeDeep_ko,
   '/object/omit': Omit,
   '/ko/object/omit': Omit_ko,
   '/object/path': Path,
   '/ko/object/path': Path_ko,
+  '/object/pathOr': PathOr,
+  '/ko/object/pathOr': PathOr_ko,
   '/object/pick': Pick,
   '/ko/object/pick': Pick_ko,
   '/object/prop': Prop,
   '/ko/object/prop': Prop_ko,
+  '/object/propOr': PropOr,
+  '/ko/object/propOr': PropOr_ko,
   '/object/values': Values,
   '/ko/object/values': Values_ko,
 };

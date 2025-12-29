@@ -1,5 +1,7 @@
 export { default as prop } from './prop';
+export { default as propOr } from './propOr';
 export { default as path } from './path';
+export { default as pathOr } from './pathOr';
 export { default as pick } from './pick';
 export { default as omit } from './omit';
 export { default as assoc } from './assoc';
@@ -8,6 +10,7 @@ export { default as dissoc } from './dissoc';
 export { default as dissocPath } from './dissocPath';
 export { default as merge } from './merge';
 export { default as mergeDeep } from './mergeDeep';
+export { default as mergeAll } from './mergeAll';
 export { default as keys } from './keys';
 export { default as values } from './values';
 export { default as entries } from './entries';

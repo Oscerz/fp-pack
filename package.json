@@ -20,8 +20,12 @@
   },
   "typesVersions": {
     "*": {
-      "stream": ["dist/stream/index.d.ts"],
-      "stream/*": ["dist/stream/*"]
+      "stream": [
+        "dist/stream/index.d.ts"
+      ],
+      "stream/*": [
+        "dist/stream/*"
+      ]
     }
   },
   "files": [
@@ -46,6 +50,7 @@
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@vitest/ui": "2.1.9",
+    "prettier": "^3.7.4",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
     "vite-plugin-dts": "^4.3.0",
