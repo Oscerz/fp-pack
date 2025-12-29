@@ -13,9 +13,11 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        'stream/index': resolve(__dirname, 'src/stream/index.ts'),
+      },
       name: 'FpKit',
-      formats: ['es', 'umd'],
     },
     rollupOptions: {
       external: [],
@@ -26,12 +28,6 @@ export default defineConfig({
           preserveModulesRoot: 'src',
           entryFileNames: '[name].mjs',
           chunkFileNames: '[name].mjs',
-        },
-        {
-          format: 'umd',
-          name: 'FpKit',
-          entryFileNames: 'fp-kit.umd.js',
-          globals: {},
         },
       ],
       treeshake: {

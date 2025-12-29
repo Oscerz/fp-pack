@@ -15,7 +15,8 @@
     },
     "./stream": {
       "types": "./dist/stream/index.d.ts",
-      "import": "./dist/stream/index.mjs"
+      "import": "./dist/stream/index.mjs",
+      "require": "./dist/fp-kit-stream.umd.js"
     }
   },
   "typesVersions": {
@@ -35,7 +36,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.umd.config.ts && vite build --config vite.umd.stream.config.ts",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
