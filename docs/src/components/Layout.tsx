@@ -58,8 +58,12 @@ import { Timeout } from '@/pages/Timeout';
 import { Timeout_ko } from '@/pages/Timeout_ko';
 import { StreamChunk } from '@/pages/StreamChunk';
 import { StreamChunk_ko } from '@/pages/StreamChunk_ko';
+import { StreamConcat } from '@/pages/StreamConcat';
+import { StreamConcat_ko } from '@/pages/StreamConcat_ko';
 import { StreamDrop } from '@/pages/StreamDrop';
 import { StreamDrop_ko } from '@/pages/StreamDrop_ko';
+import { StreamDropWhile } from '@/pages/StreamDropWhile';
+import { StreamDropWhile_ko } from '@/pages/StreamDropWhile_ko';
 import { StreamEvery } from '@/pages/StreamEvery';
 import { StreamEvery_ko } from '@/pages/StreamEvery_ko';
 import { StreamFilter } from '@/pages/StreamFilter';
@@ -68,20 +72,32 @@ import { StreamFind } from '@/pages/StreamFind';
 import { StreamFind_ko } from '@/pages/StreamFind_ko';
 import { StreamFlatMap } from '@/pages/StreamFlatMap';
 import { StreamFlatMap_ko } from '@/pages/StreamFlatMap_ko';
+import { StreamFlatten } from '@/pages/StreamFlatten';
+import { StreamFlatten_ko } from '@/pages/StreamFlatten_ko';
 import { StreamMap } from '@/pages/StreamMap';
 import { StreamMap_ko } from '@/pages/StreamMap_ko';
+import { StreamAppend } from '@/pages/StreamAppend';
+import { StreamAppend_ko } from '@/pages/StreamAppend_ko';
+import { StreamPrepend } from '@/pages/StreamPrepend';
+import { StreamPrepend_ko } from '@/pages/StreamPrepend_ko';
 import { StreamReduce } from '@/pages/StreamReduce';
 import { StreamReduce_ko } from '@/pages/StreamReduce_ko';
+import { StreamScan } from '@/pages/StreamScan';
+import { StreamScan_ko } from '@/pages/StreamScan_ko';
 import { StreamSome } from '@/pages/StreamSome';
 import { StreamSome_ko } from '@/pages/StreamSome_ko';
 import { StreamTake } from '@/pages/StreamTake';
 import { StreamTake_ko } from '@/pages/StreamTake_ko';
+import { StreamTakeWhile } from '@/pages/StreamTakeWhile';
+import { StreamTakeWhile_ko } from '@/pages/StreamTakeWhile_ko';
 import { StreamToArray } from '@/pages/StreamToArray';
 import { StreamToArray_ko } from '@/pages/StreamToArray_ko';
 import { StreamToAsync } from '@/pages/StreamToAsync';
 import { StreamToAsync_ko } from '@/pages/StreamToAsync_ko';
 import { StreamZip } from '@/pages/StreamZip';
 import { StreamZip_ko } from '@/pages/StreamZip_ko';
+import { StreamZipWith } from '@/pages/StreamZipWith';
+import { StreamZipWith_ko } from '@/pages/StreamZipWith_ko';
 import { Clamp } from '@/pages/Clamp';
 import { Clamp_ko } from '@/pages/Clamp_ko';
 import { Equals } from '@/pages/Equals';
@@ -323,18 +339,32 @@ const routes: Record<string, PageComponent> = {
   '/ko/async/debounceLeadingTrailing': DebounceLeadingTrailing_ko,
   '/stream/chunk': StreamChunk,
   '/ko/stream/chunk': StreamChunk_ko,
+  '/stream/concat': StreamConcat,
+  '/ko/stream/concat': StreamConcat_ko,
   '/stream/map': StreamMap,
   '/ko/stream/map': StreamMap_ko,
   '/stream/filter': StreamFilter,
   '/ko/stream/filter': StreamFilter_ko,
   '/stream/flatMap': StreamFlatMap,
   '/ko/stream/flatMap': StreamFlatMap_ko,
+  '/stream/flatten': StreamFlatten,
+  '/ko/stream/flatten': StreamFlatten_ko,
   '/stream/take': StreamTake,
   '/ko/stream/take': StreamTake_ko,
+  '/stream/takeWhile': StreamTakeWhile,
+  '/ko/stream/takeWhile': StreamTakeWhile_ko,
   '/stream/drop': StreamDrop,
   '/ko/stream/drop': StreamDrop_ko,
+  '/stream/dropWhile': StreamDropWhile,
+  '/ko/stream/dropWhile': StreamDropWhile_ko,
+  '/stream/append': StreamAppend,
+  '/ko/stream/append': StreamAppend_ko,
+  '/stream/prepend': StreamPrepend,
+  '/ko/stream/prepend': StreamPrepend_ko,
   '/stream/zip': StreamZip,
   '/ko/stream/zip': StreamZip_ko,
+  '/stream/zipWith': StreamZipWith,
+  '/ko/stream/zipWith': StreamZipWith_ko,
   '/stream/find': StreamFind,
   '/ko/stream/find': StreamFind_ko,
   '/stream/some': StreamSome,
@@ -343,6 +373,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/stream/every': StreamEvery_ko,
   '/stream/reduce': StreamReduce,
   '/ko/stream/reduce': StreamReduce_ko,
+  '/stream/scan': StreamScan,
+  '/ko/stream/scan': StreamScan_ko,
   '/stream/toArray': StreamToArray,
   '/ko/stream/toArray': StreamToArray_ko,
   '/stream/toAsync': StreamToAsync,
