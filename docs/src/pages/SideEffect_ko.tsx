@@ -14,14 +14,14 @@ export const SideEffect_ko = () => (
       language="typescript"
       code={`import { SideEffect, matchSideEffect, runPipeResult, pipe } from 'fp-kit';
 
-const stop = (value: number) => new SideEffect(() => value * 10);
+const stop = (value: number) => new SideEffect(() => value * 10, 'DOUBLE');
 const fn = pipe((n: number) => n + 1, stop, (n) => n + 1);
 
 const result = fn(1); // SideEffect 인스턴스, 이후 파이프는 건너뜀
 
 matchSideEffect(result, {
   value: (v) => v,
-  effect: (se) => se, // 자동 실행 없음
+  effect: (se) => se.label, // 자동 실행 없음
 });
 
 runPipeResult(result); // 명시적으로 effect 실행`}

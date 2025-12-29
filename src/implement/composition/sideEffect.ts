@@ -3,13 +3,15 @@
  */
 export class SideEffect<T = unknown> {
   readonly effect: () => T;
+  readonly label?: string;
 
-  constructor(effect: () => T) {
+  constructor(effect: () => T, label?: string) {
     this.effect = effect;
+    this.label = label;
   }
 
-  static of<T>(effect: () => T): SideEffect<T> {
-    return new SideEffect(effect);
+  static of<T>(effect: () => T, label?: string): SideEffect<T> {
+    return new SideEffect(effect, label);
   }
 }
 

@@ -10,6 +10,13 @@ describe('SideEffect', () => {
     expect(sideEffect).toBeInstanceOf(SideEffect);
   });
 
+  it('stores an optional label', () => {
+    const effect = () => 'ok';
+    const sideEffect = SideEffect.of(effect, 'TEST_LABEL');
+
+    expect(sideEffect.label).toBe('TEST_LABEL');
+  });
+
   it('matchSideEffect routes values', () => {
     const effect = new SideEffect(() => 'run');
     const valueResult = matchSideEffect(3, {

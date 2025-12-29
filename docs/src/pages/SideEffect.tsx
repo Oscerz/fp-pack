@@ -14,14 +14,14 @@ export const SideEffect = () => (
       language="typescript"
       code={`import { SideEffect, matchSideEffect, runPipeResult, pipe } from 'fp-kit';
 
-const stop = (value: number) => new SideEffect(() => value * 10);
+const stop = (value: number) => new SideEffect(() => value * 10, 'DOUBLE');
 const fn = pipe((n: number) => n + 1, stop, (n) => n + 1);
 
 const result = fn(1); // SideEffect instance, rest of pipe skipped
 
 matchSideEffect(result, {
   value: (v) => v,
-  effect: (se) => se, // no auto-run
+  effect: (se) => se.label, // no auto-run
 });
 
 runPipeResult(result); // explicitly executes effect`}
