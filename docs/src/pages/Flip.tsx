@@ -246,7 +246,7 @@ calculate(7);  // 6
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      Next Steps
+      Related Functions
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -262,7 +262,23 @@ calculate(7);  // 6
           curry →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          Combine flip with curry for powerful partial application patterns.
+          Combine with curry for powerful composition.
+        </p>
+      </a>
+
+      <a
+        href="/composition/partial"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/partial');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          partial →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Pre-fill arguments after flipping order.
         </p>
       </a>
 
@@ -278,7 +294,7 @@ calculate(7);  // 6
           pipe →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          Use flipped functions in readable data transformation pipelines.
+          Use flipped functions in pipelines.
         </p>
       </a>
     </div>

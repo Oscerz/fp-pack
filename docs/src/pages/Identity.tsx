@@ -294,7 +294,7 @@ flatMapOptional(maybeValue, n => n * 2);  // 84`}
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      Next Steps
+      Related Functions
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -310,23 +310,39 @@ flatMapOptional(maybeValue, n => n * 2);  // 84`}
           pipe →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          Use identity in pipelines as a neutral transformation element.
+          Use identity as neutral element in pipelines.
         </p>
       </a>
 
       <a
-        href="/composition/compose"
+        href="/composition/tap"
         onClick={(e: Event) => {
           e.preventDefault();
-          navigateTo('/composition/compose');
+          navigateTo('/composition/tap');
         }}
-        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
       >
-        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
-          compose →
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          tap →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          Learn how identity serves as the identity element in function composition.
+          Execute side effects while passing value through.
+        </p>
+      </a>
+
+      <a
+        href="/composition/constant"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/constant');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          constant →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Always return same value - opposite of identity.
         </p>
       </a>
     </div>

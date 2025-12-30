@@ -109,39 +109,55 @@ const byDate = groupBy((m: Message) => m.date, messages);
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
       <a
-        href="/array/chunk"
+        href="/array/partition"
         onClick={(e: Event) => {
           e.preventDefault();
-          navigateTo('/array/chunk');
+          navigateTo('/array/partition');
         }}
         class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
       >
         <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
-          chunk →
+          partition →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          페이지/배치 처리를 위해 고정 크기로 분할합니다.
+          조건으로 두 그룹으로 분할.
         </p>
       </a>
 
       <a
-        href="/array/flatMap"
+        href="/array/reduce"
         onClick={(e: Event) => {
           e.preventDefault();
-          navigateTo('/array/flatMap');
+          navigateTo('/array/reduce');
         }}
         class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
       >
         <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
-          flatMap →
+          reduce →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          1→N 변환을 위해 매핑 후 평탄화합니다.
+          그룹화된 값 변환하기.
+        </p>
+      </a>
+
+      <a
+        href="/array/map"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/map');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-pink-500 dark:hover:border-pink-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-pink-600 dark:text-pink-400 mb-2">
+          map →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          각 그룹 처리하기.
         </p>
       </a>
     </div>

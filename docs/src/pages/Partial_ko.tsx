@@ -384,7 +384,7 @@ add3(10)(20, 5);     // 35`}
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -400,7 +400,7 @@ add3(10)(20, 5);     // 35`}
           curry →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          순차적 인자 적용과 유연한 조합을 위한 curry에 대해 알아보세요.
+          순차적 인자 적용을 위한 대안적 접근 방식.
         </p>
       </a>
 
@@ -416,7 +416,23 @@ add3(10)(20, 5);     // 35`}
           pipe →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          부분 적용된 함수를 pipe와 함께 가독성 있는 파이프라인으로 결합하세요.
+          부분 적용된 함수를 파이프라인으로 결합.
+        </p>
+      </a>
+
+      <a
+        href="/composition/flip"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/flip');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          flip →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          더 나은 합성을 위해 인자 순서를 반대로.
         </p>
       </a>
     </div>

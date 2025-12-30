@@ -303,7 +303,7 @@ sumSquaresOfEvens([1, 2, 3, 4, 5, 6]);  // 56
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      Next Steps
+      Related Functions
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -319,7 +319,7 @@ sumSquaresOfEvens([1, 2, 3, 4, 5, 6]);  // 56
           pipe →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          Learn about pipe, the more intuitive left-to-right composition.
+          Left-to-right composition - more intuitive alternative.
         </p>
       </a>
 
@@ -335,7 +335,23 @@ sumSquaresOfEvens([1, 2, 3, 4, 5, 6]);  // 56
           curry →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          Learn about curry to create partially applied functions for better composition.
+          Transform functions for partial application.
+        </p>
+      </a>
+
+      <a
+        href="/composition/partial"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/partial');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          partial →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Pre-fill function arguments for flexible composition.
         </p>
       </a>
     </div>

@@ -87,7 +87,7 @@ const [valid, invalid] = partition(value => !Number.isNaN(Number(value)), inputs
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -103,7 +103,7 @@ const [valid, invalid] = partition(value => !Number.isNaN(Number(value)), inputs
           filter →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          조건을 만족하는 요소만 남깁니다.
+          일치하는 요소만 가져오기.
         </p>
       </a>
 
@@ -119,7 +119,23 @@ const [valid, invalid] = partition(value => !Number.isNaN(Number(value)), inputs
           groupBy →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          키 함수로 그룹을 만듭니다.
+          여러 카테고리로 그룹화.
+        </p>
+      </a>
+
+      <a
+        href="/array/reduce"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/reduce');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-pink-500 dark:hover:border-pink-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-pink-600 dark:text-pink-400 mb-2">
+          reduce →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          분할된 배열 처리하기.
         </p>
       </a>
     </div>

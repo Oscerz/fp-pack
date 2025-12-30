@@ -246,7 +246,7 @@ calculate(7);  // 6
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -262,7 +262,23 @@ calculate(7);  // 6
           curry →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          강력한 부분 적용 패턴을 위해 flip과 curry를 결합하세요.
+          강력한 합성을 위해 curry와 결합.
+        </p>
+      </a>
+
+      <a
+        href="/composition/partial"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/partial');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          partial →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          순서 뒤집은 후 인자 미리 채우기.
         </p>
       </a>
 
@@ -278,7 +294,7 @@ calculate(7);  // 6
           pipe →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          가독성 있는 데이터 변환 파이프라인에서 뒤집힌 함수를 사용하세요.
+          파이프라인에서 뒤집힌 함수 사용.
         </p>
       </a>
     </div>

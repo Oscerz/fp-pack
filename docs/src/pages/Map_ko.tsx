@@ -86,7 +86,7 @@ const formatted = map((p: number) => \`$\${p.toFixed(2)}\`, prices);
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -102,7 +102,7 @@ const formatted = map((p: number) => \`$\${p.toFixed(2)}\`, prices);
           filter →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          조건을 만족하는 요소만 남깁니다.
+          조건을 만족하는 요소 선택.
         </p>
       </a>
 
@@ -118,7 +118,23 @@ const formatted = map((p: number) => \`$\${p.toFixed(2)}\`, prices);
           reduce →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          배열을 하나의 값으로 누적합니다.
+          배열을 하나의 값으로 누적.
+        </p>
+      </a>
+
+      <a
+        href="/array/flatMap"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/flatMap');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          flatMap →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          매핑과 평탄화를 한 번에.
         </p>
       </a>
     </div>

@@ -191,7 +191,7 @@ checkAdultStatus(user);  // "예"`}
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -207,7 +207,7 @@ checkAdultStatus(user);  // "예"`}
           pipe →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          더 직관적인 왼쪽에서 오른쪽 합성인 pipe에 대해 알아보세요.
+          왼쪽에서 오른쪽 합성 - 더 직관적인 대안.
         </p>
       </a>
 
@@ -223,7 +223,23 @@ checkAdultStatus(user);  // "예"`}
           curry →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          더 나은 합성을 위해 부분 적용된 함수를 만드는 curry에 대해 알아보세요.
+          부분 적용을 위한 함수 변환.
+        </p>
+      </a>
+
+      <a
+        href="/composition/partial"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/partial');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          partial →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          유연한 합성을 위해 함수 인자를 미리 채우기.
         </p>
       </a>
     </div>

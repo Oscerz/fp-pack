@@ -326,7 +326,7 @@ processData([5, 2, 8, 1, 9]);  // [1, 2, 5]`}
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -342,23 +342,39 @@ processData([5, 2, 8, 1, 9]);  // [1, 2, 5]`}
           drop →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          요소를 건너뛰는 take의 보완 함수인 drop에 대해 알아보세요.
+          처음 N개 요소 건너뛰기.
         </p>
       </a>
 
       <a
-        href="/ko/array/filter"
+        href="/ko/array/slice"
         onClick={(e: Event) => {
           e.preventDefault();
-          navigateTo('/ko/array/filter');
+          navigateTo('/ko/array/slice');
         }}
         class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
       >
         <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
-          filter →
+          slice →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          위치가 아닌 조건에 따라 요소를 추출하는 방법을 알아보세요.
+          요소 범위 추출하기.
+        </p>
+      </a>
+
+      <a
+        href="/ko/array/takeWhile"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/array/takeWhile');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-pink-500 dark:hover:border-pink-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-pink-600 dark:text-pink-400 mb-2">
+          takeWhile →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          조건이 만족되는 동안 가져오기.
         </p>
       </a>
     </div>

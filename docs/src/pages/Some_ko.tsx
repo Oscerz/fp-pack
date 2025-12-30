@@ -387,39 +387,55 @@ some(isEven, numbers);  // true
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
       <a
-        href="/composition/curry"
+        href="/array/filter"
         onClick={(e: Event) => {
           e.preventDefault();
-          navigateTo('/composition/curry');
-        }}
-        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-pink-500 dark:hover:border-pink-500 transition-colors cursor-pointer"
-      >
-        <h3 class="text-lg md:text-xl font-medium text-pink-600 dark:text-pink-400 mb-2">
-          curry →
-        </h3>
-        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          더 나은 조합을 위해 some을 커링하여 재사용 가능한 predicate를 만드세요.
-        </p>
-      </a>
-
-      <a
-        href="/composition/pipe"
-        onClick={(e: Event) => {
-          e.preventDefault();
-          navigateTo('/composition/pipe');
+          navigateTo('/array/filter');
         }}
         class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
       >
         <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
-          pipe →
+          filter →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          데이터 변환 파이프라인에서 검증 단계로 some을 사용하세요.
+          일치하는 모든 요소 가져오기.
+        </p>
+      </a>
+
+      <a
+        href="/array/every"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/every');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          every →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          모든 요소가 일치하는지 확인.
+        </p>
+      </a>
+
+      <a
+        href="/array/find"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/find');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-pink-500 dark:hover:border-pink-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-pink-600 dark:text-pink-400 mb-2">
+          find →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          첫 번째 일치 요소 가져오기.
         </p>
       </a>
     </div>

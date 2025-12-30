@@ -105,10 +105,26 @@ getUpperName(missing); // null`}
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
+      <a
+        href="/array/some"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/some');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-pink-500 dark:hover:border-pink-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-pink-600 dark:text-pink-400 mb-2">
+          some →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          요소가 존재하는지 확인.
+        </p>
+      </a>
+
       <a
         href="/array/filter"
         onClick={(e: Event) => {
@@ -121,23 +137,23 @@ getUpperName(missing); // null`}
           filter →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          조건을 만족하는 요소만 남깁니다.
+          일치하는 모든 요소 찾기.
         </p>
       </a>
 
       <a
-        href="/nullable/maybe"
+        href="/array/findIndex"
         onClick={(e: Event) => {
           e.preventDefault();
-          navigateTo('/nullable/maybe');
+          navigateTo('/array/findIndex');
         }}
         class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
       >
         <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
-          maybe →
+          findIndex →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          null/undefined에 안전한 변환을 수행합니다.
+          값 대신 인덱스 가져오기.
         </p>
       </a>
     </div>

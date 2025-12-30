@@ -476,7 +476,7 @@ processValue(3);  // 16 반환, state = { count: 2, lastValue: 6 }`}
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
     <div class="grid gap-6 mt-6">
@@ -492,7 +492,7 @@ processValue(3);  // 16 반환, state = { count: 2, lastValue: 6 }`}
           pipe →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          tap이 디버깅과 부수 효과에 빛을 발하는 파이프라인 구축 방법을 배우세요.
+          디버깅에 tap이 뛰어난 파이프라인 구축.
         </p>
       </a>
 
@@ -508,7 +508,23 @@ processValue(3);  // 16 반환, state = { count: 2, lastValue: 6 }`}
           identity →
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
-          값을 변경하지 않고 전달하는 또 다른 유틸리티를 알아보세요.
+          사이드 이펙트 없이 값을 전달.
+        </p>
+      </a>
+
+      <a
+        href="/debug/log"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/debug/log');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          log →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          빠른 콘솔 로깅 - 특화된 tap.
         </p>
       </a>
     </div>

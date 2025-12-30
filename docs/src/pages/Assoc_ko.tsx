@@ -651,51 +651,73 @@ const updated = updateProduct('price', 799, product); // ✓ OK
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
-    <div class="space-y-4">
-      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-        관련된 객체 및 함수형 프로그래밍 유틸리티들을 시도해보세요:
-      </p>
-      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/composition/pipe');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            pipe
-          </a>{' '}
-          - 복잡한 변환을 위해 여러 assoc 호출 조합
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/array/map');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            map
-          </a>{' '}
-          - 배열 요소를 불변 방식으로 변환
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/composition/identity');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            identity
-          </a>{' '}
-          - 값을 변경하지 않고 반환, 조건부 업데이트에 유용
-        </li>
-      </ul>
+    <div class="grid gap-6 mt-6">
+      <a
+        href="/object/assocPath"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/object/assocPath');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          assocPath →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          깊이 중첩된 속성을 불변 방식으로 설정.
+        </p>
+      </a>
+
+      <a
+        href="/object/dissoc"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/object/dissoc');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          dissoc →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          불변 방식으로 속성 제거 - assoc의 반대.
+        </p>
+      </a>
+
+      <a
+        href="/object/path"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/object/path');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          path →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          중첩된 속성을 안전하게 읽기.
+        </p>
+      </a>
+
+      <a
+        href="/object/merge"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/object/merge');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          merge →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          불변 방식으로 객체 결합.
+        </p>
+      </a>
     </div>
   </div>
 );
