@@ -7,8 +7,45 @@ export const Home = () => (
     </h1>
 
     <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
-      Practical functional programming utilities for everyday JavaScript developers.
+      A practical, pipe-first functional toolkit for modern TypeScript.
     </p>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Core Philosophy
+    </h2>
+
+    <ul class="space-y-4 text-gray-700 dark:text-gray-300 mb-8">
+      <li class="flex items-start">
+        <span class="text-blue-500 font-bold mr-3 text-2xl">🔄</span>
+        <div>
+          <strong class="text-lg">Pipe-First Composition</strong>
+          <p class="mt-1">Built around <code class="text-sm">pipe</code> and <code class="text-sm">pipeAsync</code> for clean, left-to-right data transformations. Follow standard pipeline patterns that developers already know.</p>
+        </div>
+      </li>
+      <li class="flex items-start">
+        <span class="text-purple-500 font-bold mr-3 text-2xl">⚡</span>
+        <div>
+          <strong class="text-lg">SideEffect Pattern</strong>
+          <p class="mt-1">No monads, no heavy abstractions. Use the <code class="text-sm">SideEffect</code> interface to handle errors and side effects declaratively within your pipe chains, without breaking the flow.</p>
+        </div>
+      </li>
+      <li class="flex items-start">
+        <span class="text-green-500 font-bold mr-3 text-2xl">💧</span>
+        <div>
+          <strong class="text-lg">Stream Processing</strong>
+          <p class="mt-1">Efficient lazy evaluation with <code class="text-sm">stream/*</code> functions. Handle both <code class="text-sm">Iterable</code> and <code class="text-sm">AsyncIterable</code> for memory-conscious operations on large datasets.</p>
+        </div>
+      </li>
+      <li class="flex items-start">
+        <span class="text-orange-500 font-bold mr-3 text-2xl">🔀</span>
+        <div>
+          <strong class="text-lg">Async First-Class</strong>
+          <p class="mt-1"><code class="text-sm">pipeAsync</code> makes async flow control practical and composable. Mix sync and async functions naturally in your pipelines.</p>
+        </div>
+      </li>
+    </ul>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
@@ -18,36 +55,106 @@ export const Home = () => (
 
     <ul class="space-y-3 text-gray-700 dark:text-gray-300">
       <li class="flex items-start">
-        <span class="text-blue-500 font-bold mr-3">✨</span>
+        <span class="text-blue-500 font-bold mr-3">🎯</span>
         <div>
-          <strong>No Magic</strong> - Clear, understandable implementations without heavy abstractions
+          <strong>Practical & Real-World</strong> - Solutions for everyday async operations, data pipelines, and error handling that actually ship
+        </div>
+      </li>
+      <li class="flex items-start">
+        <span class="text-blue-500 font-bold mr-3">🚫</span>
+        <div>
+          <strong>No Academic FP</strong> - No monads, functors, or category theory. Just useful patterns that solve real problems
         </div>
       </li>
       <li class="flex items-start">
         <span class="text-blue-500 font-bold mr-3">👥</span>
         <div>
-          <strong>Developer-Friendly</strong> - Written for regular JavaScript developers, not FP academics
-        </div>
-      </li>
-      <li class="flex items-start">
-        <span class="text-blue-500 font-bold mr-3">🎯</span>
-        <div>
-          <strong>Practical</strong> - Functions you'll actually use daily, not theoretical constructs
-        </div>
-      </li>
-      <li class="flex items-start">
-        <span class="text-blue-500 font-bold mr-3">📘</span>
-        <div>
-          <strong>Typed</strong> - Full TypeScript support with excellent type inference
+          <strong>TypeScript Native</strong> - Written for TypeScript developers with excellent type inference and minimal annotations
         </div>
       </li>
       <li class="flex items-start">
         <span class="text-blue-500 font-bold mr-3">🪶</span>
         <div>
-          <strong>Lightweight</strong> - Tree-shakeable and minimal bundle impact (~5KB)
+          <strong>Lightweight & Modular</strong> - Zero dependencies, fully tree-shakeable, ~5KB footprint
         </div>
       </li>
     </ul>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Key Features
+    </h2>
+
+    <div class="grid gap-6 mt-6 mb-8">
+      <div class="block p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+        <h3 class="text-xl font-medium text-blue-600 dark:text-blue-400 mb-3">
+          Standard Pipe Operations
+        </h3>
+        <p class="text-gray-700 dark:text-gray-300 mb-3">
+          Familiar <code class="text-sm">pipe</code> and <code class="text-sm">compose</code> patterns that follow industry-standard conventions.
+        </p>
+        <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
+{`const result = pipe(
+  filter(user => user.active),
+  map(user => user.name),
+  take(10)
+)(users);`}
+        </pre>
+      </div>
+
+      <div class="block p-6 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+        <h3 class="text-xl font-medium text-purple-600 dark:text-purple-400 mb-3">
+          SideEffect for Error Handling
+        </h3>
+        <p class="text-gray-700 dark:text-gray-300 mb-3">
+          Handle errors within pipes without breaking composition. No try-catch, no monads.
+        </p>
+        <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
+{`const process = pipe(
+  validate,
+  (data) => data.ok
+    ? data
+    : SideEffect.of(() => throw Error()),
+  transform
+);`}
+        </pre>
+      </div>
+
+      <div class="block p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg border border-green-200 dark:border-green-800">
+        <h3 class="text-xl font-medium text-green-600 dark:text-green-400 mb-3">
+          Lazy Stream Processing
+        </h3>
+        <p class="text-gray-700 dark:text-gray-300 mb-3">
+          Memory-efficient operations on large datasets with full <code class="text-sm">AsyncIterable</code> support.
+        </p>
+        <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
+{`import * as Stream from 'fp-kit/stream';
+
+const first100 = pipe(
+  Stream.filter(n => n % 2 === 0),
+  Stream.take(100),
+  Stream.toArray
+)(Stream.range(1, 1000000));`}
+        </pre>
+      </div>
+
+      <div class="block p-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+        <h3 class="text-xl font-medium text-orange-600 dark:text-orange-400 mb-3">
+          Async Pipeline with pipeAsync
+        </h3>
+        <p class="text-gray-700 dark:text-gray-300 mb-3">
+          Compose async operations naturally. Mix sync and async functions in the same pipeline.
+        </p>
+        <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
+{`const fetchUser = pipeAsync(
+  async (id) => fetch(\`/api/\${id}\`),
+  (res) => res.json(),
+  (data) => data.user
+);`}
+        </pre>
+      </div>
+    </div>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
@@ -56,7 +163,7 @@ export const Home = () => (
     </h2>
 
     <p class="text-gray-700 dark:text-gray-300 mb-6">
-      Explore the composition utilities to start building powerful function pipelines:
+      Explore the core composition utilities to build powerful, type-safe pipelines:
     </p>
 
     <div class="grid gap-6 mt-6">

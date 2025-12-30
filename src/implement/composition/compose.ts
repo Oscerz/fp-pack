@@ -1,6 +1,8 @@
 /**
  * compose - 함수를 우→좌로 합성
  */
+import SideEffect from './sideEffect';
+
 type UnaryFn<A, R> = (a: A) => R;
 type ComposeInput<Fns extends UnaryFn<any, any>[]> = Fns extends [...UnaryFn<any, any>[], UnaryFn<infer A, any>]
   ? A
@@ -41,7 +43,13 @@ function compose<A, B, C, D, E, R>(
 function compose<Fns extends [UnaryFn<any, any>, ...UnaryFn<any, any>[]]>(...funcs: Fns): Compose<Fns>;
 function compose(...funcs: Array<UnaryFn<any, any>>): (input: any) => any;
 function compose(...funcs: Array<(input: any) => any>) {
-  return (value: any) => funcs.reduceRight((acc, fn) => fn(acc), value);
+  return (value: any) =>
+    funcs.reduceRight((acc, fn) => {
+      if (acc instanceof SideEffect) {
+        return acc;
+      }
+      return fn(acc);
+    }, value);
 }
 
 export default compose;

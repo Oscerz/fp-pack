@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import compose from './compose';
+import SideEffect from './sideEffect';
 
 describe('compose', () => {
   it('applies functions right-to-left', () => {
@@ -25,5 +26,16 @@ describe('compose', () => {
     const square = (n: number) => n * n;
     const fn = compose(square);
     expect(fn(4)).toBe(16);
+  });
+
+  it('short-circuits when SideEffect is returned', () => {
+    const effect = new SideEffect(() => 'effect');
+    const stop = (_value: number) => effect;
+    const after = (_value: number) => _value + 1;
+
+    const fn = compose(after, stop, (n: number) => n + 1);
+    const result = fn(1);
+
+    expect(result).toBe(effect);
   });
 });
