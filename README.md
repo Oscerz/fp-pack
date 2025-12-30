@@ -164,7 +164,7 @@ Functions for conditional logic and flow control.
 
 ### Array
 
-Functions for working with arrays. Inputs are never mutated, and results return new values or arrays.
+Functions for working with arrays. All operations are immutable and return new arrays.
 
 - **map** - Transform each element
 - **filter** - Select elements matching a predicate
@@ -406,7 +406,7 @@ const first10Evens = pipe(
   Stream.toArray
 );
 
-first10Evens(Stream.range(1, 1000000)); // Only processes ~20 items
+first10Evens(Stream.range(1, 1000000)); // Only processes ~10 items, not 1 million
 ```
 
 ## What You Get
