@@ -9,7 +9,6 @@ lerna-debug.log*
 CLAUDE.md
 AGENTS.md
 .claude
-.claude/*
 
 node_modules
 dist
