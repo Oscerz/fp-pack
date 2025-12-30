@@ -492,6 +492,16 @@ pnpm test
 pnpm dev
 ```
 
+## Acknowledgements
+
+fp-kit was inspired by and learned from excellent functional programming libraries in the JavaScript ecosystem:
+
+- **[Ramda](https://ramdajs.com/)** - A practical functional library that pioneered many of the patterns we use today
+- **[FxTS](https://github.com/marpple/FxTS)** - TypeScript library whose AsyncIterable implementation and stream processing architecture heavily influenced our design
+- **[FxJS](https://github.com/marpple/FxJS)** - JavaScript functional library that demonstrated practical lazy evaluation patterns
+
+While fp-kit's implementation approaches differ (using generator functions, the SideEffect pattern, and pipe-first composition), we're deeply grateful for the influence these projects had on functional programming in JavaScript.
+
 ## License
 
 MIT
