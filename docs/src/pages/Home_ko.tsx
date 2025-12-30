@@ -1,4 +1,5 @@
 import { navigateTo } from '@/store';
+import { CodeBlock } from '@/components/CodeBlock';
 
 export const Home_ko = () => (
   <div class="prose prose-lg dark:prose-invert max-w-none">
@@ -86,73 +87,77 @@ export const Home_ko = () => (
       주요 기능
     </h2>
 
-    <div class="grid gap-6 mt-6 mb-8">
-      <div class="block p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-        <h3 class="text-xl font-medium text-blue-600 dark:text-blue-400 mb-3">
+    <div class="grid gap-4 md:gap-6 mt-6 mb-8">
+      <div class="block p-4 md:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800 overflow-hidden">
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2 md:mb-3">
           표준 파이프 연산
         </h3>
-        <p class="text-gray-700 dark:text-gray-300 mb-3">
-          업계 표준 관례를 따르는 익숙한 <code class="text-sm">pipe</code>와 <code class="text-sm">compose</code> 패턴.
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
+          업계 표준 관례를 따르는 익숙한 <code class="text-xs md:text-sm">pipe</code>와 <code class="text-xs md:text-sm">compose</code> 패턴.
         </p>
-        <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
-{`const result = pipe(
+        <CodeBlock
+          language="typescript"
+          code={`const result = pipe(
   filter(user => user.active),
   map(user => user.name),
   take(10)
 )(users);`}
-        </pre>
+        />
       </div>
 
-      <div class="block p-6 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-        <h3 class="text-xl font-medium text-purple-600 dark:text-purple-400 mb-3">
+      <div class="block p-4 md:p-6 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800 overflow-hidden">
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2 md:mb-3">
           에러 처리를 위한 SideEffect
         </h3>
-        <p class="text-gray-700 dark:text-gray-300 mb-3">
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
           합성을 깨지 않고 파이프 내에서 에러를 처리합니다. try-catch도, 모나드도 필요 없습니다.
         </p>
-        <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
-{`const process = pipe(
+        <CodeBlock
+          language="typescript"
+          code={`const process = pipe(
   validate,
   (data) => data.ok
     ? data
     : SideEffect.of(() => throw Error()),
   transform
 );`}
-        </pre>
+        />
       </div>
 
-      <div class="block p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg border border-green-200 dark:border-green-800">
-        <h3 class="text-xl font-medium text-green-600 dark:text-green-400 mb-3">
+      <div class="block p-4 md:p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg border border-green-200 dark:border-green-800 overflow-hidden">
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2 md:mb-3">
           지연 스트림 처리
         </h3>
-        <p class="text-gray-700 dark:text-gray-300 mb-3">
-          완전한 <code class="text-sm">AsyncIterable</code> 지원으로 대용량 데이터셋에 대한 메모리 효율적인 연산 제공.
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
+          완전한 <code class="text-xs md:text-sm">AsyncIterable</code> 지원으로 대용량 데이터셋에 대한 메모리 효율적인 연산 제공.
         </p>
-        <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
-{`import * as Stream from 'fp-kit/stream';
+        <CodeBlock
+          language="typescript"
+          code={`import * as Stream from 'fp-kit/stream';
 
 const first100 = pipe(
   Stream.filter(n => n % 2 === 0),
   Stream.take(100),
   Stream.toArray
 )(Stream.range(1, 1000000));`}
-        </pre>
+        />
       </div>
 
-      <div class="block p-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
-        <h3 class="text-xl font-medium text-orange-600 dark:text-orange-400 mb-3">
+      <div class="block p-4 md:p-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg border border-orange-200 dark:border-orange-800 overflow-hidden">
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2 md:mb-3">
           pipeAsync로 비동기 파이프라인
         </h3>
-        <p class="text-gray-700 dark:text-gray-300 mb-3">
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
           비동기 연산을 자연스럽게 합성합니다. 같은 파이프라인에서 동기와 비동기 함수를 혼합 사용 가능.
         </p>
-        <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
-{`const fetchUser = pipeAsync(
+        <CodeBlock
+          language="typescript"
+          code={`const fetchUser = pipeAsync(
   async (id) => fetch(\`/api/\${id}\`),
   (res) => res.json(),
   (data) => data.user
 );`}
-        </pre>
+        />
       </div>
     </div>
 

@@ -9,7 +9,7 @@ export const Header = mount(renew => {
 
     return (
       <header class="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-[#1b1b1f] transition-colors">
-        <div class="mx-auto max-w-[1440px] px-6 md:px-12">
+        <div class="mx-auto max-w-[1440px] px-6 md:px-6">
           <div class="flex items-center justify-between h-16">
             <div class="flex items-center space-x-4">
               <a
@@ -22,9 +22,6 @@ export const Header = mount(renew => {
               >
                 fp-kit
               </a>
-              <span class="text-sm text-gray-500 dark:text-gray-400">
-                Functional Programming Utilities
-              </span>
             </div>
 
             <nav class="flex items-center space-x-4">
