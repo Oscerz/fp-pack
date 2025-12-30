@@ -164,6 +164,73 @@ const first100 = pipe(
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      AI 에이전트 스킬
+    </h2>
+
+    <p class="text-gray-700 dark:text-gray-300 mb-4">
+      fp-kit은 AI 코딩 어시스턴트(Claude Code, GitHub Copilot, Cursor 등)가 자동으로 fp-kit 스타일의 함수형 코드를 작성하도록 돕는 스킬 파일을 포함합니다.
+    </p>
+
+    <div class="border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20 p-4 md:p-6 mb-6 rounded-r">
+      <h3 class="text-lg font-medium text-green-800 dark:text-green-200 mb-3">
+        🤖 AI 어시스턴트가 하는 일
+      </h3>
+      <ul class="space-y-2 text-sm md:text-base text-green-800 dark:text-green-200">
+        <li class="flex items-start">
+          <span class="mr-2">•</span>
+          <span>모든 변환에 <code class="text-xs md:text-sm bg-green-100 dark:bg-green-800 px-1 rounded">pipe</code>와 <code class="text-xs md:text-sm bg-green-100 dark:bg-green-800 px-1 rounded">pipeAsync</code>를 기본으로 사용</span>
+        </li>
+        <li class="flex items-start">
+          <span class="mr-2">•</span>
+          <span>try-catch 대신 <code class="text-xs md:text-sm bg-green-100 dark:bg-green-800 px-1 rounded">SideEffect</code> 패턴 사용</span>
+        </li>
+        <li class="flex items-start">
+          <span class="mr-2">•</span>
+          <span>대용량 데이터셋에는 <code class="text-xs md:text-sm bg-green-100 dark:bg-green-800 px-1 rounded">stream/*</code> 함수 선호</span>
+        </li>
+        <li class="flex items-start">
+          <span class="mr-2">•</span>
+          <span>fp-kit 유틸리티를 사용한 선언적, 함수형 코드 작성</span>
+        </li>
+      </ul>
+    </div>
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4">
+      설정 방법
+    </h3>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
+      AI 코딩 어시스턴트가 스킬 파일을 지원한다면, <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">fp-kit.md</code>를 적절한 디렉토리에 복사하세요.
+    </p>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
+      <strong>Claude Code의 경우:</strong> <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">.claude/skills/</code>에 복사
+    </p>
+
+    <CodeBlock
+      language="bash"
+      code={`# Unix/macOS/Linux
+cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+
+# Windows (PowerShell)
+Copy-Item node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+
+# 또는 수동으로 디렉토리 생성 후 복사
+mkdir -p .claude/skills
+cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/`}
+    />
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mt-4 mb-2">
+      <strong>다른 AI 어시스턴트의 경우:</strong> 해당 도구의 문서를 참고하여 스킬/지침 파일을 배치할 위치를 확인하세요.
+    </p>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-6">
+      설정을 완료하면 AI 어시스턴트가 코드 작성 시 자동으로 fp-kit 코딩 패턴을 적용합니다.
+    </p>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
       시작하기
     </h2>
 

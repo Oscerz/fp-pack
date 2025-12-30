@@ -164,6 +164,73 @@ const first100 = pipe(
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      AI Agent Skills
+    </h2>
+
+    <p class="text-gray-700 dark:text-gray-300 mb-4">
+      fp-kit includes an AI agent skills file that helps AI coding assistants (Claude Code, GitHub Copilot, Cursor, etc.) automatically write fp-kit-style functional code.
+    </p>
+
+    <div class="border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20 p-4 md:p-6 mb-6 rounded-r">
+      <h3 class="text-lg font-medium text-green-800 dark:text-green-200 mb-3">
+        🤖 What AI Assistants Will Do
+      </h3>
+      <ul class="space-y-2 text-sm md:text-base text-green-800 dark:text-green-200">
+        <li class="flex items-start">
+          <span class="mr-2">•</span>
+          <span>Default to using <code class="text-xs md:text-sm bg-green-100 dark:bg-green-800 px-1 rounded">pipe</code> and <code class="text-xs md:text-sm bg-green-100 dark:bg-green-800 px-1 rounded">pipeAsync</code> for all transformations</span>
+        </li>
+        <li class="flex items-start">
+          <span class="mr-2">•</span>
+          <span>Use the <code class="text-xs md:text-sm bg-green-100 dark:bg-green-800 px-1 rounded">SideEffect</code> pattern instead of try-catch</span>
+        </li>
+        <li class="flex items-start">
+          <span class="mr-2">•</span>
+          <span>Prefer <code class="text-xs md:text-sm bg-green-100 dark:bg-green-800 px-1 rounded">stream/*</code> functions for large datasets</span>
+        </li>
+        <li class="flex items-start">
+          <span class="mr-2">•</span>
+          <span>Write declarative, functional code using fp-kit utilities</span>
+        </li>
+      </ul>
+    </div>
+
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4">
+      How to Setup
+    </h3>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
+      If your AI coding assistant supports skills files, copy <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">fp-kit.md</code> to the appropriate directory.
+    </p>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
+      <strong>For Claude Code:</strong> Copy to <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">.claude/skills/</code>
+    </p>
+
+    <CodeBlock
+      language="bash"
+      code={`# Unix/macOS/Linux
+cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+
+# Windows (PowerShell)
+Copy-Item node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+
+# Or manually create the directory and copy
+mkdir -p .claude/skills
+cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/`}
+    />
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mt-4 mb-2">
+      <strong>For other AI assistants:</strong> Consult your tool's documentation for where to place skills/instructions files.
+    </p>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-6">
+      Once configured, your AI assistant will automatically apply fp-kit coding patterns when helping you write code.
+    </p>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
       Get Started
     </h2>
 
