@@ -1,47 +1,52 @@
-## fp-kit
+# fp-kit
 
-**A practical, immutable-first functional toolkit for everyday JavaScript.**
+**A practical, pipe-first functional toolkit for modern TypeScript.**
 
-fp-kit is a small, focused collection of functional programming utilities designed for real-world JavaScript applications.  
-It emphasizes **immutability, purity, and clarity by default**, while remaining approachable for everyday developers.
+fp-kit is a focused collection of functional programming utilities designed for real-world TypeScript applications.
+It emphasizes **function composition, immutability, and declarative code** through `pipe` and `pipeAsync`, while remaining approachable for everyday developers.
 
-There’s no framework, no hidden runtime, and no heavy abstractions—just well-chosen helpers that make functional style easier to adopt and maintain in production code.
+There's no framework, no monads, and no heavy abstractions—just well-chosen helpers that make functional style easier to adopt and maintain in production code.
 
 ---
 
 ## Why fp-kit?
 
-- ✨ **Immutable by Default**  
-  All helpers avoid in-place mutation and favor predictable, immutable transformations.
+- 🔄 **Pipe-First Philosophy**
+  Built around `pipe` and `pipeAsync` for clean, left-to-right function composition.
 
-- 👥 **Designed for JavaScript Developers**  
-  No academic FP concepts required. If you know arrays, objects, and functions, you’re good to go.
+- 🚫 **No Monad Pattern**
+  Traditional FP monads (Option, Either) don't compose well with pipes. We use the `SideEffect` pattern instead for error handling.
 
-- 🎯 **Focused on Real Use Cases**  
-  Covers the patterns you actually write every day—data transformation, composition, control flow, and safe defaults.
+- 💧 **Lazy Stream Processing**
+  Efficient iterable processing with `stream/*` functions for memory-conscious operations on large datasets.
 
-- 📘 **TypeScript-First**  
-  Built with TypeScript from the ground up for strong inference and minimal annotation.
+- 👥 **Designed for TypeScript Developers**
+  No academic FP concepts required. Strong type inference, minimal annotations.
 
-- 🪶 **Lightweight & Modular**  
+- 🎯 **Practical & Production-Ready**
+  Covers the patterns you write every day—data transformation, composition, control flow, and async operations.
+
+- 🪶 **Lightweight & Modular**
   Zero dependencies, tree-shakeable modules, and a tiny footprint (~5KB).
 
 ---
 
 ## Design Principles
 
-- **Immutable & Pure by default**  
-  Core utilities are synchronous, deterministic, and side-effect free. Any exception is explicitly named (e.g. `tap`).
+- **Pipe-centric composition**
+  `pipe` (sync) and `pipeAsync` (async) are the primary composition tools. All utilities are designed to work seamlessly in pipe chains.
 
-- **Small, explicit helpers**  
-  Each function does one thing well. No magic behavior, no hidden control flow.
+- **SideEffect pattern over monads**
+  Handle errors and side effects declaratively within pipes using the `SideEffect` class, without breaking the composition flow.
 
-- **Async as an extension, not a foundation**  
-  Common async patterns (`go`, `pipeAsync`, retries, timing helpers) are provided without turning fp-kit into a framework.
+- **Immutable & Pure by default**
+  Core utilities avoid mutations and side effects. Any exception is explicitly named (e.g. `tap`, `log`).
 
-- **Iterable-friendly, not stream-centric**  
-  Array helpers remain simple and eager.  
-  Lazy / iterable helpers are provided *optionally* for advanced cases, without introducing custom stream abstractions.
+- **Lazy evaluation when needed**
+  Array helpers are eager and simple. Stream helpers (`stream/*`) provide lazy, memory-efficient alternatives for large datasets.
+
+- **Curried where it makes sense**
+  Multi-argument functions are curried for easy partial application in pipes.
 
 ## Installation
 
@@ -53,22 +58,75 @@ pnpm add fp-kit
 yarn add fp-kit
 ```
 
-## Usage
+## Quick Start
+
+### Basic Pipe Composition
 
 ```typescript
-import { pipe, map, filter, curry } from 'fp-kit';
+import { pipe, map, filter, take } from 'fp-kit';
 
-// Example: Function composition
-const processNumbers = pipe(
-  filter((n: number) => n > 0),
-  map((n: number) => n * 2),
-  sum
+// Synchronous data transformation
+const processUsers = pipe(
+  filter((user: User) => user.age >= 18),
+  map(user => user.name.toUpperCase()),
+  take(10)
 );
 
-// Example: Currying
-const add = curry((a: number, b: number) => a + b);
-const add10 = add(10);
-console.log(add10(5)); // 15
+const result = processUsers(users);
+```
+
+### Async Operations with pipeAsync
+
+```typescript
+import { pipeAsync } from 'fp-kit';
+
+// Async pipe composition
+const fetchUserProfile = pipeAsync(
+  async (userId: string) => fetch(`/api/users/${userId}`),
+  async (response) => response.json(),
+  (data) => data.profile
+);
+
+const profile = await fetchUserProfile('user-123');
+```
+
+### Error Handling with SideEffect
+
+```typescript
+import { pipe, SideEffect, runPipeResult } from 'fp-kit';
+
+const safeDivide = pipe(
+  (input: { a: number; b: number }) => {
+    if (input.b === 0) {
+      return SideEffect.of(() => {
+        throw new Error('Division by zero');
+      }, 'DIVISION_ERROR');
+    }
+    return input;
+  },
+  ({ a, b }) => a / b
+);
+
+const result = safeDivide({ a: 10, b: 2 });
+const value = runPipeResult(result); // 5
+```
+
+### Lazy Stream Processing
+
+```typescript
+import { pipe } from 'fp-kit';
+import { filter, map, take, toArray, range } from 'fp-kit/stream';
+
+// Process only what you need - memory efficient
+const processLargeDataset = pipe(
+  filter((n: number) => n % 2 === 0),
+  map(n => n * n),
+  take(100),
+  toArray
+);
+
+// Only processes 100 items, not 1 million
+const result = processLargeDataset(range(1, 1000000));
 ```
 
 ## API Reference
@@ -82,11 +140,16 @@ Functions for composing and transforming other functions.
 - **curry** - Transform a function to support partial application
 - **partial** - Pre-fill function arguments
 - **flip** - Reverse the order of function arguments
+- **complement** - Logical negation of a predicate
 - **identity** - Return input unchanged
 - **constant** - Always return the same value
 - **tap** - Execute side effects without changing the value
 - **once** - Create a function that only executes once
 - **memoize** - Cache function results for same inputs
+- **SideEffect** - Side effect container for pipe error handling
+- **isSideEffect** - Type guard to check for SideEffect
+- **matchSideEffect** - Pattern match on value or SideEffect
+- **runPipeResult** - Execute SideEffect or return value
 
 ### Control Flow
 
@@ -101,7 +164,7 @@ Functions for conditional logic and flow control.
 
 ### Array
 
-Functions for working with arrays and iterables.
+Functions for working with arrays. All operations are immutable and return new arrays.
 
 - **map** - Transform each element
 - **filter** - Select elements matching a predicate
@@ -112,27 +175,48 @@ Functions for working with arrays and iterables.
 - **every** - Check if all elements match
 - **take** - Take first n elements
 - **drop** - Skip first n elements
+- **takeWhile** - Take elements while predicate is true
+- **dropWhile** - Skip elements while predicate is true
 - **chunk** - Split array into chunks of specified size
 - **zip** - Combine two arrays into pairs
+- **zipWith** - Combine two arrays with custom function
 - **unzip** - Split array of pairs into two arrays
 - **zipIndex** - Pair each element with its index
 - **uniq** - Remove duplicate values
 - **uniqBy** - Remove duplicates by comparison function
+- **sort** - Sort array
 - **sortBy** - Sort by comparison function
 - **groupBy** - Group elements by key function
+- **partition** - Split array by predicate into [true, false]
+- **concat** - Concatenate arrays
+- **append** - Add element to end
+- **prepend** - Add element to start
+- **flatten** - Flatten one level deep
+- **flattenDeep** - Flatten all levels
+- **head** - Get first element
+- **tail** - Get all but first element
+- **last** - Get last element
+- **init** - Get all but last element
+- **range** - Generate numeric range
+- **scan** - Like reduce but emit intermediate values
 
 ### Object
 
-Functions for working with objects and records.
+Functions for working with objects and records. All operations are immutable.
 
 - **prop** - Safely access object property
+- **propOr** - Access property with default value
 - **path** - Safely access nested property path
+- **pathOr** - Access nested path with default value
 - **pick** - Select specified properties
 - **omit** - Remove specified properties
 - **assoc** - Set property immutably
+- **assocPath** - Set nested path immutably
 - **dissoc** - Remove property immutably
+- **dissocPath** - Remove nested path immutably
 - **merge** - Shallow merge objects
 - **mergeDeep** - Deep merge objects
+- **mergeAll** - Merge multiple objects
 - **keys** - Get array of object keys
 - **values** - Get array of object values
 - **entries** - Get array of [key, value] pairs
@@ -146,10 +230,10 @@ Functions for working with objects and records.
 Functions for comparing and checking values.
 
 - **equals** - Deep equality comparison
+- **includes** - Check containment (string) or deep equality in arrays
 - **isNil** - Check if value is null or undefined
 - **isEmpty** - Check if value is empty
 - **isType** - Check value type
-- **includes** - Check containment (string) or deep equality in arrays
 - **gt** - Greater than comparison
 - **gte** - Greater than or equal comparison
 - **lt** - Less than comparison
@@ -160,10 +244,10 @@ Functions for comparing and checking values.
 
 Mathematical operations and utilities.
 
-- **add** - Addition
-- **sub** - Subtraction
-- **mul** - Multiplication
-- **div** - Division
+- **add** - Addition (curried)
+- **sub** - Subtraction (curried)
+- **mul** - Multiplication (curried)
+- **div** - Division (curried)
 - **sum** - Sum of array elements
 - **mean** - Average of array elements
 - **min** - Minimum value in array
@@ -175,7 +259,7 @@ Mathematical operations and utilities.
 
 ### String
 
-Functions for string manipulation.
+Functions for string manipulation. All operations return new strings.
 
 - **trim** - Remove whitespace from both ends
 - **split** - Split string by separator
@@ -191,24 +275,52 @@ Functions for string manipulation.
 
 Functions for asynchronous operations.
 
-- **pipeAsync** - Compose async functions
+- **pipeAsync** - Compose async/sync functions (supports SideEffect)
 - **delay** - Wait for specified milliseconds
 - **timeout** - Execute promise with timeout limit
-- **retry** - Retry failed operations
-- **debounce** - Debounce function calls
+- **retry** - Retry failed operations with backoff
+- **debounce** - Debounce function calls (trailing)
+- **debounceLeading** - Debounce with leading edge
+- **debounceLeadingTrailing** - Debounce with both edges
 - **throttle** - Throttle function calls
 
-### Maybe / Result
+### Stream (Lazy Iterables)
 
-Functions for handling nullable values and errors.
+Memory-efficient lazy evaluation for large datasets. Works with both sync and async iterables.
+
+- **map** - Lazy map over iterable
+- **filter** - Lazy filter
+- **flatMap** - Lazy flatMap
+- **flatten** - Lazy flatten (one level)
+- **flattenDeep** - Lazy flatten (all levels)
+- **take** - Take first n elements
+- **takeWhile** - Take while predicate is true
+- **drop** - Skip first n elements
+- **dropWhile** - Skip while predicate is true
+- **chunk** - Split into chunks
+- **zip** - Combine two iterables
+- **zipWith** - Combine with custom function
+- **find** - Find first matching element
+- **some** - Check if any element matches
+- **every** - Check if all elements match
+- **reduce** - Accumulate values
+- **scan** - Emit intermediate accumulations
+- **concat** - Concatenate iterables
+- **append** - Add element to end
+- **prepend** - Add element to start
+- **range** - Generate lazy numeric range
+- **toArray** - Materialize iterable to array
+- **toAsync** - Convert to async iterable
+
+### Nullable
+
+Functions for handling nullable values safely.
 
 - **maybe** - Safely transform nullable values
 - **mapMaybe** - Apply function only if value exists
 - **getOrElse** - Get value or return default
-- **result** - Wrap operation in Result type
-- **mapResult** - Transform successful result
-- **unwrap** - Safely unwrap value with default
 - **fold** - Handle both Some and None cases
+- **result** - Wrap operation in Result type
 
 ### Debug
 
@@ -216,15 +328,105 @@ Functions for debugging and development.
 
 - **assert** - Assert condition with error message
 - **invariant** - Check invariant contracts
-- **log** - Log value and pass through
+- **log** - Log value and pass through (for debugging pipes)
+
+## Key Concepts
+
+### SideEffect Pattern
+
+fp-kit uses the `SideEffect` pattern instead of traditional monads for error handling in pipes:
+
+```typescript
+import { pipe, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+
+const validateAge = (age: number) => {
+  if (age < 0) {
+    return SideEffect.of(() => {
+      throw new Error('Age cannot be negative');
+    }, 'INVALID_AGE');
+  }
+  return age;
+};
+
+const processAge = pipe(
+  validateAge,
+  (age) => age * 2,  // This won't run if SideEffect is returned
+  (age) => ({ age })
+);
+
+const result = processAge(-5);
+
+if (isSideEffect(result)) {
+  console.log('Error:', result.label); // 'INVALID_AGE'
+} else {
+  console.log('Success:', result);
+}
+
+// Or use runPipeResult to execute the side effect
+const value = runPipeResult(result); // Throws error
+```
+
+### Pipe vs PipeAsync
+
+- Use **`pipe`** for synchronous transformations
+- Use **`pipeAsync`** when ANY step involves Promises or AsyncIterables
+
+```typescript
+// Sync pipe
+const processNumbers = pipe(
+  filter((n: number) => n > 0),
+  map(n => n * 2),
+  sum
+);
+
+// Async pipe
+const fetchAndProcess = pipeAsync(
+  async (id: string) => fetchUser(id),
+  (user) => user.profile,  // Sync step is OK
+  async (profile) => enrichProfile(profile)
+);
+```
+
+### Stream vs Array
+
+Use `stream/*` for:
+- Large datasets that don't fit in memory
+- Operations that can short-circuit (take, find)
+- Processing iterables without materializing to arrays
+- Async data sources (AsyncIterable)
+
+```typescript
+import { pipe } from 'fp-kit';
+import * as Stream from 'fp-kit/stream';
+
+// Memory efficient - processes only 10 items
+const first10Evens = pipe(
+  Stream.filter((n: number) => n % 2 === 0),
+  Stream.take(10),
+  Stream.toArray
+);
+
+first10Evens(Stream.range(1, 1000000)); // Only processes ~20 items
+```
 
 ## What You Get
 
-- 🔧 **96 Utility Functions** - Organized into 10 practical categories
+- 🔧 **96+ Utility Functions** - Organized into 10 practical categories
 - 🎨 **Composable Design** - Built for pipes, currying, and function composition
 - 📦 **Modern Builds** - ESM and UMD formats for any environment
 - 🌳 **Tree-Shakeable** - Import only what you need
-- ⚡ **Zero Dependencies** - No bloat, just pure JavaScript/TypeScript
+- ⚡ **Zero Dependencies** - No bloat, just pure TypeScript
+- 💪 **Full Type Safety** - Strong inference with minimal annotations
+
+## Import Paths
+
+```typescript
+// Main library (implement/*)
+import { pipe, map, filter, pipeAsync } from 'fp-kit';
+
+// Stream functions (lazy iterables)
+import { map, filter, toArray, range } from 'fp-kit/stream';
+```
 
 ## Development
 
@@ -234,6 +436,9 @@ pnpm install
 
 # Build library
 pnpm build
+
+# Run tests
+pnpm test
 
 # Run dev server
 pnpm dev
