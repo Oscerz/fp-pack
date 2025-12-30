@@ -1,11 +1,13 @@
 # fp-kit
 
-**A practical, pipe-first functional toolkit for modern TypeScript.**
+**A practical functional toolkit for JavaScript and TypeScript.**
 
-fp-kit is a focused collection of functional programming utilities designed for real-world TypeScript applications.
+Written in TypeScript with full type safety, fp-kit works seamlessly in both JavaScript and TypeScript projects.
+
+fp-kit is a focused collection of functional programming utilities designed for real-world applications.
 It emphasizes **function composition, immutability, and declarative code** through `pipe` and `pipeAsync`, while remaining approachable for everyday developers.
 
-There's no framework, no monads, and no heavy abstractions—just well-chosen helpers that make functional style easier to adopt and maintain in production code.
+There's no framework and no heavy abstractions—just well-chosen helpers that make functional style easier to adopt and maintain in production code.
 
 ---
 
@@ -14,14 +16,14 @@ There's no framework, no monads, and no heavy abstractions—just well-chosen he
 - 🔄 **Pipe-First Philosophy**
   Built around `pipe` and `pipeAsync` for clean, left-to-right function composition.
 
-- 🚫 **No Monad Pattern**
-  Traditional FP monads (Option, Either) don't compose well with pipes. We use the `SideEffect` pattern instead for error handling.
+- ⚡ **SideEffect Pattern**
+  Handle errors and side effects declaratively within pipes. Write normal functions that compose naturally—mark exceptional paths when needed, and the pipe automatically handles early termination. Focus on business logic, not error plumbing.
 
 - 💧 **Lazy Stream Processing**
   Efficient iterable processing with `stream/*` functions for memory-conscious operations on large datasets.
 
-- 👥 **Designed for TypeScript Developers**
-  No academic FP concepts required. Strong type inference, minimal annotations.
+- 📘 **JavaScript & TypeScript**
+  Works seamlessly in JavaScript. Written in TypeScript for robust type inference when you need it.
 
 - 🎯 **Practical & Production-Ready**
   Covers the patterns you write every day—data transformation, composition, control flow, and async operations.
@@ -36,8 +38,8 @@ There's no framework, no monads, and no heavy abstractions—just well-chosen he
 - **Pipe-centric composition**
   `pipe` (sync) and `pipeAsync` (async) are the primary composition tools. All utilities are designed to work seamlessly in pipe chains.
 
-- **SideEffect pattern over monads**
-  Handle errors and side effects declaratively within pipes using the `SideEffect` class, without breaking the composition flow.
+- **Pragmatic error handling**
+  The `SideEffect` pattern handles errors and side effects declaratively within pipes. Write normal functions that compose naturally—the pipe automatically short-circuits when it encounters a `SideEffect`, eliminating the need for wrapper types everywhere.
 
 - **Immutable & Pure by default**
   Core utilities avoid mutations and side effects. Any exception is explicitly named (e.g. `tap`, `log`).
@@ -125,20 +127,21 @@ const profile = await fetchUserProfile('user-123');
 ```typescript
 import { pipe, SideEffect, runPipeResult } from 'fp-kit';
 
-const safeDivide = pipe(
-  (input: { a: number; b: number }) => {
-    if (input.b === 0) {
-      return SideEffect.of(() => {
-        throw new Error('Division by zero');
-      }, 'DIVISION_ERROR');
-    }
-    return input;
-  },
-  ({ a, b }) => a / b
-);
+const validateAge = (age: number) =>
+  age >= 18
+    ? age
+    : SideEffect.of(() => {
+        alert('Must be 18 or older');
+        return null;
+      });
 
-const result = safeDivide({ a: 10, b: 2 });
-const value = runPipeResult(result); // 5
+const result = pipe(
+  validateAge,
+  (age) => `Age: ${age}`,
+  (msg) => console.log(msg),
+  runPipeResult
+)(15);
+// Pipe stops at SideEffect, alert executes, returns null
 ```
 
 ### Lazy Stream Processing
@@ -364,37 +367,52 @@ Functions for debugging and development.
 
 ### SideEffect Pattern
 
-fp-kit uses the `SideEffect` pattern instead of traditional monads for error handling in pipes:
+**The JavaScript exception problem:** In functional pipelines, throwing exceptions breaks composition—control jumps out of the pipe. To avoid this, you need `try-catch` (which breaks flow) or wrap every function in `Either`/`Result` (which requires `map`/`chain` everywhere). Both solutions make you think about error plumbing instead of business logic.
+
+**The SideEffect solution:** Write normal functions that compose naturally. When you need to terminate early (validation failure, missing data, errors), return `SideEffect.of(() => ...)`. The pipe automatically stops—no ceremony, no wrappers, no plumbing.
 
 ```typescript
-import { pipe, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+import { pipe, SideEffect, runPipeResult } from 'fp-kit';
 
-const validateAge = (age: number) => {
-  if (age < 0) {
-    return SideEffect.of(() => {
-      throw new Error('Age cannot be negative');
-    }, 'INVALID_AGE');
-  }
-  return age;
+// Optional chaining pattern - return null to gracefully terminate
+const findUser = (id: string) => {
+  const user = database.get(id);
+  return user ? user : SideEffect.of(() => null);
 };
 
-const processAge = pipe(
-  validateAge,
-  (age) => age * 2,  // This won't run if SideEffect is returned
-  (age) => ({ age })
-);
+const email = pipe(
+  findUser,
+  (user) => user.email,        // Skipped if user not found
+  (email) => email.toLowerCase(),
+  runPipeResult
+)('unknown-id');
+// Returns null without errors - clean optional flow
 
-const result = processAge(-5);
-
-if (isSideEffect(result)) {
-  console.log('Error:', result.label); // 'INVALID_AGE'
-} else {
-  console.log('Success:', result);
-}
-
-// Or use runPipeResult to execute the side effect
-const value = runPipeResult(result); // Throws error
+// Practical: User notification flow
+const result = pipe(
+  validateCard,
+  (card) => card.balance >= 100
+    ? card
+    : SideEffect.of(() => {
+        showToast('Insufficient balance');
+        logEvent('payment_failed', { reason: 'insufficient_funds' });
+        return null;
+      }),
+  chargeCard,
+  sendReceipt,
+  (receipt) => ({ success: true, receipt }),
+  runPipeResult
+)(userCard);
+// If balance insufficient: shows toast, logs event, returns null
+// Otherwise: completes payment and returns success object
 ```
+
+**Key benefits:**
+- Write normal functions—no wrapper types
+- Mark exceptional paths explicitly with `SideEffect.of()`
+- Pipe automatically short-circuits on `SideEffect`
+- Handle effects once at the end with `runPipeResult`
+- Focus on business logic, not error infrastructure
 
 ### Pipe vs PipeAsync
 
