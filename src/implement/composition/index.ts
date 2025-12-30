@@ -11,4 +11,4 @@ export { default as once } from './once';
 export { default as memoize } from './memoize';
 export { default as SideEffect } from './sideEffect';
 export { SideEffect as SideEffectClass } from './sideEffect';
-export { matchSideEffect, runPipeResult } from './sideEffect';
+export { isSideEffect, matchSideEffect, runPipeResult } from './sideEffect';
