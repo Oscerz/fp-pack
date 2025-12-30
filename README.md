@@ -58,6 +58,36 @@ pnpm add fp-kit
 yarn add fp-kit
 ```
 
+## AI Agent Skills (Optional)
+
+fp-kit includes an AI agent skills file that helps AI coding assistants (Claude Code, GitHub Copilot, Cursor, etc.) automatically write fp-kit-style functional code.
+
+When you have this skills file in your project, AI assistants will:
+- Default to using `pipe` and `pipeAsync` for all transformations
+- Use the `SideEffect` pattern instead of try-catch
+- Prefer `stream/*` functions for large datasets
+- Write declarative, functional code using fp-kit utilities
+
+### Setup for Claude Code
+
+Copy the skills file to your project's `.claude/skills/` directory:
+
+```bash
+# Unix/macOS/Linux
+cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+
+# Windows (PowerShell)
+Copy-Item node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+
+# Or manually create the directory and copy
+mkdir -p .claude/skills
+cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+```
+
+Once configured, AI assistants will automatically apply fp-kit coding patterns when helping you write code.
+
+> **Note:** The skills file is located at `node_modules/fp-kit/dist/skills/fp-kit.md` after installation. You can also view it in the [GitHub repository](https://github.com/yourusername/fp-kit/blob/main/fp-kit.md).
+
 ## Quick Start
 
 ### Basic Pipe Composition
