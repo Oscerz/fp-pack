@@ -11,6 +11,7 @@ export const SearchModal = mount<SearchModalProps>((renew, props) => {
   let searchQuery = '';
   let selectedIndex = 0;
   const inputRef = ref<HTMLInputElement | null>(null);
+  let escHandler: ((e: KeyboardEvent) => void) | null = null;
 
   const filterResults = () => {
     if (!searchQuery.trim()) {
@@ -36,6 +37,18 @@ export const SearchModal = mount<SearchModalProps>((renew, props) => {
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let results: any[] = [];
+  const scrollToSelected = () => {
+    setTimeout(() => {
+      const selectedElement = document.querySelector(`[data-result-index="${selectedIndex}"]`);
+      if (selectedElement) {
+        selectedElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest'
+        });
+      }
+    }, 0);
+  };
+
   const handleKeyDown = (e: KeyboardEvent) => {
     results = filterResults();
 
@@ -43,22 +56,20 @@ export const SearchModal = mount<SearchModalProps>((renew, props) => {
       e.preventDefault();
       selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
       renew();
+      scrollToSelected();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       selectedIndex = Math.max(selectedIndex - 1, 0);
       renew();
+      scrollToSelected();
     } else if (e.key === 'Enter' && results[selectedIndex]) {
       e.preventDefault();
       navigateTo(results[selectedIndex].path);
       searchQuery = '';
       selectedIndex = 0;
       props.onClose();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      searchQuery = '';
-      selectedIndex = 0;
-      props.onClose();
     }
+    // ESC는 전역 핸들러에서 처리
   };
 
   const handleInput = (e: Event) => {
@@ -74,13 +85,37 @@ export const SearchModal = mount<SearchModalProps>((renew, props) => {
     props.onClose();
   };
 
-  return () => (
-    <>
-      {/* Backdrop */}
-      <div
-        class="fixed inset-0 bg-black/50 z-[100] backdrop-blur-sm"
-        onClick={handleClose}
-      />
+  return () => {
+    // Global ESC handler - 모달이 열려있을 때는 어디서든 ESC로 닫기
+    if (!props.isOpen) {
+      // 모달이 닫혔으면 전역 리스너 제거
+      if (escHandler) {
+        window.removeEventListener('keydown', escHandler);
+        escHandler = null;
+      }
+      return null;
+    }
+
+    // 모달이 열려있으면 전역 ESC 리스너 추가
+    if (!escHandler) {
+      escHandler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          handleClose();
+        }
+      };
+      window.addEventListener('keydown', escHandler);
+    }
+
+    results = filterResults();
+
+    return (
+      <>
+        {/* Backdrop */}
+        <div
+          class="fixed inset-0 bg-black/50 z-[100] backdrop-blur-sm"
+          onClick={handleClose}
+        />
 
       {/* Modal */}
       <div class="fixed inset-0 z-[101] flex items-start justify-center pt-[20vh] px-4">
@@ -114,9 +149,9 @@ export const SearchModal = mount<SearchModalProps>((renew, props) => {
                 onInput={handleInput}
                 onKeyDown={handleKeyDown}
               />
-              <kbd class="hidden sm:inline-block px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded">
+              <button class="hidden sm:inline-block px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded" onClick={() => props.onClose()}>
                 ESC
-              </kbd>
+              </button>
             </div>
           </div>
 
@@ -131,7 +166,7 @@ export const SearchModal = mount<SearchModalProps>((renew, props) => {
                 {results.map((item, index) => {
                   const isSelected = index === selectedIndex;
                   return (
-                    <li key={item.path}>
+                    <li key={item.path} data-result-index={index}>
                       <button
                         type="button"
                         class={`w-full text-left px-4 py-3 flex items-center justify-between transition-colors ${
@@ -206,5 +241,6 @@ export const SearchModal = mount<SearchModalProps>((renew, props) => {
         </div>
       </div>
     </>
-  );
+    );
+  };
 });
