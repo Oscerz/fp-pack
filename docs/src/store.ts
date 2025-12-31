@@ -1,11 +1,17 @@
 import { lstore } from 'lithent/helper';
 
+// Get path from hash
+const getPathFromHash = (): string => {
+  const hash = location.hash.slice(1); // Remove #
+  return hash || '/';
+};
+
 export const appStore = lstore<{
   route: string;
   theme: 'light' | 'dark';
   sidebarOpen: boolean;
 }>({
-  route: location.pathname,
+  route: getPathFromHash(),
   theme: 'light',
   sidebarOpen: false,
 });
@@ -31,11 +37,8 @@ const resolveRouteForLanguage = (path: string, lang: 'en' | 'ko'): string => {
 const navigateInternal = (path: string) => {
   const normalizedPath = path.replace(/\/+$/, '') || '/';
 
-  if (window.location.pathname !== normalizedPath) {
-    history.pushState(null, '', normalizedPath);
-  }
-
   store.route = normalizedPath;
+  location.hash = `#${normalizedPath}`;
   window.scrollTo(0, 0);
 };
 
@@ -59,7 +62,8 @@ export const toggleLanguage = () => {
   setLanguage(isKoreanRoute() ? 'en' : 'ko');
 };
 
-// Handle browser back/forward
-window.addEventListener('popstate', () => {
-  store.route = location.pathname;
+// Listen to hashchange (browser back/forward and hash changes)
+window.addEventListener('hashchange', () => {
+  store.route = getPathFromHash();
+  window.scrollTo(0, 0);
 });
