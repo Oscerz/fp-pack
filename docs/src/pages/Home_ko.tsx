@@ -198,12 +198,14 @@ const first100 = pipe(
         return null;  // 조기 종료
       });
 
-const result = pipeSideEffect(
+const agePipeline = pipeSideEffect(
   validateAge,
   (age) => \`나이: \${age}\`,  // 검증 실패 시 실행되지 않음
-  (msg) => console.log(msg),
-  runPipeResult
-)(15);
+  (msg) => console.log(msg)
+);
+
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+const result = runPipeResult(agePipeline(15));
 // 파이프라인이 SideEffect에서 중단, alert 실행, null 반환`}
         />
       </div>
@@ -224,12 +226,14 @@ const result = pipeSideEffect(
     : SideEffect.of(() => null);  // 우아한 종료
 };
 
-const email = pipeSideEffect(
+const emailPipeline = pipeSideEffect(
   findUser,
   (user) => user.email,  // 사용자를 찾지 못하면 건너뜀
-  (email) => email.toLowerCase(),
-  runPipeResult
-)('unknown-id');
+  (email) => email.toLowerCase()
+);
+
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+const email = runPipeResult(emailPipeline('unknown-id'));
 // 에러 없이 null 반환 - 깔끔한 옵셔널 흐름`}
         />
       </div>
@@ -243,7 +247,7 @@ const email = pipeSideEffect(
         </p>
         <CodeBlock
           language="typescript"
-          code={`const result = pipeSideEffect(
+          code={`const paymentPipeline = pipeSideEffect(
   validateCard,
   (card) => card.balance >= 100
     ? card
@@ -254,9 +258,11 @@ const email = pipeSideEffect(
       }),
   chargeCard,
   sendReceipt,
-  (receipt) => ({ success: true, receipt }),
-  runPipeResult
-)(userCard);
+  (receipt) => ({ success: true, receipt })
+);
+
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+const result = runPipeResult(paymentPipeline(userCard));
 // 잔액 부족 시: 토스트 표시, 이벤트 로깅, null 반환
 // 그 외: 결제 완료 및 성공 객체 반환`}
         />

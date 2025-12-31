@@ -69,13 +69,15 @@ const fetchUserData = async (userId: string) => {
 
 ## SideEffect Pattern - Error Handling in Pipes
 
+**Important:** `pipe` and `pipeAsync` are for **pure** functions only—they don't handle `SideEffect`. Use `pipeSideEffect`/`pipeAsyncSideEffect` when your pipeline can return `SideEffect`.
+
 **DO NOT use try-catch blocks in SideEffect-aware pipelines.** Use `pipeSideEffect` / `pipeAsyncSideEffect` with the `SideEffect` class to handle errors declaratively.
 
 ```typescript
 import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
 
 // GOOD: SideEffect for error handling
-const processData = pipeSideEffect(
+const processDataPipeline = pipeSideEffect(
   validateInput,
   (data) => {
     if (!data.isValid) {
@@ -85,11 +87,11 @@ const processData = pipeSideEffect(
     }
     return data;
   },
-  transformData,
-  runPipeResult
+  transformData
 );
 
-const finalValue = processData(input); // Executes SideEffect if present
+// runPipeResult must be called OUTSIDE the pipeline
+const finalValue = runPipeResult(processDataPipeline(input));
 
 // BAD: try-catch in imperative code
 const processData = (input: any) => {
@@ -105,9 +107,47 @@ const processData = (input: any) => {
 
 **Key SideEffect functions:**
 - `SideEffect.of(fn, label?)` - Create a side effect container
-- `isSideEffect(value)` - Type guard to check for SideEffect
-- `runPipeResult(result)` - Execute SideEffect or return value
+- `isSideEffect(value)` - Type guard with **precise type narrowing** for both success and error paths
+- `runPipeResult(result)` - Execute SideEffect or return value (call **OUTSIDE** pipelines). **⚠️ CRITICAL:** `runPipeResult<T, R=any>` has default `R=any`, so using it without type narrowing returns `any` type. Use `isSideEffect` for precise type safety
 - `matchSideEffect(result, { value, effect })` - Pattern match on result
+
+**Type-safe result handling with `isSideEffect`:**
+
+```typescript
+import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+
+const processNumbers = pipeSideEffect(
+  (nums: number[]) => nums.filter(n => n % 2 === 1),
+  (odds) => odds.length > 0
+    ? odds
+    : SideEffect.of(() => 'No odd numbers'),
+  (odds) => odds.map(n => n * 2)
+);
+
+const result = processNumbers([1, 2, 3, 4, 5]);
+
+// ✅ Precise type narrowing with isSideEffect
+if (!isSideEffect(result)) {
+  // TypeScript knows: result is number[]
+  const sum: number = result.reduce((a, b) => a + b, 0);
+} else {
+  // TypeScript knows: result is SideEffect<string>
+  const error = runPipeResult<number[], string>(result);  // Exact type: string
+}
+
+// ❌ Without isSideEffect - less precise
+const value = runPipeResult(result);  // Type: number[] | string (union)
+```
+
+**⚠️ CRITICAL: runPipeResult Type Safety**
+
+`runPipeResult<T, R=any>` has a default type parameter `R=any`. This means:
+
+- ❌ **Without type narrowing**: `const result = runPipeResult(pipeline(data));` returns `any` type
+- ✅ **With isSideEffect**: Provides exact type inference in both branches (recommended)
+- ✅ **With explicit types**: `runPipeResult<SuccessType, ErrorType>(result)` for precise types
+
+**Always prefer `isSideEffect` for type safety** unless you don't need precise types.
 
 ## Stream Functions - Lazy Iterable Processing
 
@@ -267,16 +307,14 @@ const getNames = map((user: User) => user.name);
 const processUsers = pipe(filterActive, getNames);
 ```
 
-### 3. Choose pipe vs pipeAsync
+### 3. Choose pipe vs pipeSideEffect
 
-- **Use `pipe`** for synchronous data transformations
-- **Use `pipeAsync`** when ANY step involves:
-  - API calls
-  - Database queries
-  - File I/O
-  - AsyncIterable processing
-  - Any Promise-returning function
-- **Use `pipeSideEffect` / `pipeAsyncSideEffect`** when SideEffect short-circuiting is required
+- **Use `pipe`** for synchronous, **pure** transformations (no SideEffect handling)
+- **Use `pipeAsync`** for async operations, **pure** transformations (no SideEffect handling)
+- **Use `pipeSideEffect`** when you need SideEffect short-circuiting (sync)
+- **Use `pipeAsyncSideEffect`** when you need SideEffect short-circuiting (async)
+
+**Important:** `pipe` and `pipeAsync` are for **pure** functions only—they don't handle `SideEffect`. If your pipeline can return `SideEffect`, use `pipeSideEffect` or `pipeAsyncSideEffect` instead.
 
 ```typescript
 // Sync: use pipe
@@ -315,7 +353,7 @@ const result = getFirst100Even(range(1, 1000000));
 ```typescript
 import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
 
-const safeDivide = pipeSideEffect(
+const safeDividePipeline = pipeSideEffect(
   (input: { a: number; b: number }) => {
     if (input.b === 0) {
       return SideEffect.of(() => {
@@ -324,11 +362,11 @@ const safeDivide = pipeSideEffect(
     }
     return input;
   },
-  ({ a, b }) => a / b,
-  runPipeResult
+  ({ a, b }) => a / b
 );
 
-const result = safeDivide({ a: 10, b: 2 }); // 5
+// runPipeResult must be called OUTSIDE the pipeline
+const result = runPipeResult(safeDividePipeline({ a: 10, b: 2 })); // 5
 ```
 
 ### 6. Use Control Flow Functions
@@ -458,10 +496,12 @@ const updateUser = assoc('lastLogin', new Date());
 - Stream: `import { map, filter, toArray } from 'fp-kit/stream'`
 
 ### When to Use What
-- **Data transformation**: `pipe` + array/object functions
-- **Async operations**: `pipeAsync`
+- **Pure sync transformations**: `pipe` + array/object functions
+- **Pure async operations**: `pipeAsync`
+- **Error handling with SideEffect**: `pipeSideEffect` (sync) / `pipeAsyncSideEffect` (async)
+- **Type-safe result handling**: `isSideEffect` for precise type narrowing (⚠️ **ALWAYS prefer this over bare `runPipeResult`** to avoid `any` types)
+- **Execute SideEffect**: `runPipeResult` (call OUTSIDE pipelines). **⚠️ CRITICAL:** Returns `any` type without type narrowing due to default `R=any` parameter
 - **Large datasets**: `stream/*` functions
-- **Error handling**: `pipeSideEffect`/`pipeAsyncSideEffect` + `SideEffect`
 - **Conditionals**: `ifElse`, `when`, `unless`, `cond`
 - **Object access**: `prop`, `path`, `pick`, `omit`
 - **Object updates**: `assoc`, `merge`, `evolve`
@@ -504,15 +544,16 @@ const validateFieldsOrStop = (data: any) => {
   }, 'VALIDATION_ERROR');
 };
 
-const handleSubmit = pipeAsyncSideEffect(
+const handleSubmitPipeline = pipeAsyncSideEffect(
   tap((e: Event) => e.preventDefault()),
   prop('currentTarget'),
   (form) => getFormData(form as HTMLFormElement),
   validateFieldsOrStop,          // Returns data or SideEffect
   sanitizeInput,
-  submitToAPI,
-  runPipeResult
+  submitToAPI
 );
+
+const handleSubmit = (e: Event) => runPipeResult(handleSubmitPipeline(e));
 ```
 
 ### Pattern 2: Computing Derived/Reactive Values
@@ -592,13 +633,14 @@ const validateResponseOrStop = (users: unknown) => {
   return users as User[];
 };
 
-const safeFetchUsers = pipeAsyncSideEffect(
+const safeFetchUsersPipeline = pipeAsyncSideEffect(
   fetchUsers,
   validateResponseOrStop,
   filter((u: User) => u.verified),
-  tap((users) => setUsers(users)),
-  runPipeResult
+  tap((users) => setUsers(users))
 );
+
+const safeFetchUsers = () => runPipeResult(safeFetchUsersPipeline());
 ```
 
 ### Pattern 4: List/Table Data Processing
@@ -673,13 +715,14 @@ const validateFormOrStop = (data: any) => {
     : data;
 };
 
-const submitForm = pipeSideEffect(
+const submitFormPipeline = pipeSideEffect(
   pick(['email', 'password', 'name']),  // Only include relevant fields
   mapValues((v) => typeof v === 'string' ? v.trim() : v),  // Sanitize
   validateFormOrStop,
-  submitToAPI,
-  runPipeResult
+  submitToAPI
 );
+
+const submitForm = (data: any) => runPipeResult(submitFormPipeline(data));
 
 // GOOD: Multi-step form state
 const validateCurrentStepOrStop = (state: any) => {
@@ -691,11 +734,12 @@ const validateCurrentStepOrStop = (state: any) => {
   }, 'STEP_VALIDATION_ERROR');
 };
 
-const goToNextStep = pipeSideEffect(
+const goToNextStepPipeline = pipeSideEffect(
   validateCurrentStepOrStop,
-  (state) => assoc('currentStep', state.currentStep + 1, state),
-  runPipeResult
+  (state) => assoc('currentStep', state.currentStep + 1, state)
 );
+
+const goToNextStep = (state: any) => runPipeResult(goToNextStepPipeline(state));
 ```
 
 ### Pattern 6: Real-time Data Streams
@@ -923,7 +967,7 @@ const handleScroll = pipe(
 );
 
 // GOOD: Load next page with stream processing
-const loadNextPage = pipeAsyncSideEffect(
+const loadNextPagePipeline = pipeAsyncSideEffect(
   async () => {
     setIsLoading(true);
     return fetchItemsFromAPI(currentPage);
@@ -936,9 +980,10 @@ const loadNextPage = pipeAsyncSideEffect(
   )(items),
   tap((newItems) => setItems(prev => [...prev, ...newItems])),
   tap(() => setCurrentPage(prev => prev + 1)),
-  tap(() => setIsLoading(false)),
-  runPipeResult
+  tap(() => setIsLoading(false))
 );
+
+const loadNextPage = () => runPipeResult(loadNextPagePipeline());
 
 // GOOD: Virtual scroll - calculate visible range in pipe
 const getVisibleItems = pipe(
@@ -1248,7 +1293,7 @@ import { useForm } from 'react-hook-form';
 import { pipe, pipeSideEffect, pipeAsyncSideEffect, pick, mapValues, trim, when, tap, SideEffect, runPipeResult } from 'fp-kit';
 
 // GOOD: Validation with pipeSideEffect
-const validateFormData = pipeSideEffect(
+const validateFormDataPipeline = pipeSideEffect(
   pick(['email', 'password', 'name']),
   mapValues((v) => typeof v === 'string' ? trim(v) : v),
   (data) => {
@@ -1258,16 +1303,17 @@ const validateFormData = pipeSideEffect(
     return Object.keys(errors).length > 0
       ? SideEffect.of(() => ({ values: {}, errors }), 'VALIDATION_ERROR')
       : { values: data, errors: {} };
-  },
-  runPipeResult
+  }
 );
+
+const validateFormData = (values: any) => runPipeResult(validateFormDataPipeline(values));
 
 const { register, handleSubmit } = useForm({
   resolver: (values) => validateFormData(values)
 });
 
 // GOOD: Submit handler with pipeAsyncSideEffect
-const onSubmit = pipeAsyncSideEffect(
+const onSubmitPipeline = pipeAsyncSideEffect(
   validateFormData,
   when(
     (result) => Object.keys(result.errors).length === 0,
@@ -1276,9 +1322,10 @@ const onSubmit = pipeAsyncSideEffect(
       submitToAPI,
       tap(() => navigate('/success'))
     )
-  ),
-  runPipeResult
+  )
 );
+
+const onSubmit = (data: any) => runPipeResult(onSubmitPipeline(data));
 ```
 
 ### Vue Ecosystem
@@ -1414,23 +1461,25 @@ As an AI coding assistant working with fp-kit:
 7. **Keep code declarative** - describe what, not how
 8. **All logic inside pipe** - never break out of pipe chains for conditionals or loops
 9. **Use control flow functions** - `when`, `unless`, `ifElse`, `cond` instead of if/else/switch
-10. **End SideEffect pipelines with `runPipeResult`** - handle SideEffect at the end of the pipeline, not in the middle
-11. **Apply use-case patterns** - recognize scenarios (form handling, list processing, etc.) and apply appropriate fp-kit patterns
-12. **Framework-agnostic core** - write fp-kit logic independent of UI framework, only wrap at the boundaries
-13. **Library integration** - use pipe in select/resolver/action functions of popular libraries (React Query, Zustand, Pinia, etc.)
+10. **Call `runPipeResult` OUTSIDE pipelines** - `runPipeResult` / `matchSideEffect` must be called outside `pipeSideEffect`/`pipeAsyncSideEffect` for proper type safety
+11. **Use `isSideEffect` for type narrowing** - get precise types in both success and error branches
+12. **Apply use-case patterns** - recognize scenarios (form handling, list processing, etc.) and apply appropriate fp-kit patterns
+13. **Framework-agnostic core** - write fp-kit logic independent of UI framework, only wrap at the boundaries
+14. **Library integration** - use pipe in select/resolver/action functions of popular libraries (React Query, Zustand, Pinia, etc.)
 
 ### Key Principles
 
 **✅ DO: Keep everything in pipe**
 ```typescript
 // GOOD: All logic inside pipe
-const handleSubmit = pipeAsyncSideEffect(
+const handleSubmitPipeline = pipeAsyncSideEffect(
   getFormData,
   validateFields,
   when(isValid, submitToAPI),
-  unless(isValid, showErrors),
-  runPipeResult
+  unless(isValid, showErrors)
 );
+
+const handleSubmit = (form: HTMLFormElement) => runPipeResult(handleSubmitPipeline(form));
 ```
 
 **❌ DON'T: Break out of pipe for conditionals**

@@ -39,7 +39,7 @@ There's no framework and no heavy abstractions—just well-chosen helpers that m
   `pipe` (sync) and `pipeAsync` (async) are the primary composition tools. All utilities are designed to work seamlessly in pipe chains.
 
 - **Pragmatic error handling**
-  The `SideEffect` pattern handles errors and side effects declaratively in `pipeSideEffect`/`pipeAsyncSideEffect` pipelines. Write normal functions that compose naturally—these pipelines automatically short-circuit when they encounter a `SideEffect`, eliminating the need for wrapper types everywhere.
+  The `SideEffect` pattern handles errors and side effects declaratively in `pipeSideEffect`/`pipeAsyncSideEffect` pipelines. Write normal functions that compose naturally—these pipelines automatically short-circuit when they encounter a `SideEffect`, eliminating the need for wrapper types everywhere. Use `runPipeResult`/`matchSideEffect` **outside** the pipeline for proper type safety, or `isSideEffect` for precise type narrowing in both success and error paths.
 
 - **Immutable & Pure by default**
   Core utilities avoid mutations and side effects. Any exception is explicitly named (e.g. `tap`, `log`).
@@ -148,12 +148,14 @@ const validateAge = (age: number) =>
         return null;
       });
 
-const result = pipeSideEffect(
+const agePipeline = pipeSideEffect(
   validateAge,
   (age) => `Age: ${age}`,
-  (msg) => console.log(msg),
-  runPipeResult
-)(15);
+  (msg) => console.log(msg)
+);
+
+// runPipeResult must be called OUTSIDE the pipeline
+const result = runPipeResult(agePipeline(15));
 // Pipeline stops at SideEffect, alert executes, returns null
 ```
 
@@ -194,9 +196,9 @@ Functions for composing and transforming other functions.
 - **once** - Create a function that only executes once
 - **memoize** - Cache function results for same inputs
 - **SideEffect** - Side effect container for SideEffect-aware pipelines
-- **isSideEffect** - Type guard to check for SideEffect
+- **isSideEffect** - Type guard with precise type narrowing for both success and error paths
 - **matchSideEffect** - Pattern match on value or SideEffect
-- **runPipeResult** - Execute SideEffect or return value
+- **runPipeResult** - Execute SideEffect or return value (call OUTSIDE pipelines). **⚠️ CRITICAL:** `runPipeResult<T, R=any>` has default `R=any`, so using it without type narrowing returns `any` type. Use `isSideEffect` for precise type safety, or provide explicit type parameters `runPipeResult<SuccessType, ErrorType>`
 
 ### Control Flow
 
@@ -395,16 +397,18 @@ const findUser = (id: string) => {
   return user ? user : SideEffect.of(() => null);
 };
 
-const email = pipeSideEffect(
+const emailPipeline = pipeSideEffect(
   findUser,
   (user) => user.email,        // Skipped if user not found
-  (email) => email.toLowerCase(),
-  runPipeResult
-)('unknown-id');
+  (email) => email.toLowerCase()
+);
+
+// runPipeResult must be called OUTSIDE the pipeline
+const email = runPipeResult(emailPipeline('unknown-id'));
 // Returns null without errors - clean optional flow
 
 // Practical: User notification flow
-const result = pipeSideEffect(
+const paymentPipeline = pipeSideEffect(
   validateCard,
   (card) => card.balance >= 100
     ? card
@@ -415,9 +419,11 @@ const result = pipeSideEffect(
       }),
   chargeCard,
   sendReceipt,
-  (receipt) => ({ success: true, receipt }),
-  runPipeResult
-)(userCard);
+  (receipt) => ({ success: true, receipt })
+);
+
+// runPipeResult must be called OUTSIDE the pipeline
+const result = runPipeResult(paymentPipeline(userCard));
 // If balance insufficient: shows toast, logs event, returns null
 // Otherwise: completes payment and returns success object
 ```
@@ -426,28 +432,83 @@ const result = pipeSideEffect(
 - Write normal functions—no wrapper types
 - Mark exceptional paths explicitly with `SideEffect.of()`
 - `pipeSideEffect`/`pipeAsyncSideEffect` automatically short-circuit on `SideEffect`
-- Handle effects once at the end with `runPipeResult`
+- `runPipeResult` / `matchSideEffect` must be called **OUTSIDE** the pipeline for proper type safety
 - Focus on business logic, not error infrastructure
+
+**Type-safe result handling with `isSideEffect`:**
+
+```typescript
+import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+
+const processNumbers = pipeSideEffect(
+  (nums: number[]) => nums.filter(n => n % 2 === 1),
+  (odds) => odds.length > 0
+    ? odds
+    : SideEffect.of(() => 'No odd numbers found'),
+  (odds) => odds.map(n => n * 2)
+);
+
+const oddsDoubled = processNumbers([1, 2, 3, 4, 5]);
+
+// ✅ Precise type narrowing with isSideEffect
+if (!isSideEffect(oddsDoubled)) {
+  // TypeScript knows: oddsDoubled is number[]
+  const sum: number = oddsDoubled.reduce((a, b) => a + b, 0);
+  console.log(`Sum: ${sum}`);  // Exact type: number
+} else {
+  // TypeScript knows: oddsDoubled is SideEffect<string>
+  const error = runPipeResult<number[], string>(oddsDoubled);
+  console.log(`Error: ${error}`);  // Exact type: string
+}
+
+// ❌ Without isSideEffect - less precise
+const result = runPipeResult(oddsDoubled);  // Type: number[] | string (union)
+```
+
+**⚠️ CRITICAL: runPipeResult Type Safety**
+
+`runPipeResult<T, R=any>` has a default type parameter `R=any`. This means:
+
+- ❌ **Without type narrowing**: `const result = runPipeResult(pipeline(data));` returns `any` type
+- ✅ **With isSideEffect**: Provides exact type inference in both branches (recommended)
+- ✅ **With explicit types**: `runPipeResult<SuccessType, ErrorType>(result)` for precise types
+
+**Always prefer `isSideEffect` for type safety** unless you don't need precise types.
 
 ### Pipe vs PipeAsync
 
-- Use **`pipe`** for synchronous transformations
-- Use **`pipeAsync`** when ANY step involves Promises or AsyncIterables
-- Use **`pipeSideEffect`** / **`pipeAsyncSideEffect`** when SideEffect short-circuiting is required
+- Use **`pipe`** for synchronous, **pure** transformations (no SideEffect handling)
+- Use **`pipeAsync`** for async operations, **pure** transformations (no SideEffect handling)
+- Use **`pipeSideEffect`** when you need SideEffect short-circuiting (sync)
+- Use **`pipeAsyncSideEffect`** when you need SideEffect short-circuiting (async)
+
+**Important:** `pipe` and `pipeAsync` are for **pure** functions only—they don't handle `SideEffect`. If your pipeline can return `SideEffect`, use `pipeSideEffect` or `pipeAsyncSideEffect` instead.
 
 ```typescript
-// Sync pipe
+// Pure sync pipe - no SideEffect handling
 const processNumbers = pipe(
   filter((n: number) => n > 0),
   map(n => n * 2),
   sum
 );
 
-// Async pipe
+// Pure async pipe - no SideEffect handling
 const fetchAndProcess = pipeAsync(
   async (id: string) => fetchUser(id),
   (user) => user.profile,  // Sync step is OK
   async (profile) => enrichProfile(profile)
+);
+
+// SideEffect-aware sync pipe
+const validateAndProcess = pipeSideEffect(
+  (n: number) => n > 0 ? n : SideEffect.of(() => 'Invalid'),
+  (n) => n * 2
+);
+
+// SideEffect-aware async pipe
+const fetchAndValidate = pipeAsyncSideEffect(
+  async (id: string) => fetchUser(id),
+  (user) => user.verified ? user : SideEffect.of(() => 'Not verified')
 );
 ```
 

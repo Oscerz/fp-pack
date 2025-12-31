@@ -38,9 +38,10 @@ const checkVerified = (user: { id: string; verified: boolean }) =>
     ? user
     : SideEffect.of(() => ({ error: '이메일 미인증', userId: user.id }));
 
-const pipeline = pipeAsyncSideEffect(fetchUser, checkVerified, runPipeResult);
+const userPipeline = pipeAsyncSideEffect(fetchUser, checkVerified);
 
-const result = await pipeline('123');
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+const result = await runPipeResult(userPipeline('123'));
 // { error: '이메일 미인증', userId: '123' }`}
     />
 
@@ -68,6 +69,30 @@ function pipeAsyncSideEffect(...funcs: Array<(input: any) => any>): (input: any)
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       각 단계는 값, SideEffect, 또는 Promise를 반환할 수 있습니다. SideEffect가 등장하면 즉시 종료됩니다.
     </p>
+
+    <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
+      <p class="text-sm md:text-base text-red-800 dark:text-red-200 leading-relaxed">
+        <span class="font-medium">🚨 중요: runPipeResult 타입 안전성</span>
+        <br />
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">runPipeResult&lt;T, R=any&gt;</code>는 기본 타입 매개변수로 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>를 사용합니다.
+        <br />
+        <br />
+        ❌ <strong>타입 내로잉 없이 runPipeResult를 사용하면 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> 타입이 반환됩니다:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        <br />
+        <br />
+        ✅ <strong>정확한 타입 안전성을 위해서는 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> 타입 가드를 사용하세요:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">if (!isSideEffect(result)) {'{'} /* 정확한 타입 */ {'}'}</code>
+        <br />
+        <br />
+        또는 명시적으로 타입 매개변수를 전달하세요:
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">runPipeResult&lt;성공타입, 에러타입&gt;(result)</code>
+      </p>
+    </div>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
@@ -113,15 +138,14 @@ const sendNotification = async (user: User) => {
   return { sent: true, userId: user.id };
 };
 
-const notifyUser = pipeAsyncSideEffect(
+const notifyUserPipeline = pipeAsyncSideEffect(
   fetchUser,
   checkVerified,
-  sendNotification,  // 사용자가 인증되지 않은 경우 실행되지 않음
-  runPipeResult  // SideEffect가 있으면 자동 실행
+  sendNotification  // 사용자가 인증되지 않은 경우 실행되지 않음
 );
 
-// 미인증 사용자 - 즉시 에러 반환
-const result = await notifyUser('123');
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+const result = await runPipeResult(notifyUserPipeline('123'));
 console.log(result);  // { error: '이메일 미인증', userId: '123' }`}
     />
 
@@ -159,16 +183,15 @@ const processData = async (data: any) => {
   return { processed: true, ...data };
 };
 
-const pipeline = pipeAsyncSideEffect(
+const dataPipeline = pipeAsyncSideEffect(
   fetchData,
   validateData,
-  processData,
-  runPipeResult  // SideEffect가 있으면 자동 실행
+  processData
 );
 
-// 에러가 즉시 throw됨
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
 try {
-  const result = await pipeline('https://api.example.com/data');
+  const result = await runPipeResult(dataPipeline('https://api.example.com/data'));
   console.log('성공:', result);
 } catch (err) {
   console.error('에러 포착:', err.message);
@@ -217,19 +240,18 @@ const processPayment = async (req: PaymentRequest) => {
   return { success: true, transactionId: 'tx_123', ...req };
 };
 
-const payment = pipeAsyncSideEffect(
+const paymentPipeline = pipeAsyncSideEffect(
   validatePayment,
   checkBalance,
-  processPayment,
-  runPipeResult  // Auto-execute SideEffect if present
+  processPayment
 );
 
-// 잔액 부족으로 결제 시도
-const result = await payment({
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+const result = await runPipeResult(paymentPipeline({
   amount: 150,
   currency: 'KRW',
   userId: 'user_1'
-});
+}));
 
 console.log(result);
 // { error: '잔액 부족', balance: 100, required: 150 }`}
@@ -240,13 +262,17 @@ console.log(result);
         <span class="font-medium">⚠️ 중요:</span>
         <br />
         <br />
-        SideEffect를 만나면 파이프라인이 즉시 중단되고 반환됩니다.
-        SideEffect 자체는 <strong>절대 자동 실행되지 않습니다</strong> -{' '}
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult()</code> 또는{' '}
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">await sideEffect.effect()</code>를 명시적으로 호출하여 실행해야 합니다.
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult()</code>와{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">matchSideEffect()</code>는{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">pipeAsyncSideEffect</code> 체인{' '}
+        <strong>밖에서</strong> 호출해야 합니다.
         <br />
         <br />
-        이를 통해 비동기 에러 처리와 조건부 실행을 완전히 제어할 수 있습니다.
+        파이프라인 내부에서 사용하면 타입 안전성이 깨지고 <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">unknown</code> 또는{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> 타입을 반환합니다.
+        <br />
+        <br />
+        항상: <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">await runPipeResult(pipeline(input))</code>
       </p>
     </div>
 

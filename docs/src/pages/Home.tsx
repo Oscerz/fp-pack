@@ -198,12 +198,14 @@ const first100 = pipe(
         return null;  // Early termination
       });
 
-const result = pipeSideEffect(
+const agePipeline = pipeSideEffect(
   validateAge,
   (age) => \`Age: \${age}\`,  // Never runs if validation fails
-  (msg) => console.log(msg),
-  runPipeResult
-)(15);
+  (msg) => console.log(msg)
+);
+
+// runPipeResult must be called OUTSIDE the pipeline
+const result = runPipeResult(agePipeline(15));
 // Pipeline stops at SideEffect, alert executes, returns null`}
         />
       </div>
@@ -224,12 +226,14 @@ const result = pipeSideEffect(
     : SideEffect.of(() => null);  // Graceful termination
 };
 
-const email = pipeSideEffect(
+const emailPipeline = pipeSideEffect(
   findUser,
   (user) => user.email,  // Skipped if user not found
-  (email) => email.toLowerCase(),
-  runPipeResult
-)('unknown-id');
+  (email) => email.toLowerCase()
+);
+
+// runPipeResult must be called OUTSIDE the pipeline
+const email = runPipeResult(emailPipeline('unknown-id'));
 // Returns null without errors - clean optional flow`}
         />
       </div>
@@ -243,7 +247,7 @@ const email = pipeSideEffect(
         </p>
         <CodeBlock
           language="typescript"
-          code={`const result = pipeSideEffect(
+          code={`const paymentPipeline = pipeSideEffect(
   validateCard,
   (card) => card.balance >= 100
     ? card
@@ -254,9 +258,11 @@ const email = pipeSideEffect(
       }),
   chargeCard,
   sendReceipt,
-  (receipt) => ({ success: true, receipt }),
-  runPipeResult
-)(userCard);
+  (receipt) => ({ success: true, receipt })
+);
+
+// runPipeResult must be called OUTSIDE the pipeline
+const result = runPipeResult(paymentPipeline(userCard));
 // If balance insufficient: shows toast, logs event, returns null
 // Otherwise: completes payment and returns success object`}
         />

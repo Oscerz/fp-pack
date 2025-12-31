@@ -40,14 +40,14 @@ const validateAge = (age: number) =>
         return null;
       });
 
-const processAge = pipeSideEffect(
+const processAgePipeline = pipeSideEffect(
   validateAge,
   (age) => age * 2,      // SideEffect 반환 시 건너뜀
-  (age) => \`나이: \${age}\`,
-  runPipeResult          // SideEffect가 있으면 실행
+  (age) => \`나이: \${age}\`
 );
 
-processAge(15); // "나이 검증 실패" 로그, null 반환`}
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+runPipeResult(processAgePipeline(15)); // "나이 검증 실패" 로그, null 반환`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -83,6 +83,30 @@ function matchSideEffect<T, R>(
 function runPipeResult<T, R>(value: T | SideEffect<R>): T | R;`}
     />
 
+    <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
+      <p class="text-sm md:text-base text-red-800 dark:text-red-200 leading-relaxed">
+        <span class="font-medium">🚨 중요: runPipeResult 타입 안전성</span>
+        <br />
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">runPipeResult&lt;T, R=any&gt;</code>는 기본 타입 매개변수로 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>를 사용합니다.
+        <br />
+        <br />
+        ❌ <strong>타입 내로잉 없이 runPipeResult를 사용하면 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> 타입이 반환됩니다:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        <br />
+        <br />
+        ✅ <strong>정확한 타입 안전성을 위해서는 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> 타입 가드를 사용하세요:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">if (!isSideEffect(result)) {'{'} /* 정확한 타입 */ {'}'}</code>
+        <br />
+        <br />
+        또는 명시적으로 타입 매개변수를 전달하세요:
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">runPipeResult&lt;성공타입, 에러타입&gt;(result)</code>
+      </p>
+    </div>
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
@@ -116,18 +140,18 @@ const validateAge = (data: FormData) =>
         throw new Error('만 18세 이상이어야 합니다');
       });
 
-const processForm = pipeSideEffect(
+const processFormPipeline = pipeSideEffect(
   validateEmail,
   validateAge,
-  (data) => ({ success: true, data }),
-  runPipeResult
+  (data) => ({ success: true, data })
 );
 
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
 try {
-  processForm({ email: 'test@example.com', age: 25 });
+  runPipeResult(processFormPipeline({ email: 'test@example.com', age: 25 }));
   // { success: true, data: { email: 'test@example.com', age: 25 } }
 
-  processForm({ email: 'invalid', age: 25 });
+  runPipeResult(processFormPipeline({ email: 'invalid', age: 25 }));
   // 에러 발생: Error: 유효하지 않은 이메일
 } catch (err) {
   console.error(err.message);
@@ -156,15 +180,15 @@ const findUser = (id: string): User | SideEffect => {
   return user ? user : SideEffect.of(() => null);
 };
 
-const getUserTheme = pipeSideEffect(
+const getUserThemePipeline = pipeSideEffect(
   findUser,
   (user) => user.profile ?? SideEffect.of(() => null),
   (profile) => profile.settings ?? SideEffect.of(() => null),
-  (settings) => settings.theme,
-  runPipeResult
+  (settings) => settings.theme
 );
 
-getUserTheme('user-123'); // 'dark' 또는 단계가 실패하면 null`}
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+runPipeResult(getUserThemePipeline('user-123')); // 'dark' 또는 단계가 실패하면 null`}
     />
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
@@ -200,15 +224,15 @@ const checkBalance = (payment: PaymentData) => {
       });
 };
 
-const processPayment = pipeSideEffect(
+const processPaymentPipeline = pipeSideEffect(
   validateAmount,
   checkBalance,
   (payment) => chargeCard(payment),
-  (result) => ({ success: true, ...result }),
-  runPipeResult
+  (result) => ({ success: true, ...result })
 );
 
-const result = processPayment({ amount: -10, userId: 'user-1' });
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+const result = runPipeResult(processPaymentPipeline({ amount: -10, userId: 'user-1' }));
 // 에러 로그, 토스트 표시, null 반환`}
     />
 
@@ -248,25 +272,60 @@ console.log(output); // "0으로 나눔"`}
       isSideEffect로 타입 가드
     </h3>
 
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      <code class="text-sm">isSideEffect</code>는 파이프라인 결과 처리를 위한 <strong>정확한 타입 내로잉(Type Narrowing)</strong>을 제공합니다.
+      <code class="text-sm">runPipeResult</code>나 <code class="text-sm">matchSideEffect</code>와 달리,
+      양쪽 분기에서 타입을 좁혀서 성공 경로와 에러 경로 모두에서 정확한 타입 추론을 제공합니다.
+    </p>
+
     <CodeBlock
       language="typescript"
-      code={`import { pipeSideEffect, SideEffect, isSideEffect } from 'fp-kit';
+      code={`import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
 
-const processData = (data: number) =>
-  data > 0
-    ? data * 2
-    : SideEffect.of(() => '잘못된 데이터');
+const processNumbers = pipeSideEffect(
+  (nums: number[]) => nums.filter(n => n % 2 === 1),
+  (odds) => odds.length > 0
+    ? odds
+    : SideEffect.of(() => '홀수를 찾을 수 없습니다'),
+  (odds) => odds.map(n => n * 2)
+);
 
-const result = processData(-5);
+const oddsDoubled = processNumbers([1, 2, 3, 4, 5]);
 
-if (isSideEffect(result)) {
-  console.log('파이프라인이 effect와 함께 중단됨');
-  const value = result.effect();
-  console.log(value); // "잘못된 데이터"
+// ✅ 정확한 추론을 사용한 타입 안전 분기
+if (!isSideEffect(oddsDoubled)) {
+  // TypeScript가 인식: oddsDoubled는 number[]
+  const result: number = oddsDoubled.reduce((a, b) => a + b, 0);
+  console.log(\`합계: \${result}\`);  // result: number (정확한 타입!)
 } else {
-  console.log('성공:', result);
-}`}
+  // TypeScript가 인식: oddsDoubled는 SideEffect<string>
+  const result = runPipeResult<number[], string>(oddsDoubled);
+  console.log(\`에러: \${result}\`);  // result: string (정확한 타입!)
+}
+
+// ❌ isSideEffect 없이 - 덜 정확한 타입
+const result = runPipeResult(oddsDoubled);
+// result: number[] | string (유니온 타입 - 덜 정확함)`}
     />
+
+    <div class="bg-blue-50 dark:bg-blue-900/20 p-4 mb-6 rounded border border-blue-200 dark:border-blue-800">
+      <p class="text-sm md:text-base text-blue-800 dark:text-blue-200 leading-relaxed">
+        <span class="font-medium">💡 isSideEffect 사용 시기:</span>
+        <br />
+        <br />
+        <strong>성공과 에러 경로 모두에서 <strong>정확한 타입 추론</strong>이 필요할 때{' '}
+        <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">isSideEffect</code>를 사용하세요.</strong>
+        <br />
+        <br />
+        ⚠️ <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code>를 타입 내로잉 없이 사용하면 기본 <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">R=any</code> 매개변수로 인해 <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">any</code> 타입이 반환됩니다.
+        <br />
+        정확한 타입이 필요하지 않거나 명시적인 타입 매개변수를 제공할 때만 <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code>를 사용하세요.
+        <br />
+        <br />
+        두 경우를 같은 반환 타입으로 변환하고 싶다면{' '}
+        <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">matchSideEffect</code>를 사용하세요.
+      </p>
+    </div>
 
     <div class="border-l-4 border-orange-500 bg-orange-50 dark:bg-orange-900/20 p-4 mb-6 rounded-r mt-6">
       <p class="text-sm md:text-base text-orange-800 dark:text-orange-200 leading-relaxed">

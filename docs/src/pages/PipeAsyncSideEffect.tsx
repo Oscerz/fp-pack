@@ -37,9 +37,10 @@ const checkVerified = (user: { id: string; verified: boolean }) =>
     ? user
     : SideEffect.of(() => ({ error: 'Email not verified', userId: user.id }));
 
-const pipeline = pipeAsyncSideEffect(fetchUser, checkVerified, runPipeResult);
+const userPipeline = pipeAsyncSideEffect(fetchUser, checkVerified);
 
-const result = await pipeline('123');
+// runPipeResult must be called OUTSIDE the pipeline
+const result = await runPipeResult(userPipeline('123'));
 // { error: 'Email not verified', userId: '123' }`}
     />
 
@@ -68,6 +69,30 @@ function pipeAsyncSideEffect(...funcs: Array<(input: any) => any>): (input: any)
       Each step can return a value, a SideEffect, or a Promise of either. If a SideEffect appears,
       the pipeline stops immediately and returns it.
     </p>
+
+    <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
+      <p class="text-sm md:text-base text-red-800 dark:text-red-200 leading-relaxed">
+        <span class="font-medium">🚨 Critical: runPipeResult Type Safety</span>
+        <br />
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">runPipeResult&lt;T, R=any&gt;</code> has a default type parameter <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>.
+        <br />
+        <br />
+        ❌ <strong>Using runPipeResult without type narrowing returns <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> type:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        <br />
+        <br />
+        ✅ <strong>For precise type safety, use <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> type guard:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">if (!isSideEffect(result)) {'{'} /* exact type */ {'}'}</code>
+        <br />
+        <br />
+        Or explicitly provide type parameters:
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">runPipeResult&lt;SuccessType, ErrorType&gt;(result)</code>
+      </p>
+    </div>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
@@ -113,15 +138,14 @@ const sendNotification = async (user: User) => {
   return { sent: true, userId: user.id };
 };
 
-const notifyUser = pipeAsyncSideEffect(
+const notifyUserPipeline = pipeAsyncSideEffect(
   fetchUser,
   checkVerified,
-  sendNotification,  // This won't execute if user is not verified
-  runPipeResult  // Auto-execute SideEffect if present
+  sendNotification  // This won't execute if user is not verified
 );
 
-// Unverified user - gets error immediately
-const result = await notifyUser('123');
+// runPipeResult must be called OUTSIDE the pipeline
+const result = await runPipeResult(notifyUserPipeline('123'));
 console.log(result);  // { error: 'Email not verified', userId: '123' }`}
     />
 
@@ -159,16 +183,15 @@ const processData = async (data: any) => {
   return { processed: true, ...data };
 };
 
-const pipeline = pipeAsyncSideEffect(
+const dataPipeline = pipeAsyncSideEffect(
   fetchData,
   validateData,
-  processData,
-  runPipeResult  // Auto-execute SideEffect if present
+  processData
 );
 
-// Errors are thrown immediately
+// runPipeResult must be called OUTSIDE the pipeline
 try {
-  const result = await pipeline('https://api.example.com/data');
+  const result = await runPipeResult(dataPipeline('https://api.example.com/data'));
   console.log('Success:', result);
 } catch (err) {
   console.error('Caught error:', err.message);
@@ -217,19 +240,18 @@ const processPayment = async (req: PaymentRequest) => {
   return { success: true, transactionId: 'tx_123', ...req };
 };
 
-const payment = pipeAsyncSideEffect(
+const paymentPipeline = pipeAsyncSideEffect(
   validatePayment,
   checkBalance,
-  processPayment,
-  runPipeResult  // Auto-execute SideEffect if present
+  processPayment
 );
 
-// Try payment with insufficient funds
-const result = await payment({
+// runPipeResult must be called OUTSIDE the pipeline
+const result = await runPipeResult(paymentPipeline({
   amount: 150,
   currency: 'USD',
   userId: 'user_1'
-});
+}));
 
 console.log(result);
 // { error: 'Insufficient funds', balance: 100, required: 150 }`}
@@ -240,13 +262,16 @@ console.log(result);
         <span class="font-medium">⚠️ Important:</span>
         <br />
         <br />
-        When a SideEffect is encountered, the pipeline stops and returns it. The SideEffect itself is{' '}
-        <strong>never auto-executed</strong> - you must explicitly call{' '}
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult()</code> or{' '}
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">await sideEffect.effect()</code> to run it.
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult()</code> and{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">matchSideEffect()</code> must be called{' '}
+        <strong>OUTSIDE</strong> the <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">pipeAsyncSideEffect</code> chain.
         <br />
         <br />
-        This gives you complete control over async error handling and conditional execution.
+        Using them inside the pipeline will break type safety and return <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">unknown</code> or{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> types.
+        <br />
+        <br />
+        Always: <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">await runPipeResult(pipeline(input))</code>
       </p>
     </div>
 

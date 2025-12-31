@@ -38,14 +38,14 @@ const validateAge = (age: number) =>
         throw new Error('Must be 18 or older');
       });
 
-const processAge = pipeSideEffect(
+const processAgePipeline = pipeSideEffect(
   validateAge,
   (age: number) => age * 2,
-  (age: number) => \`Age: \${age}\`,
-  runPipeResult
+  (age: number) => \`Age: \${age}\`
 );
 
-processAge(15); // Throws: Error: Must be 18 or older`}
+// runPipeResult must be called OUTSIDE the pipeline
+runPipeResult(processAgePipeline(15)); // Throws: Error: Must be 18 or older`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -74,6 +74,30 @@ function pipeSideEffect(...funcs: Array<(input: any) => any>): (input: any) => a
       and returns it.
     </p>
 
+    <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
+      <p class="text-sm md:text-base text-red-800 dark:text-red-200 leading-relaxed">
+        <span class="font-medium">🚨 Critical: runPipeResult Type Safety</span>
+        <br />
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">runPipeResult&lt;T, R=any&gt;</code> has a default type parameter <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>.
+        <br />
+        <br />
+        ❌ <strong>Using runPipeResult without type narrowing returns <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> type:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        <br />
+        <br />
+        ✅ <strong>For precise type safety, use <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> type guard:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">if (!isSideEffect(result)) {'{'} /* exact type */ {'}'}</code>
+        <br />
+        <br />
+        Or explicitly provide type parameters:
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">runPipeResult&lt;SuccessType, ErrorType&gt;(result)</code>
+      </p>
+    </div>
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
@@ -98,22 +122,21 @@ const validateAge = (age: number) => {
   return age;
 };
 
-const processAge = pipeSideEffect(
+const processAgePipeline = pipeSideEffect(
   validateAge,
   (age: number) => age * 2,  // This won't execute if SideEffect is returned
-  (age: number) => \`Age: \${age}\`,
-  runPipeResult  // Auto-execute SideEffect if present
+  (age: number) => \`Age: \${age}\`
 );
 
-// SideEffect is automatically executed
+// runPipeResult must be called OUTSIDE the pipeline
 try {
-  processAge(-5);  // Throws: Error: Age cannot be negative
+  runPipeResult(processAgePipeline(-5));  // Throws: Error: Age cannot be negative
 } catch (error) {
   console.error(error.message);
 }
 
 // Normal execution continues
-const result = processAge(10);
+const result = runPipeResult(processAgePipeline(10));
 console.log(result);  // "Age: 20"`}
     />
 
@@ -141,25 +164,24 @@ const checkPermission = (user: User) => {
   return user;
 };
 
-const deleteUser = pipeSideEffect(
+const deleteUserPipeline = pipeSideEffect(
   checkPermission,
   (user: User) => {
     console.log(\`Deleting user: \${user.name}\`);
     return { success: true, deletedId: user.id };
-  },
-  runPipeResult  // Auto-execute SideEffect if present
+  }
 );
 
 const adminUser = { id: 1, name: 'Alice', role: 'admin' as const };
 const normalUser = { id: 2, name: 'Bob', role: 'user' as const };
 
-// Admin can proceed
-const result1 = deleteUser(adminUser);
+// Admin can proceed - runPipeResult called OUTSIDE
+const result1 = runPipeResult(deleteUserPipeline(adminUser));
 // Logs: "Deleting user: Alice"
 console.log(result1);  // { success: true, deletedId: 1 }
 
 // Normal user gets error immediately
-const result2 = deleteUser(normalUser);
+const result2 = runPipeResult(deleteUserPipeline(normalUser));
 console.log(result2);  // { error: 'Unauthorized', message: 'Admin access required' }`}
     />
 
@@ -181,19 +203,18 @@ const divide = (a: number, b: number) => {
   return a / b;
 };
 
-const calculate = pipeSideEffect(
+const calculatePipeline = pipeSideEffect(
   (input: { a: number; b: number }) => divide(input.a, input.b),
   (result: number) => result * 100,
-  (result: number) => Math.round(result),
-  runPipeResult  // Auto-execute SideEffect if present
+  (result: number) => Math.round(result)
 );
 
-// Normal calculation
-const result1 = calculate({ a: 10, b: 2 });
+// Normal calculation - runPipeResult called OUTSIDE
+const result1 = runPipeResult(calculatePipeline({ a: 10, b: 2 }));
 console.log(result1);  // 500
 
 // Division by zero executes SideEffect and logs
-const result2 = calculate({ a: 10, b: 0 });
+const result2 = runPipeResult(calculatePipeline({ a: 10, b: 0 }));
 // Logs: "Division by zero!"
 console.log(result2);  // NaN`}
     />
@@ -203,12 +224,16 @@ console.log(result2);  // NaN`}
         <span class="font-medium">⚠️ Important:</span>
         <br />
         <br />
-        SideEffect containers are <strong>never auto-executed</strong>. You must explicitly call{' '}
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult()</code> or{' '}
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">sideEffect.effect()</code> to run the deferred operation.
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult()</code> and{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">matchSideEffect()</code> must be called{' '}
+        <strong>OUTSIDE</strong> the <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">pipeSideEffect</code> chain.
         <br />
         <br />
-        This gives you complete control over when and where side effects are executed.
+        Using them inside the pipeline will break type safety and return <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">unknown</code> or{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> types.
+        <br />
+        <br />
+        Always: <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult(pipeline(input))</code>
       </p>
     </div>
 

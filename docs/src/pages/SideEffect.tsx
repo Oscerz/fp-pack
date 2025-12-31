@@ -40,14 +40,14 @@ const validateAge = (age: number) =>
         return null;
       });
 
-const processAge = pipeSideEffect(
+const processAgePipeline = pipeSideEffect(
   validateAge,
   (age) => age * 2,      // Skipped if SideEffect returned
-  (age) => \`Age: \${age}\`,
-  runPipeResult          // Executes SideEffect if present
+  (age) => \`Age: \${age}\`
 );
 
-processAge(15); // Logs "Age validation failed", returns null`}
+// runPipeResult must be called OUTSIDE the pipeline
+runPipeResult(processAgePipeline(15)); // Logs "Age validation failed", returns null`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -83,6 +83,30 @@ function matchSideEffect<T, R>(
 function runPipeResult<T, R>(value: T | SideEffect<R>): T | R;`}
     />
 
+    <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
+      <p class="text-sm md:text-base text-red-800 dark:text-red-200 leading-relaxed">
+        <span class="font-medium">🚨 Critical: runPipeResult Type Safety</span>
+        <br />
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">runPipeResult&lt;T, R=any&gt;</code> has a default type parameter <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>.
+        <br />
+        <br />
+        ❌ <strong>Using runPipeResult without type narrowing returns <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> type:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        <br />
+        <br />
+        ✅ <strong>For precise type safety, use <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> type guard:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">if (!isSideEffect(result)) {'{'} /* exact type */ {'}'}</code>
+        <br />
+        <br />
+        Or explicitly provide type parameters:
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">runPipeResult&lt;SuccessType, ErrorType&gt;(result)</code>
+      </p>
+    </div>
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
@@ -116,18 +140,18 @@ const validateAge = (data: FormData) =>
         throw new Error('Must be 18 or older');
       });
 
-const processForm = pipeSideEffect(
+const processFormPipeline = pipeSideEffect(
   validateEmail,
   validateAge,
-  (data) => ({ success: true, data }),
-  runPipeResult
+  (data) => ({ success: true, data })
 );
 
+// runPipeResult must be called OUTSIDE the pipeline
 try {
-  processForm({ email: 'test@example.com', age: 25 });
+  runPipeResult(processFormPipeline({ email: 'test@example.com', age: 25 }));
   // { success: true, data: { email: 'test@example.com', age: 25 } }
 
-  processForm({ email: 'invalid', age: 25 });
+  runPipeResult(processFormPipeline({ email: 'invalid', age: 25 }));
   // Throws: Error: Invalid email
 } catch (err) {
   console.error(err.message);
@@ -156,15 +180,15 @@ const findUser = (id: string): User | SideEffect => {
   return user ? user : SideEffect.of(() => null);
 };
 
-const getUserTheme = pipeSideEffect(
+const getUserThemePipeline = pipeSideEffect(
   findUser,
   (user) => user.profile ?? SideEffect.of(() => null),
   (profile) => profile.settings ?? SideEffect.of(() => null),
-  (settings) => settings.theme,
-  runPipeResult
+  (settings) => settings.theme
 );
 
-getUserTheme('user-123'); // 'dark' or null if any step fails`}
+// runPipeResult must be called OUTSIDE the pipeline
+runPipeResult(getUserThemePipeline('user-123')); // 'dark' or null if any step fails`}
     />
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
@@ -200,15 +224,15 @@ const checkBalance = (payment: PaymentData) => {
       });
 };
 
-const processPayment = pipeSideEffect(
+const processPaymentPipeline = pipeSideEffect(
   validateAmount,
   checkBalance,
   (payment) => chargeCard(payment),
-  (result) => ({ success: true, ...result }),
-  runPipeResult
+  (result) => ({ success: true, ...result })
 );
 
-const result = processPayment({ amount: -10, userId: 'user-1' });
+// runPipeResult must be called OUTSIDE the pipeline
+const result = runPipeResult(processPaymentPipeline({ amount: -10, userId: 'user-1' }));
 // Logs error, shows toast, returns null`}
     />
 
@@ -248,25 +272,59 @@ console.log(output); // "Division by zero"`}
       Type Guard with isSideEffect
     </h3>
 
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      <code class="text-sm">isSideEffect</code> provides <strong>precise type narrowing</strong> for handling pipeline results.
+      Unlike <code class="text-sm">runPipeResult</code> or <code class="text-sm">matchSideEffect</code>, it narrows the type
+      in both branches, giving you exact type inference for success and error paths.
+    </p>
+
     <CodeBlock
       language="typescript"
-      code={`import { pipeSideEffect, SideEffect, isSideEffect } from 'fp-kit';
+      code={`import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
 
-const processData = (data: number) =>
-  data > 0
-    ? data * 2
-    : SideEffect.of(() => 'Invalid data');
+const processNumbers = pipeSideEffect(
+  (nums: number[]) => nums.filter(n => n % 2 === 1),
+  (odds) => odds.length > 0
+    ? odds
+    : SideEffect.of(() => 'No odd numbers found'),
+  (odds) => odds.map(n => n * 2)
+);
 
-const result = processData(-5);
+const oddsDoubled = processNumbers([1, 2, 3, 4, 5]);
 
-if (isSideEffect(result)) {
-  console.log('Pipeline stopped with effect');
-  const value = result.effect();
-  console.log(value); // "Invalid data"
+// ✅ Type-safe branching with precise inference
+if (!isSideEffect(oddsDoubled)) {
+  // TypeScript knows: oddsDoubled is number[]
+  const result: number = oddsDoubled.reduce((a, b) => a + b, 0);
+  console.log(\`Sum: \${result}\`);  // result: number (exact type!)
 } else {
-  console.log('Success:', result);
-}`}
+  // TypeScript knows: oddsDoubled is SideEffect<string>
+  const result = runPipeResult<number[], string>(oddsDoubled);
+  console.log(\`Error: \${result}\`);  // result: string (exact type!)
+}
+
+// ❌ Without isSideEffect - less precise types
+const result = runPipeResult(oddsDoubled);
+// result: number[] | string (union type - less precise)`}
     />
+
+    <div class="bg-blue-50 dark:bg-blue-900/20 p-4 mb-6 rounded border border-blue-200 dark:border-blue-800">
+      <p class="text-sm md:text-base text-blue-800 dark:text-blue-200 leading-relaxed">
+        <span class="font-medium">💡 When to use isSideEffect:</span>
+        <br />
+        <br />
+        <strong>Use <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">isSideEffect</code></strong> when you need{' '}
+        <strong>precise type inference</strong> for both success and error paths.
+        <br />
+        <br />
+        ⚠️ <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code> without type narrowing returns <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">any</code> type due to default <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">R=any</code> parameter.
+        <br />
+        Only use <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code> when you don't need precise types or when providing explicit type parameters.
+        <br />
+        <br />
+        Use <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">matchSideEffect</code> for pattern matching when you want to transform both cases to the same return type.
+      </p>
+    </div>
 
     <div class="border-l-4 border-orange-500 bg-orange-50 dark:bg-orange-900/20 p-4 mb-6 rounded-r mt-6">
       <p class="text-sm md:text-base text-orange-800 dark:text-orange-200 leading-relaxed">

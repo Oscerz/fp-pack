@@ -38,14 +38,14 @@ const validateAge = (age: number) =>
         throw new Error('18세 이상만 가능합니다');
       });
 
-const processAge = pipeSideEffect(
+const processAgePipeline = pipeSideEffect(
   validateAge,
   (age: number) => age * 2,
-  (age: number) => \`나이: \${age}\`,
-  runPipeResult
+  (age: number) => \`나이: \${age}\`
 );
 
-processAge(15); // Throws: Error: 18세 이상만 가능합니다`}
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+runPipeResult(processAgePipeline(15)); // Throws: Error: 18세 이상만 가능합니다`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -73,6 +73,30 @@ function pipeSideEffect(...funcs: Array<(input: any) => any>): (input: any) => a
       각 단계는 일반 값 또는 SideEffect를 반환할 수 있습니다. SideEffect가 등장하면 파이프라인은 즉시 종료됩니다.
     </p>
 
+    <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
+      <p class="text-sm md:text-base text-red-800 dark:text-red-200 leading-relaxed">
+        <span class="font-medium">🚨 중요: runPipeResult 타입 안전성</span>
+        <br />
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">runPipeResult&lt;T, R=any&gt;</code>는 기본 타입 매개변수로 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>를 사용합니다.
+        <br />
+        <br />
+        ❌ <strong>타입 내로잉 없이 runPipeResult를 사용하면 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> 타입이 반환됩니다:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        <br />
+        <br />
+        ✅ <strong>정확한 타입 안전성을 위해서는 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> 타입 가드를 사용하세요:</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">if (!isSideEffect(result)) {'{'} /* 정확한 타입 */ {'}'}</code>
+        <br />
+        <br />
+        또는 명시적으로 타입 매개변수를 전달하세요:
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">runPipeResult&lt;성공타입, 에러타입&gt;(result)</code>
+      </p>
+    </div>
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
@@ -97,22 +121,21 @@ const validateAge = (age: number) => {
   return age;
 };
 
-const processAge = pipeSideEffect(
+const processAgePipeline = pipeSideEffect(
   validateAge,
   (age: number) => age * 2,  // SideEffect가 반환되면 실행되지 않음
-  (age: number) => \`나이: \${age}\`,
-  runPipeResult  // SideEffect가 있으면 자동 실행
+  (age: number) => \`나이: \${age}\`
 );
 
-// SideEffect가 자동으로 실행됨
+// runPipeResult는 파이프라인 밖에서 호출해야 합니다
 try {
-  processAge(-5);  // Throws: Error: 나이는 음수일 수 없습니다
+  runPipeResult(processAgePipeline(-5));  // Throws: Error: 나이는 음수일 수 없습니다
 } catch (error) {
   console.error(error.message);
 }
 
 // 정상 실행 계속
-const result = processAge(10);
+const result = runPipeResult(processAgePipeline(10));
 console.log(result);  // "나이: 20"`}
     />
 
@@ -140,25 +163,24 @@ const checkPermission = (user: User) => {
   return user;
 };
 
-const deleteUser = pipeSideEffect(
+const deleteUserPipeline = pipeSideEffect(
   checkPermission,
   (user: User) => {
     console.log(\`사용자 삭제 중: \${user.name}\`);
     return { success: true, deletedId: user.id };
-  },
-  runPipeResult  // SideEffect가 있으면 자동 실행
+  }
 );
 
 const adminUser = { id: 1, name: 'Alice', role: 'admin' as const };
 const normalUser = { id: 2, name: 'Bob', role: 'user' as const };
 
-// 관리자는 진행 가능
-const result1 = deleteUser(adminUser);
+// 관리자는 진행 가능 - runPipeResult는 밖에서 호출
+const result1 = runPipeResult(deleteUserPipeline(adminUser));
 // 로그: "사용자 삭제 중: Alice"
 console.log(result1);  // { success: true, deletedId: 1 }
 
 // 일반 사용자는 즉시 에러 반환
-const result2 = deleteUser(normalUser);
+const result2 = runPipeResult(deleteUserPipeline(normalUser));
 console.log(result2);  // { error: '권한 없음', message: '관리자 권한이 필요합니다' }`}
     />
 
@@ -180,19 +202,18 @@ const divide = (a: number, b: number) => {
   return a / b;
 };
 
-const calculate = pipeSideEffect(
+const calculatePipeline = pipeSideEffect(
   (input: { a: number; b: number }) => divide(input.a, input.b),
   (result: number) => result * 100,
-  (result: number) => Math.round(result),
-  runPipeResult  // SideEffect가 있으면 자동 실행
+  (result: number) => Math.round(result)
 );
 
-// 정상 계산
-const result1 = calculate({ a: 10, b: 2 });
+// 정상 계산 - runPipeResult는 밖에서 호출
+const result1 = runPipeResult(calculatePipeline({ a: 10, b: 2 }));
 console.log(result1);  // 500
 
 // 0으로 나누기는 SideEffect를 실행하고 로그를 출력
-const result2 = calculate({ a: 10, b: 0 });
+const result2 = runPipeResult(calculatePipeline({ a: 10, b: 0 }));
 // 로그: "0으로 나눌 수 없습니다!"
 console.log(result2);  // NaN`}
     />
@@ -202,12 +223,17 @@ console.log(result2);  // NaN`}
         <span class="font-medium">⚠️ 중요:</span>
         <br />
         <br />
-        SideEffect 컨테이너는 <strong>절대 자동 실행되지 않습니다</strong>. 지연된 작업을 실행하려면{' '}
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult()</code> 또는{' '}
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">sideEffect.effect()</code>를 명시적으로 호출해야 합니다.
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult()</code>와{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">matchSideEffect()</code>는{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">pipeSideEffect</code> 체인{' '}
+        <strong>밖에서</strong> 호출해야 합니다.
         <br />
         <br />
-        이를 통해 부수 효과가 실행되는 시점과 위치를 완전히 제어할 수 있습니다.
+        파이프라인 내부에서 사용하면 타입 안전성이 깨지고 <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">unknown</code> 또는{' '}
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> 타입을 반환합니다.
+        <br />
+        <br />
+        항상: <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult(pipeline(input))</code>
       </p>
     </div>
 
