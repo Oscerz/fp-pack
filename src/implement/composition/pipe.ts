@@ -13,7 +13,8 @@ type PipeOutput<Fns extends UnaryFn<any, any>[]> = Fns extends [UnaryFn<any, inf
       ? PipeOutput<Rest>
       : never
     : never;
-type Pipe<Fns extends UnaryFn<any, any>[]> = (input: PipeInput<Fns> | SideEffect<any>) => PipeOutput<Fns>;
+type Resolve<T> = T extends infer R ? R : never;
+type Pipe<Fns extends UnaryFn<any, any>[]> = (input: PipeInput<Fns> | SideEffect<any>) => Resolve<PipeOutput<Fns>>;
 
 function pipe<A, R>(ab: UnaryFn<A, R>): (a: A | SideEffect<any>) => MaybeSideEffect<R>;
 function pipe<A, B, R>(ab: UnaryFn<A, B>, bc: UnaryFn<B, R>): (a: A | SideEffect<any>) => MaybeSideEffect<R>;

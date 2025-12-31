@@ -14,7 +14,10 @@ type PipeOutput<Fns extends AsyncOrSync<any, any>[]> = Fns extends [AsyncOrSync<
       ? PipeOutput<Rest>
       : never
     : never;
-type PipeAsync<Fns extends AsyncOrSync<any, any>[]> = (input: PipeInput<Fns> | SideEffect<any>) => Promise<PipeOutput<Fns>>;
+type Resolve<T> = T extends infer R ? R : never;
+type PipeAsync<Fns extends AsyncOrSync<any, any>[]> = (
+  input: PipeInput<Fns> | SideEffect<any>
+) => Promise<Resolve<PipeOutput<Fns>>>;
 
 function pipeAsync<A, R>(ab: AsyncOrSync<A, R>): (a: A | SideEffect<any>) => Promise<MaybeSideEffect<Awaited<R>>>;
 function pipeAsync<A, B, R>(

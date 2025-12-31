@@ -37,7 +37,7 @@ export function runPipeResult<T, R>(result: T | SideEffect<R>): T | R {
   return result as T;
 }
 
-export function isSideEffect(value: unknown): value is SideEffect {
+export function isSideEffect(value: unknown): value is SideEffect<any> {
   return value instanceof SideEffect;
 }
 
