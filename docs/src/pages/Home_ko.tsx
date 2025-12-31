@@ -46,6 +46,13 @@ export const Home_ko = () => (
           <p class="mt-1"><code class="text-sm">pipeAsync</code>로 비동기 흐름 제어를 실용적이고 합성 가능하게 만듭니다. 파이프라인 내에서 동기와 비동기 함수를 자연스럽게 섞어 사용할 수 있습니다.</p>
         </div>
       </li>
+      <li class="flex items-start">
+        <span class="text-pink-500 font-bold mr-3 text-2xl">🎯</span>
+        <div>
+          <strong class="text-lg">커링 설계</strong>
+          <p class="mt-1">모든 다중 인자 유틸리티 함수는 커리드 되거나 커리드 함수처럼 동작하여, 부분 적용과 포인트 프리 스타일을 통해 파이프에서 우아한 합성을 가능하게 합니다.</p>
+        </div>
+      </li>
     </ul>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

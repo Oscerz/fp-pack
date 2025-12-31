@@ -47,8 +47,21 @@ There's no framework and no heavy abstractions—just well-chosen helpers that m
 - **Lazy evaluation when needed**
   Array helpers are eager and simple. Stream helpers (`stream/*`) provide lazy, memory-efficient alternatives for large datasets.
 
-- **Curried where it makes sense**
-  Multi-argument functions are curried for easy partial application in pipes.
+- **Curried by design**
+  All multi-argument utility functions are curried or behave like curried functions, enabling partial application and point-free style. This design allows elegant composition in pipes without awkward wrapper functions.
+
+  ```typescript
+  // Functions are curried - apply arguments one at a time
+  const double = map((n: number) => n * 2);
+  const evenOnly = filter((n: number) => n % 2 === 0);
+
+  const result = pipe(
+    evenOnly,  // Partially applied filter
+    double,    // Partially applied map
+    take(5)    // Partially applied take
+  )([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  // [4, 8, 12, 16, 20]
+  ```
 
 ## Installation
 

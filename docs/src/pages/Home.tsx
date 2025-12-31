@@ -46,6 +46,13 @@ export const Home = () => (
           <p class="mt-1"><code class="text-sm">pipeAsync</code> makes async flow control practical and composable. Mix sync and async functions naturally in your pipelines.</p>
         </div>
       </li>
+      <li class="flex items-start">
+        <span class="text-pink-500 font-bold mr-3 text-2xl">🎯</span>
+        <div>
+          <strong class="text-lg">Curried by Design</strong>
+          <p class="mt-1">All multi-argument utility functions are curried or behave like curried functions, enabling partial application and point-free style for elegant composition in pipes.</p>
+        </div>
+      </li>
     </ul>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
