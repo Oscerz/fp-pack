@@ -363,51 +363,73 @@ processData(5);  // 개발 환경일 때만 로깅`}
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
-    <div class="space-y-4">
-      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-        관련된 디버깅 및 유틸리티 함수들을 시도해보세요:
-      </p>
-      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/debug/assert');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            assert
-          </a>{' '}
-          - 조건 검증과 빠른 실패 처리
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/composition/tap');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            tap
-          </a>{' '}
-          - 파이프라인에서 부수 효과 실행 (log는 tap 패턴을 기반으로 구축됨)
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/composition/pipe');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            pipe
-          </a>{' '}
-          - 함수를 왼쪽에서 오른쪽으로 조합 (log가 가장 유용한 곳)
-        </li>
-      </ul>
+    <div class="grid gap-6 mt-6">
+      <a
+        href="/composition/tap"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/tap');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          tap →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          파이프라인에서 부수 효과 실행 - log는 이 패턴을 기반으로 합니다.
+        </p>
+      </a>
+
+      <a
+        href="/composition/pipe"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipe');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          pipe →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          왼쪽에서 오른쪽으로 함수 조합 - log가 가장 유용한 곳입니다.
+        </p>
+      </a>
+
+      <a
+        href="/debug/assert"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/debug/assert');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          assert →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          조건 검증과 빠른 실패 - 강제를 포함한 디버깅입니다.
+        </p>
+      </a>
+
+      <a
+        href="/debug/invariant"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/debug/invariant');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          invariant →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          불변식 강제 - 또 다른 디버깅 및 검증 도구입니다.
+        </p>
+      </a>
     </div>
   </div>
 );

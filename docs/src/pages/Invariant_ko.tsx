@@ -430,51 +430,73 @@ validateOrder({
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
-    <div class="space-y-4">
-      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-        관련된 디버깅 및 검증 함수들을 시도해보세요:
-      </p>
-      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/debug/assert');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            assert
-          </a>{' '}
-          - 일반적인 조건 검사를 위한 유사 함수
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/guard');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            guard
-          </a>{' '}
-          - 조건 실패 시 기본값 반환 (에러를 발생시키지 않는 대안)
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/debug/log');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            log
-          </a>{' '}
-          - 값을 기록하고 그대로 전달
-        </li>
-      </ul>
+    <div class="grid gap-6 mt-6">
+      <a
+        href="/debug/assert"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/debug/assert');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          assert →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          일반 조건 검증 - 더 넓은 범위의 검증 유틸리티입니다.
+        </p>
+      </a>
+
+      <a
+        href="/control/guard"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/guard');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          guard →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          실패 시 기본값 반환 - 에러를 발생시키지 않는 안전 패턴입니다.
+        </p>
+      </a>
+
+      <a
+        href="/debug/log"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/debug/log');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          log →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          값을 로깅하고 전달 - 디버깅 동반자입니다.
+        </p>
+      </a>
+
+      <a
+        href="/control/tryCatch"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/tryCatch');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          tryCatch →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          예외를 함수형으로 처리 - 안전한 오류 처리입니다.
+        </p>
+      </a>
     </div>
   </div>
 );

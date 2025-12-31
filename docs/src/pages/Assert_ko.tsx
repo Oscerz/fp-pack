@@ -410,51 +410,73 @@ validateConfig({
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
-    <div class="space-y-4">
-      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-        관련된 디버깅 및 검증 함수들을 시도해보세요:
-      </p>
-      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/debug/invariant');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            invariant
-          </a>{' '}
-          - assert와 유사하며, 런타임 검사에 일반적으로 사용됨
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/guard');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            guard
-          </a>{' '}
-          - 조건 실패 시 기본값 반환 (에러를 발생시키지 않는 대안)
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/tryCatch');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            tryCatch
-          </a>{' '}
-          - 에러를 발생시키지 않고 함수형으로 처리
-        </li>
-      </ul>
+    <div class="grid gap-6 mt-6">
+      <a
+        href="/debug/invariant"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/debug/invariant');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          invariant →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          불변식과 계약 강제 - 의미론적으로 집중된 검증입니다.
+        </p>
+      </a>
+
+      <a
+        href="/control/guard"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/guard');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          guard →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          실패 시 기본값 반환 - 에러를 발생시키지 않는 검증 대안입니다.
+        </p>
+      </a>
+
+      <a
+        href="/control/tryCatch"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/tryCatch');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          tryCatch →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          예외를 안전하게 처리 - 함수형 오류 처리 패턴입니다.
+        </p>
+      </a>
+
+      <a
+        href="/debug/log"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/debug/log');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          log →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          파이프라인에서 값 로깅 - 흐름을 방해하지 않고 데이터 검사합니다.
+        </p>
+      </a>
     </div>
   </div>
 );

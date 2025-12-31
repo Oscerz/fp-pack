@@ -499,51 +499,73 @@ jsonStrings.map(processItem);
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
-    <div class="space-y-4">
-      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-        관련된 제어 흐름 함수들을 시도해보세요:
-      </p>
-      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/guard');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            guard
-          </a>{' '}
-          - 조건 실패 시 기본값 반환
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/ifElse');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            ifElse
-          </a>{' '}
-          - 조건에 따라 두 가지 다른 변환 중 선택
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/composition/pipe');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            pipe
-          </a>{' '}
-          - 왼쪽에서 오른쪽으로 함수 조합
-        </li>
-      </ul>
+    <div class="grid gap-6 mt-6">
+      <a
+        href="/control/guard"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/guard');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          guard →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          검증 실패 시 기본값 반환 - 유사한 안전 패턴입니다.
+        </p>
+      </a>
+
+      <a
+        href="/control/ifElse"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/ifElse');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          ifElse →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          두 가지 변환 중 선택 - 조건 기반 분기입니다.
+        </p>
+      </a>
+
+      <a
+        href="/composition/pipe"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipe');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          pipe →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          왼쪽에서 오른쪽으로 함수 조합 - 오류 처리 체인에 완벽합니다.
+        </p>
+      </a>
+
+      <a
+        href="/composition/sideEffect"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/sideEffect');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          sideEffect →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          지연된 실행 패턴 - 안전한 작업을 위한 또 다른 접근 방식입니다.
+        </p>
+      </a>
     </div>
   </div>
 );

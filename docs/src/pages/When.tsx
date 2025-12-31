@@ -326,51 +326,73 @@ processProduct({ id: 2, name: 'Gadget', price: 50, stock: 0 });
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      Next Steps
+      Related Functions
     </h2>
 
-    <div class="space-y-4">
-      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-        Try these related control flow functions:
-      </p>
-      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/unless');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            unless
-          </a>{' '}
-          - Apply a function only when a condition is false (opposite of when)
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/ifElse');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            ifElse
-          </a>{' '}
-          - Choose between two different transformations based on a condition
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/cond');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            cond
-          </a>{' '}
-          - Handle multiple conditional branches
-        </li>
-      </ul>
+    <div class="grid gap-6 mt-6">
+      <a
+        href="/control/unless"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/unless');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          unless →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Apply function when condition is false - opposite of when.
+        </p>
+      </a>
+
+      <a
+        href="/control/ifElse"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/ifElse');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          ifElse →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Choose between two transformations based on condition.
+        </p>
+      </a>
+
+      <a
+        href="/control/cond"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/cond');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          cond →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Handle multiple conditional branches with pattern matching.
+        </p>
+      </a>
+
+      <a
+        href="/composition/complement"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/complement');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          complement →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Negate predicate functions for use with when.
+        </p>
+      </a>
     </div>
   </div>
 );

@@ -424,51 +424,73 @@ processOrder({ total: 50, isPriority: false, customerId: 2 });
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      Next Steps
+      Related Functions
     </h2>
 
-    <div class="space-y-4">
-      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-        Try these related control flow functions:
-      </p>
-      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/when');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            when
-          </a>{' '}
-          - Apply a function only when a condition is true
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/guard');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            guard
-          </a>{' '}
-          - Return default value when predicate fails
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/cond');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            cond
-          </a>{' '}
-          - Handle multiple conditional branches
-        </li>
-      </ul>
+    <div class="grid gap-6 mt-6">
+      <a
+        href="/control/when"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/when');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          when →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Apply function when condition is true - simpler alternative.
+        </p>
+      </a>
+
+      <a
+        href="/control/unless"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/unless');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          unless →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Apply function when condition is false - opposite pattern.
+        </p>
+      </a>
+
+      <a
+        href="/control/cond"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/cond');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          cond →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Handle multiple conditional branches - extends ifElse concept.
+        </p>
+      </a>
+
+      <a
+        href="/control/guard"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/guard');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          guard →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Return default value when predicate fails - early return pattern.
+        </p>
+      </a>
     </div>
   </div>
 );

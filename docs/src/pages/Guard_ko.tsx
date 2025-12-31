@@ -435,51 +435,73 @@ validateForm({ email: 'invalid', password: 'securepass123', age: 25 });
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
-      다음 단계
+      관련 함수
     </h2>
 
-    <div class="space-y-4">
-      <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-        관련된 제어 흐름 함수들을 시도해보세요:
-      </p>
-      <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300">
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/when');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            when
-          </a>{' '}
-          - 조건이 참일 때만 함수 적용
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/ifElse');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            ifElse
-          </a>{' '}
-          - 조건에 따라 두 가지 다른 변환 중 선택
-        </li>
-        <li>
-          <a
-            onClick={(e: Event) => {
-              e.preventDefault();
-              navigateTo('/control/tryCatch');
-            }}
-            class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-          >
-            tryCatch
-          </a>{' '}
-          - 함수형 방식으로 예외 처리
-        </li>
-      </ul>
+    <div class="grid gap-6 mt-6">
+      <a
+        href="/control/unless"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/unless');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          unless →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          조건이 거짓일 때 함수 적용 - 유사한 검증 패턴입니다.
+        </p>
+      </a>
+
+      <a
+        href="/control/ifElse"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/ifElse');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          ifElse →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          두 가지 변환 중 선택 - 더 유연한 분기입니다.
+        </p>
+      </a>
+
+      <a
+        href="/control/tryCatch"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/tryCatch');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2">
+          tryCatch →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          예외를 안전하게 처리 - 오류 기반 대체 패턴입니다.
+        </p>
+      </a>
+
+      <a
+        href="/control/cond"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/control/cond');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2">
+          cond →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          여러 조건 처리 - guard를 여러 규칙으로 확장합니다.
+        </p>
+      </a>
     </div>
   </div>
 );
