@@ -477,8 +477,7 @@ const handleNameChange = pipe(
   trim,
   tap((value) => {
     // Prefer updater form to avoid stale state in React-like frameworks
-    // setFormState(prev => assoc('name', value, prev));
-    setFormState(assoc('name', value));
+    setFormState(prev => assoc('name', value, prev));
   })
 );
 
@@ -716,6 +715,7 @@ const handleWebSocketMessage = pipe(
 
 // GOOD: Batch updates with stream
 import { pipe as streamPipe, filter as streamFilter, take as streamTake, toArray } from 'fp-kit/stream';
+import { pipeAsync, runPipeResult } from 'fp-kit';
 
 const processBatchUpdates = async (updates: AsyncIterable<Update>) => {
   const processed = await streamPipe(
@@ -820,7 +820,7 @@ const updateNestedState = evolve({
 **Where to use**: Create/update/delete operations
 
 ```typescript
-import { pipeAsync, append, filter } from 'fp-kit';
+import { pipe, pipeAsync, append, filter } from 'fp-kit';
 
 // GOOD: Optimistic create with rollback
 const createItemOptimistically = (newItem: Item) => {
@@ -893,7 +893,7 @@ const stateToQueryParams = pipe(
 **Where to use**: Scroll handlers, pagination, large dataset rendering
 
 ```typescript
-import { pipe, when, ifElse, tap } from 'fp-kit';
+import { pipe, pipeAsync, when, tap, runPipeResult } from 'fp-kit';
 import { pipe as streamPipe, filter as streamFilter, take as streamTake, toArray } from 'fp-kit/stream';
 
 // GOOD: Infinite scroll with pipe - all logic inside
@@ -968,7 +968,7 @@ const handleIntersection = pipe(
 **Where to use**: Any state update with business logic
 
 ```typescript
-import { pipe, ifElse, when, unless, cond, tap } from 'fp-kit';
+import { pipe, ifElse, when, cond, tap, assoc, prop, append, map, filter, merge } from 'fp-kit';
 
 // GOOD: Use ifElse instead of if/else
 const toggleUserStatus = pipe(
@@ -980,16 +980,15 @@ const toggleUserStatus = pipe(
   tap((updatedUser) => setUser(updatedUser))
 );
 
-// GOOD: Use when for conditional side effects
+// GOOD: Use ifElse for conditional side effects
 const saveIfValid = pipe(
   validateForm,
-  when(
+  ifElse(
     (result) => result.isValid,
-    tap((data) => saveToAPI(data)),
-    tap(() => showSuccessMessage())
-  ),
-  unless(
-    (result) => result.isValid,
+    pipe(
+      tap((data) => saveToAPI(data)),
+      tap(() => showSuccessMessage())
+    ),
     tap((result) => setErrors(result.errors))
   )
 );
@@ -1123,7 +1122,7 @@ const updateMutation = useMutation({
 
 ```typescript
 import create from 'zustand';
-import { pipe, append, filter, map, merge, ifElse, when, tap } from 'fp-kit';
+import { pipe, append, filter, map, merge, ifElse, when, tap, prop, sortBy, assoc } from 'fp-kit';
 
 // GOOD: All actions use pipe
 const useStore = create((set, get) => ({
@@ -1181,7 +1180,7 @@ const useStore = create((set, get) => ({
 
 ```typescript
 import { createSlice } from '@reduxjs/toolkit';
-import { pipe, append, filter, map, merge, sortBy, cond } from 'fp-kit';
+import { pipe, append, filter, map, merge, sortBy, cond, assoc } from 'fp-kit';
 
 // GOOD: Reducers with pipe - no manual mutations
 const userSlice = createSlice({
@@ -1238,7 +1237,7 @@ const userSlice = createSlice({
 
 ```typescript
 import { useForm } from 'react-hook-form';
-import { pipe, pick, mapValues, trim, when, tap, SideEffect, runPipeResult } from 'fp-kit';
+import { pipe, pipeAsync, pick, mapValues, trim, when, tap, SideEffect, runPipeResult } from 'fp-kit';
 
 // GOOD: Validation with pipe
 const validateFormData = pipe(
