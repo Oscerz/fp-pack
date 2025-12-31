@@ -149,6 +149,25 @@ export const SearchModal = mount<SearchModalProps>((renew, props) => {
                 onInput={handleInput}
                 onKeyDown={handleKeyDown}
               />
+              <button
+                type="button"
+                class="sm:hidden ml-2 p-2 flex-none rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                aria-label="Close search"
+                onClick={handleClose}
+              >
+                <svg
+                  class="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
               <button class="hidden sm:inline-block px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded" onClick={() => props.onClose()}>
                 ESC
               </button>
