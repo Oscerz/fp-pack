@@ -26,6 +26,14 @@ const normalizeIndex = (key: number | `${number}`, length: number) => {
 const isObjectLike = (value: unknown): value is Record<PropertyKey, unknown> =>
   value !== null && typeof value === 'object';
 
+type AssocPath = {
+  <T = unknown>(
+    ...args: [pathArray: PathKey[]]
+  ): (value: unknown) => (obj: unknown) => T;
+  <T = unknown>(...args: [pathArray: PathKey[], value: unknown]): (obj: unknown) => T;
+  <T = unknown>(...args: [pathArray: PathKey[], value: unknown, obj: unknown]): T;
+};
+
 /**
  * assocPath - 경로 기반 값 설정 (불변)
  */
@@ -52,4 +60,5 @@ function assocPath<T = unknown>(pathArray: PathKey[], value: unknown, obj: unkno
   return base as T;
 }
 
-export default curry(assocPath);
+const curriedAssocPath = curry(assocPath) as AssocPath;
+export default curriedAssocPath;

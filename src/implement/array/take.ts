@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type Take = {
+  (n: number): <T>(arr: T[]) => T[];
+  <T>(...args: [n: number, arr: T[]]): T[];
+};
+
 /**
  * take - 앞에서 n개 선택
  */
@@ -9,4 +14,5 @@ function take<T>(n: number, arr: T[]): T[] {
   return arr.slice(0, n);
 }
 
-export default curry(take);
+const curriedTake = curry(take) as Take;
+export default curriedTake;

@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type Partition = {
+  <T>(...args: [predicate: (value: T) => boolean]): (arr: T[]) => [T[], T[]];
+  <T>(...args: [predicate: (value: T) => boolean, arr: T[]]): [T[], T[]];
+};
+
 /**
  * partition - 조건에 따라 분리
  */
@@ -18,4 +23,5 @@ function partition<T>(predicate: (value: T) => boolean, arr: T[]): [T[], T[]] {
   return [truthy, falsy];
 }
 
-export default curry(partition);
+const curriedPartition = curry(partition) as Partition;
+export default curriedPartition;

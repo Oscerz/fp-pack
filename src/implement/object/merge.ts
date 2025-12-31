@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type Merge = {
+  <T>(...args: [obj1: T]): <U>(obj2: U) => T & U;
+  <T, U>(...args: [obj1: T, obj2: U]): T & U;
+};
+
 /**
  * merge - 객체 병합 (얕은 병합)
  */
@@ -10,4 +15,5 @@ function merge<T, U>(obj1: T, obj2: U): T & U {
   } as T & U;
 }
 
-export default curry(merge);
+const curriedMerge = curry(merge) as Merge;
+export default curriedMerge;

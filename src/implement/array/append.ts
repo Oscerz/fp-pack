@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type Append = {
+  <T>(...args: [value: T]): (arr: T[]) => T[];
+  <T>(...args: [value: T, arr: T[]]): T[];
+};
+
 /**
  * append - 배열 끝에 값 추가
  */
@@ -7,4 +12,5 @@ function append<T>(value: T, arr: T[]): T[] {
   return [...arr, value];
 }
 
-export default curry(append);
+const curriedAppend = curry(append) as Append;
+export default curriedAppend;

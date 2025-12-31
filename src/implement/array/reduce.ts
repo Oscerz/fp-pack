@@ -1,5 +1,11 @@
 import curry from '../composition/curry';
 
+type Reduce = {
+  <T, R>(...args: [fn: (acc: R, value: T) => R]): (initial: R) => (arr: T[]) => R;
+  <T, R>(...args: [fn: (acc: R, value: T) => R, initial: R]): (arr: T[]) => R;
+  <T, R>(...args: [fn: (acc: R, value: T) => R, initial: R, arr: T[]]): R;
+};
+
 /**
  * reduce - 누적 연산
  */
@@ -11,4 +17,5 @@ function reduce<T, R>(
   return arr.reduce(fn, initial);
 }
 
-export default curry(reduce);
+const curriedReduce = curry(reduce) as Reduce;
+export default curriedReduce;

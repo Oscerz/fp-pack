@@ -2,6 +2,11 @@
 import delay from './delay';
 import curry from '../composition/curry';
 
+type Retry = {
+  (times: number): <T>(fn: () => Promise<T>, delayMs?: number) => Promise<T>;
+  <T>(...args: [times: number, fn: () => Promise<T>, delayMs?: number]): Promise<T>;
+};
+
 function retry<T>(times: number, fn: () => Promise<T>, delayMs = 0): Promise<T> {
   return (async () => {
     let attempt = 0;
@@ -18,4 +23,5 @@ function retry<T>(times: number, fn: () => Promise<T>, delayMs = 0): Promise<T> 
     }
   })();
 }
-export default curry(retry);
+const curriedRetry = curry(retry) as Retry;
+export default curriedRetry;

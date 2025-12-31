@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type UniqBy = {
+  <T>(...args: [fn: (value: T) => any]): (arr: T[]) => T[];
+  <T>(...args: [fn: (value: T) => any, arr: T[]]): T[];
+};
+
 /**
  * uniqBy - 기준 함수로 중복 제거
  */
@@ -16,4 +21,5 @@ function uniqBy<T>(fn: (value: T) => any, arr: T[]): T[] {
   return result;
 }
 
-export default curry(uniqBy);
+const curriedUniqBy = curry(uniqBy) as UniqBy;
+export default curriedUniqBy;

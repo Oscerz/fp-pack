@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type Chunk = {
+  (size: number): <T>(arr: T[]) => T[][];
+  <T>(...args: [size: number, arr: T[]]): T[][];
+};
+
 /**
  * chunk - 배열을 일정 크기로 분할
  */
@@ -16,4 +21,5 @@ function chunk<T>(size: number, arr: T[]): T[][] {
   return result;
 }
 
-export default curry(chunk);
+const curriedChunk = curry(chunk) as Chunk;
+export default curriedChunk;

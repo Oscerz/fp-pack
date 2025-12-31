@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type PickFn = {
+  <K extends PropertyKey>(...args: [keys: K[]]): <T extends Record<K, unknown>>(obj: T) => Pick<T, K>;
+  <T extends object, K extends keyof T = keyof T>(...args: [keys: K[], obj: T]): Pick<T, K>;
+};
+
 /**
  * pick - 일부 속성 선택
  */
@@ -13,4 +18,5 @@ function pick<T extends object, K extends keyof T = keyof T>(keys: K[], obj: T):
   return result;
 }
 
-export default curry(pick);
+const curriedPick = curry(pick) as PickFn;
+export default curriedPick;

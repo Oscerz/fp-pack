@@ -1,5 +1,21 @@
 import curry from '../composition/curry';
 
+type TryCatch = {
+  <T, R>(...args: [tryFn: (value: T) => R]): (
+    catchFn: (error: Error, value: T) => R
+  ) => (value: T) => R;
+  <T, R>(
+    ...args: [tryFn: (value: T) => R, catchFn: (error: Error, value: T) => R]
+  ): (value: T) => R;
+  <T, R>(
+    ...args: [
+      tryFn: (value: T) => R,
+      catchFn: (error: Error, value: T) => R,
+      value: T
+    ]
+  ): R;
+};
+
 /**
  * tryCatch - 예외를 함수형으로 처리
  */
@@ -16,4 +32,5 @@ function tryCatch<T, R>(
   }
 }
 
-export default curry(tryCatch);
+const curriedTryCatch = curry(tryCatch) as TryCatch;
+export default curriedTryCatch;

@@ -13,6 +13,12 @@ type AssocResult<T, K extends AssocKey, V> =
       : AssocValue<T, K, V>
     : AssocValue<T, K, V>;
 
+type Assoc = {
+  <K extends AssocKey>(...args: [key: K]): <V>(value: V) => <T>(obj: T) => AssocResult<T, K, V>;
+  <K extends AssocKey, V>(...args: [key: K, value: V]): <T>(obj: T) => AssocResult<T, K, V>;
+  <T, K extends AssocKey, V>(...args: [key: K, value: V, obj: T]): AssocResult<T, K, V>;
+};
+
 /**
  * assoc - 불변 객체 속성 설정
  */
@@ -33,4 +39,5 @@ function assoc<T, K extends AssocKey, V>(key: K, value: V, obj: T): AssocResult<
   return { [key]: value } as AssocResult<T, K, V>;
 }
 
-export default curry(assoc);
+const curriedAssoc = curry(assoc) as Assoc;
+export default curriedAssoc;

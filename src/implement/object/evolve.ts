@@ -1,5 +1,15 @@
 import curry from '../composition/curry';
 
+type Evolve = {
+  (
+    transformations: Partial<Record<PropertyKey, (value: any) => any>>
+  ): <T extends object>(obj: T) => T;
+  <T extends object>(
+    transformations: Partial<{ [K in keyof T]: (value: T[K]) => any }>,
+    obj: T
+  ): T;
+};
+
 /**
  * evolve - 구조 기반 변환
  */
@@ -17,4 +27,5 @@ function evolve<T extends object>(
   return result;
 }
 
-export default curry(evolve);
+const curriedEvolve = curry(evolve) as Evolve;
+export default curriedEvolve;

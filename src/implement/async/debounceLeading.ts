@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type DebounceLeading = {
+  <T extends (...args: any[]) => any>(...args: [fn: T]): (ms: number) => T;
+  <T extends (...args: any[]) => any>(...args: [fn: T, ms: number]): T;
+};
+
 /** debounceLeading - 첫 호출만 실행하는 디바운스 */
 function debounceLeading<T extends (...args: any[]) => any>(fn: T, ms: number): T {
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -16,4 +21,5 @@ function debounceLeading<T extends (...args: any[]) => any>(fn: T, ms: number): 
   return debounced as T;
 }
 
-export default curry(debounceLeading);
+const curriedDebounceLeading = curry(debounceLeading) as DebounceLeading;
+export default curriedDebounceLeading;

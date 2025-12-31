@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type OmitFn = {
+  <K extends PropertyKey>(...args: [keys: K[]]): <T extends Record<K, unknown>>(obj: T) => Omit<T, K>;
+  <T extends object, K extends keyof T = keyof T>(...args: [keys: K[], obj: T]): Omit<T, K>;
+};
+
 /**
  * omit - 일부 속성 제거
  */
@@ -11,4 +16,5 @@ function omit<T, K extends keyof T = keyof T>(keys: K[], obj: T): Omit<T, K> {
   return result as Omit<T, K>;
 }
 
-export default curry(omit);
+const curriedOmit = curry(omit) as OmitFn;
+export default curriedOmit;

@@ -26,6 +26,11 @@ const normalizeIndex = (key: number | `${number}`, length: number) => {
 const isObjectLike = (value: unknown): value is Record<PropertyKey, unknown> =>
   value !== null && typeof value === 'object';
 
+type DissocPath = {
+  <T = unknown>(...args: [pathArray: PathKey[]]): (obj: T) => T;
+  <T = unknown>(...args: [pathArray: PathKey[], obj: T]): T;
+};
+
 /**
  * dissocPath - 경로 기반 값 제거 (불변)
  */
@@ -71,4 +76,5 @@ function dissocPath<T = unknown>(pathArray: PathKey[], obj: T): T {
   return result as T;
 }
 
-export default curry(dissocPath);
+const curriedDissocPath = curry(dissocPath) as DissocPath;
+export default curriedDissocPath;

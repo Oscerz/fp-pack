@@ -1,5 +1,29 @@
 import curry from '../composition/curry';
 
+type IfElse = {
+  <T, RTrue, RFalse>(
+    ...args: [predicate: (value: T) => boolean]
+  ): (onTrue: (value: T) => RTrue) => (onFalse: (value: T) => RFalse) => (value: T) => RTrue | RFalse;
+  <T, RTrue, RFalse>(
+    ...args: [predicate: (value: T) => boolean, onTrue: (value: T) => RTrue]
+  ): (onFalse: (value: T) => RFalse) => (value: T) => RTrue | RFalse;
+  <T, RTrue, RFalse>(
+    ...args: [
+      predicate: (value: T) => boolean,
+      onTrue: (value: T) => RTrue,
+      onFalse: (value: T) => RFalse
+    ]
+  ): (value: T) => RTrue | RFalse;
+  <T, RTrue, RFalse>(
+    ...args: [
+      predicate: (value: T) => boolean,
+      onTrue: (value: T) => RTrue,
+      onFalse: (value: T) => RFalse,
+      value: T
+    ]
+  ): RTrue | RFalse;
+};
+
 /**
  * ifElse - 조건에 따라 다른 함수 실행
  */
@@ -12,4 +36,5 @@ function ifElse<T, RTrue, RFalse>(
   return predicate(value) ? onTrue(value) : onFalse(value);
 }
 
-export default curry(ifElse);
+const curriedIfElse = curry(ifElse) as IfElse;
+export default curriedIfElse;

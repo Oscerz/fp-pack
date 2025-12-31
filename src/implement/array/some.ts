@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type Some = {
+  <T>(...args: [predicate: (value: T) => boolean]): (arr: T[]) => boolean;
+  <T>(...args: [predicate: (value: T) => boolean, arr: T[]]): boolean;
+};
+
 /**
  * some - 조건 검사 (하나라도 만족)
  */
@@ -10,4 +15,5 @@ function some<T>(predicate: (value: T) => boolean, arr: T[]): boolean {
   return false;
 }
 
-export default curry(some);
+const curriedSome = curry(some) as Some;
+export default curriedSome;

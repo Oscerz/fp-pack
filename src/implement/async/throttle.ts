@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type Throttle = {
+  <T extends (...args: any[]) => any>(...args: [fn: T]): (ms: number) => T;
+  <T extends (...args: any[]) => any>(...args: [fn: T, ms: number]): T;
+};
+
 /** throttle - 호출 제어 (쓰로틀) */
 function throttle<T extends (...args: any[]) => any>(fn: T, ms: number): T {
   let lastCall = 0;
@@ -38,4 +43,5 @@ function throttle<T extends (...args: any[]) => any>(fn: T, ms: number): T {
 
   return throttled;
 }
-export default curry(throttle);
+const curriedThrottle = curry(throttle) as Throttle;
+export default curriedThrottle;

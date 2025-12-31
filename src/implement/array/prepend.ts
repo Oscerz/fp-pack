@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type Prepend = {
+  <T>(...args: [value: T]): (arr: T[]) => T[];
+  <T>(...args: [value: T, arr: T[]]): T[];
+};
+
 /**
  * prepend - 배열 앞에 값 추가
  */
@@ -7,4 +12,5 @@ function prepend<T>(value: T, arr: T[]): T[] {
   return [value, ...arr];
 }
 
-export default curry(prepend);
+const curriedPrepend = curry(prepend) as Prepend;
+export default curriedPrepend;

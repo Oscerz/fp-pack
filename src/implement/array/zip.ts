@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type Zip = {
+  <U>(...args: [arr2: U[]]): <T>(arr1: T[]) => Array<[T, U]>;
+  <T, U>(...args: [arr2: U[], arr1: T[]]): Array<[T, U]>;
+};
+
 /**
  * zip - 배열 병합
  */
@@ -14,4 +19,5 @@ function zip<T, U>(arr2: U[], arr1: T[]): Array<[T, U]> {
   return result;
 }
 
-export default curry(zip);
+const curriedZip = curry(zip) as Zip;
+export default curriedZip;

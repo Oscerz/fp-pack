@@ -1,5 +1,11 @@
 import curry from '../composition/curry';
 
+type ZipWith = {
+  <A, B, R>(...args: [fn: (a: A, b: B) => R]): (other: B[]) => (arr: A[]) => R[];
+  <A, B, R>(...args: [fn: (a: A, b: B) => R, other: B[]]): (arr: A[]) => R[];
+  <A, B, R>(...args: [fn: (a: A, b: B) => R, other: B[], arr: A[]]): R[];
+};
+
 /**
  * zipWith - 두 배열을 함수로 결합
  */
@@ -12,4 +18,5 @@ function zipWith<A, B, R>(fn: (a: A, b: B) => R, other: B[], arr: A[]): R[] {
   return result;
 }
 
-export default curry(zipWith);
+const curriedZipWith = curry(zipWith) as ZipWith;
+export default curriedZipWith;

@@ -1,5 +1,10 @@
 import curry from '../composition/curry';
 
+type TakeWhile = {
+  <T>(...args: [predicate: (value: T) => boolean]): (arr: T[]) => T[];
+  <T>(...args: [predicate: (value: T) => boolean, arr: T[]]): T[];
+};
+
 /**
  * takeWhile - 조건이 유지되는 동안 앞에서 가져오기
  */
@@ -14,4 +19,5 @@ function takeWhile<T>(predicate: (value: T) => boolean, arr: T[]): T[] {
   return result;
 }
 
-export default curry(takeWhile);
+const curriedTakeWhile = curry(takeWhile) as TakeWhile;
+export default curriedTakeWhile;
