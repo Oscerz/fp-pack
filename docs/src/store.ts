@@ -10,10 +10,12 @@ export const appStore = lstore<{
   route: string;
   theme: 'light' | 'dark';
   sidebarOpen: boolean;
+  searchOpen: boolean;
 }>({
   route: getPathFromHash(),
   theme: 'light',
   sidebarOpen: false,
+  searchOpen: false,
 });
 
 // Get store without subscription (for utility functions)
@@ -66,4 +68,12 @@ export const toggleLanguage = () => {
 window.addEventListener('hashchange', () => {
   store.route = getPathFromHash();
   window.scrollTo(0, 0);
+});
+
+// Keyboard shortcut for search (Cmd+K or Ctrl+K)
+window.addEventListener('keydown', (e: KeyboardEvent) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    store.searchOpen = !store.searchOpen;
+  }
 });
