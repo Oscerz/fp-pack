@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/20cf4276-761d-4967-b1a5-1adc0c3b9ffd" alt="fp-pack" width="200" />
+  <img src="https://github.com/user-attachments/assets/60714320-6151-47a2-9cf4-db1a186b1847" alt="fp-pack" width="200" />
 
   # fp-pack
 
