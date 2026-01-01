@@ -8,7 +8,7 @@ export const Home = () => (
     </h1>
 
     <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
-      A practical functional toolkit for JavaScript and TypeScript. Written in TypeScript with full type safety.
+      A practical functional toolkit for JavaScript and TypeScript. If you know functions, pipes, and currying, you can use it immediately.
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

@@ -1,7 +1,7 @@
 {
   "name": "fp-kit",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "Functional programming utilities library for TypeScript",
   "main": "./dist/fp-kit.umd.js",

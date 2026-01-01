@@ -7,6 +7,8 @@ Written in TypeScript with full type safety, fp-kit works seamlessly in both Jav
 fp-kit is a focused collection of functional programming utilities designed for real-world applications.
 It emphasizes **function composition, immutability, and declarative code** through `pipe` and `pipeAsync`, while remaining approachable for everyday developers.
 
+The concept is simple: if you understand functions, pipes, and currying, you can use fp-kit immediately.
+
 There's no framework and no heavy abstractions—just well-chosen helpers that make functional style easier to adopt and maintain in production code.
 
 ---

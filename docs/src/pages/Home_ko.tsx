@@ -8,7 +8,7 @@ export const Home_ko = () => (
     </h1>
 
     <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
-      JavaScript와 TypeScript를 위한 실용적인 함수형 도구 키트. TypeScript로 작성되어 완전한 타입 안전성을 제공합니다.
+      JavaScript와 TypeScript를 위한 실용적인 함수형 도구 키트. 함수, 파이프, 커리만 알면 바로 사용할 수 있습니다.
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

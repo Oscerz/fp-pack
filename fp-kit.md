@@ -1,5 +1,7 @@
 # fp-kit AI Agent Skills
 
+Document Version: {{version}}
+
 This document provides guidelines for AI coding assistants when working in projects that use fp-kit. Follow these instructions to write clean, declarative, functional code using fp-kit's utilities.
 
 ## Project Philosophy
