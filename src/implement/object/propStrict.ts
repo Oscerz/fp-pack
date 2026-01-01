@@ -16,5 +16,5 @@ function propStrict<T, K extends keyof T = keyof T>(key: K, obj: T): NonNullable
   return value as NonNullable<T[K]>;
 }
 
-const curriedPropStrict = curry(propStrict) as PropStrict;
+const curriedPropStrict = curry(propStrict) as unknown as PropStrict;
 export default curriedPropStrict;

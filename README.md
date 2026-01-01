@@ -136,6 +136,20 @@ mkdir -p .claude/skills
 cp node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/
 ```
 
+### Setup for Codex
+
+Copy the Codex skill to your project's `$CODEX_HOME/skills/` directory (default: `~/.codex/skills`):
+
+```bash
+# Unix/macOS/Linux
+mkdir -p ~/.codex/skills/fp-pack
+cp node_modules/fp-pack/dist/skills/fp-pack/SKILL.md ~/.codex/skills/fp-pack/SKILL.md
+
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force -Path "$HOME/.codex/skills/fp-pack"
+Copy-Item node_modules/fp-pack/dist/skills/fp-pack/SKILL.md $HOME/.codex/skills/fp-pack/SKILL.md
+```
+
 Once configured, AI assistants will automatically apply fp-pack coding patterns when helping you write code.
 
 > **Note:** The skills file is located at `node_modules/fp-pack/dist/skills/fp-pack.md` after installation. You can also view it in the [GitHub repository](https://github.com/superlucky84/fp-pack/blob/main/fp-pack.md).

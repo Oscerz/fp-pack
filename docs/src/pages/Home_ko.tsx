@@ -339,6 +339,21 @@ mkdir -p .claude/skills
 cp node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/`}
     />
 
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
+      <strong>Codex의 경우:</strong> <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">~/.codex/skills/fp-pack/</code>에 복사
+    </p>
+
+    <CodeBlock
+      language="bash"
+      code={`# Unix/macOS/Linux
+mkdir -p ~/.codex/skills/fp-pack
+cp node_modules/fp-pack/dist/skills/fp-pack/SKILL.md ~/.codex/skills/fp-pack/SKILL.md
+
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force -Path "$HOME/.codex/skills/fp-pack"
+Copy-Item node_modules/fp-pack/dist/skills/fp-pack/SKILL.md $HOME/.codex/skills/fp-pack/SKILL.md`}
+    />
+
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mt-4 mb-2">
       <strong>다른 AI 어시스턴트의 경우:</strong> 해당 도구의 문서를 참고하여 스킬/지침 파일을 배치할 위치를 확인하세요.
     </p>

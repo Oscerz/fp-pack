@@ -339,6 +339,21 @@ mkdir -p .claude/skills
 cp node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/`}
     />
 
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
+      <strong>For Codex:</strong> Copy to <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">~/.codex/skills/fp-pack/</code>
+    </p>
+
+    <CodeBlock
+      language="bash"
+      code={`# Unix/macOS/Linux
+mkdir -p ~/.codex/skills/fp-pack
+cp node_modules/fp-pack/dist/skills/fp-pack/SKILL.md ~/.codex/skills/fp-pack/SKILL.md
+
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force -Path "$HOME/.codex/skills/fp-pack"
+Copy-Item node_modules/fp-pack/dist/skills/fp-pack/SKILL.md $HOME/.codex/skills/fp-pack/SKILL.md`}
+    />
+
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mt-4 mb-2">
       <strong>For other AI assistants:</strong> Consult your tool's documentation for where to place skills/instructions files.
     </p>
