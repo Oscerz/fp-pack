@@ -1,6 +1,10 @@
-# fp-kit
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/20cf4276-761d-4967-b1a5-1adc0c3b9ffd" alt="fp-kit" width="200" />
 
-**A practical functional toolkit for JavaScript and TypeScript.**
+  # fp-kit
+
+  **A practical functional toolkit for JavaScript and TypeScript.**
+</div>
 
 Written in TypeScript with full type safety, fp-kit works seamlessly in both JavaScript and TypeScript projects.
 
