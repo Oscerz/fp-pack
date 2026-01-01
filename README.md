@@ -512,6 +512,51 @@ const fetchAndValidate = pipeAsyncSideEffect(
 );
 ```
 
+### SideEffect Composition Rule
+
+**🔄 Critical Rule: SideEffect Contagion**
+
+Once you use `pipeSideEffect` or `pipeAsyncSideEffect`, the result is **always `T | SideEffect`** (or `Promise<T | SideEffect>` for async).
+
+If you want to continue composing this result, you **MUST** keep using SideEffect-aware pipes. You **CANNOT** switch back to `pipe` or `pipeAsync` because they don't handle `SideEffect`.
+
+```typescript
+import { pipe, pipeSideEffect, SideEffect } from 'fp-kit';
+
+const validateUserPipeline = pipeSideEffect(
+  findUser,
+  validateAge
+);
+// Result type: User | SideEffect
+
+// ❌ WRONG - pipe cannot handle SideEffect
+const wrongPipeline = pipe(
+  validateUserPipeline,  // Returns User | SideEffect
+  (user) => user.email   // Type error! SideEffect has no 'email' property
+);
+
+// ✅ CORRECT - Keep using pipeSideEffect
+const correctPipeline = pipeSideEffect(
+  validateUserPipeline,  // User | SideEffect - handled correctly
+  (user) => user.email,  // Automatically skipped if SideEffect
+  sendEmail
+);
+
+// The same rule applies to async pipes
+const asyncPipeline = pipeAsyncSideEffect(
+  fetchUser,
+  validateUser
+);
+// Result type: Promise<User | SideEffect>
+
+// You must continue with pipeAsyncSideEffect, not pipeAsync
+const extendedAsyncPipeline = pipeAsyncSideEffect(
+  asyncPipeline,
+  processUser,
+  saveToDatabase
+);
+```
+
 ### Stream vs Array
 
 Use `stream/*` for:

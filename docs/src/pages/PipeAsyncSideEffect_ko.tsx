@@ -276,6 +276,47 @@ console.log(result);
       </p>
     </div>
 
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      SideEffect 합성 규칙
+    </h3>
+
+    <div class="border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-900/20 p-4 mb-6 rounded-r">
+      <p class="text-sm md:text-base text-purple-800 dark:text-purple-200 leading-relaxed">
+        <span class="font-medium">🔄 핵심 규칙: SideEffect의 전염성</span>
+        <br />
+        <br />
+        한번 <code class="bg-purple-100 dark:bg-purple-900/40 px-1 py-0.5 rounded">pipeAsyncSideEffect</code>를 사용하면, 그 결과는 <strong>항상 <code class="bg-purple-100 dark:bg-purple-900/40 px-1 py-0.5 rounded">Promise&lt;T | SideEffect&gt;</code></strong>입니다.
+        <br />
+        <br />
+        이 결과를 계속 합성하려면, <strong>반드시</strong> <code class="bg-purple-100 dark:bg-purple-900/40 px-1 py-0.5 rounded">pipeAsyncSideEffect</code>를 계속 사용해야 합니다.
+        <code class="bg-purple-100 dark:bg-purple-900/40 px-1 py-0.5 rounded">pipeAsync</code>로 <strong>돌아갈 수 없습니다</strong>. pipeAsync는 SideEffect를 처리할 수 없기 때문입니다.
+      </p>
+    </div>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipeAsync, pipeAsyncSideEffect, SideEffect } from 'fp-kit';
+
+const validateUserPipeline = pipeAsyncSideEffect(
+  fetchUser,
+  validateAge
+);
+// 결과 타입: Promise<User | SideEffect>
+
+// ❌ 잘못된 방법 - pipeAsync는 SideEffect를 처리 못함
+const wrongPipeline = pipeAsync(
+  validateUserPipeline,  // Promise<User | SideEffect> 반환
+  (user) => user.email   // 타입 에러! SideEffect에는 'email' 프로퍼티가 없음
+);
+
+// ✅ 올바른 방법 - pipeAsyncSideEffect 계속 사용
+const correctPipeline = pipeAsyncSideEffect(
+  validateUserPipeline,  // Promise<User | SideEffect> - 올바르게 처리됨
+  (user) => user.email,  // SideEffect면 자동으로 건너뜀
+  sendEmail
+);`}
+    />
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">

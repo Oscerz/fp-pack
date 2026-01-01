@@ -326,6 +326,58 @@ const result = runPipeResult(oddsDoubled);
       </p>
     </div>
 
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      SideEffect Composition Rule
+    </h3>
+
+    <div class="border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-900/20 p-4 mb-6 rounded-r">
+      <p class="text-sm md:text-base text-purple-800 dark:text-purple-200 leading-relaxed">
+        <span class="font-medium">🔄 Critical Rule: SideEffect Contagion</span>
+        <br />
+        <br />
+        Once you use <code class="bg-purple-100 dark:bg-purple-900/40 px-1 py-0.5 rounded">pipeSideEffect</code> or{' '}
+        <code class="bg-purple-100 dark:bg-purple-900/40 px-1 py-0.5 rounded">pipeAsyncSideEffect</code>, the result is <strong>always <code class="bg-purple-100 dark:bg-purple-900/40 px-1 py-0.5 rounded">T | SideEffect</code></strong>.
+        <br />
+        <br />
+        If you want to continue composing this result, you <strong>MUST</strong> keep using SideEffect-aware pipes.
+        You <strong>CANNOT</strong> switch back to <code class="bg-purple-100 dark:bg-purple-900/40 px-1 py-0.5 rounded">pipe</code> or{' '}
+        <code class="bg-purple-100 dark:bg-purple-900/40 px-1 py-0.5 rounded">pipeAsync</code> because they don't handle SideEffect.
+      </p>
+    </div>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, pipeSideEffect, SideEffect } from 'fp-kit';
+
+const validateUserPipeline = pipeSideEffect(
+  findUser,           // User | SideEffect
+  validateAge         // User | SideEffect
+);
+// Result type: User | SideEffect
+
+// ❌ WRONG - pipe cannot handle SideEffect
+const wrongPipeline = pipe(
+  validateUserPipeline,  // Returns User | SideEffect
+  (user) => user.email   // Type error! SideEffect has no 'email' property
+);
+
+// ✅ CORRECT - Keep using pipeSideEffect
+const correctPipeline = pipeSideEffect(
+  validateUserPipeline,  // User | SideEffect - handled correctly
+  (user) => user.email,  // Automatically skipped if SideEffect
+  sendEmail
+);
+
+// Key rule: Once SideEffect possibility exists, use SideEffect-aware pipes until the end
+const finalPipeline = pipeSideEffect(
+  validateUserPipeline,
+  processUser,
+  saveToDatabase,
+  sendNotification
+  // All steps must be in pipeSideEffect chain
+);`}
+    />
+
     <div class="border-l-4 border-orange-500 bg-orange-50 dark:bg-orange-900/20 p-4 mb-6 rounded-r mt-6">
       <p class="text-sm md:text-base text-orange-800 dark:text-orange-200 leading-relaxed">
         <span class="font-medium">⚠️ Important:</span>
