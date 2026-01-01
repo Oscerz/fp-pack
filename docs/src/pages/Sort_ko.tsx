@@ -366,6 +366,72 @@ sortBy(user => user.age, users);
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      관련 함수
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/array/sortBy');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          sortBy
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          키 기준으로 정렬합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-purple-400 dark:hover:border-purple-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/array/uniq');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          uniq
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          중복 값을 제거합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-green-400 dark:hover:border-green-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/array/groupBy');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          groupBy
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          키 기준으로 그룹화합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-orange-400 dark:hover:border-orange-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/array/map');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          map
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          정렬 전에 값을 변환합니다
+        </p>
+      </div>
+    </div>
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
       다음 단계
     </h2>
 

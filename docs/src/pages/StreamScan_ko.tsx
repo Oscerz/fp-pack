@@ -1,4 +1,5 @@
 import { CodeBlock } from '@/components/CodeBlock';
+import { navigateTo } from '@/store';
 
 export const StreamScan_ko = () => (
   <div class="prose prose-lg dark:prose-invert max-w-none">
@@ -44,5 +45,73 @@ function scan<T, R>(fn: (acc: R, value: T) => R | Promise<R>, initial: R, iterab
 function scan<T, R>(fn: (acc: R, value: T) => R, initial: R): (iterable: Iterable<T>) => IterableIterator<R>;
 function scan<T, R>(fn: (acc: R, value: T) => R | Promise<R>, initial: R): (iterable: AnyIterableInput<PromiseLikeValue<T>>) => AsyncIterableIterator<R>;`}
     />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      관련 함수
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/stream/reduce');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          reduce
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          이터러블을 단일 값으로 축소합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-purple-400 dark:hover:border-purple-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/stream/map');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          map
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          값을 지연 방식으로 변환합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-green-400 dark:hover:border-green-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/stream/filter');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          filter
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          조건에 맞는 값만 통과시킵니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-orange-400 dark:hover:border-orange-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipe');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          pipe
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          여러 변환을 파이프라인으로 조합합니다
+        </p>
+      </div>
+    </div>
   </div>
 );

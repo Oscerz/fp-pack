@@ -85,6 +85,72 @@ const current = last(queue);
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      Related Functions
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/head');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          head
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Get the first element of an array
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-purple-400 dark:hover:border-purple-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/tail');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          tail
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Get all elements except the first
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-green-400 dark:hover:border-green-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/last');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          last
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Get the last element of an array
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-orange-400 dark:hover:border-orange-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/array/take');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          take
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Take the first N elements
+        </p>
+      </div>
+    </div>
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
       Next Steps
     </h2>
 

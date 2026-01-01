@@ -387,6 +387,74 @@ processJuniorEmployees(employees);
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      관련 함수
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/equality/lt');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          lt
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          작은지 비교합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-purple-400 dark:hover:border-purple-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/equality/gt');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          gt
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          큰지 비교합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-green-400 dark:hover:border-green-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/equality/gte');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          gte
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          크거나 같은지 비교합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-orange-400 dark:hover:border-orange-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/equality/clamp');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          clamp
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          값을 범위로 제한합니다
+        </p>
+      </div>
+    </div>
+
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
       다음 단계
     </h2>

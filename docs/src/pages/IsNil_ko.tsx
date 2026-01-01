@@ -87,5 +87,73 @@ const cleaned = values.filter(v => !isNil(v));
       </a>{' '}
       문서를 참고하세요.
     </p>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      관련 함수
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/equality/isEmpty');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          isEmpty
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          배열/문자열/객체가 비었는지 확인합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-purple-400 dark:hover:border-purple-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/equality/isType');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          isType
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          런타임 타입을 확인합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-green-400 dark:hover:border-green-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/equality/equals');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          equals
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          구조적 데이터를 깊게 비교합니다
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-orange-400 dark:hover:border-orange-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/ko/equality/includes');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          includes
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          깊은 동등성으로 포함 여부를 확인합니다
+        </p>
+      </div>
+    </div>
   </div>
 );
