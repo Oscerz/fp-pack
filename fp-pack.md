@@ -669,7 +669,7 @@ const updateUser = assoc('lastLogin', new Date());
 - **Execute SideEffect**: `runPipeResult` (call OUTSIDE pipelines). **⚠️ CRITICAL:** Returns `any` type without type narrowing due to default `R=any` parameter
 - **Large datasets**: `stream/*` functions
 - **Conditionals**: `ifElse`, `when`, `unless`, `cond`
-- **Object access**: `prop`, `path`, `pick`, `omit`
+- **Object access**: `prop`, `propStrict`, `path`, `pick`, `omit`
 - **Object updates**: `assoc`, `merge`, `evolve`
 
 ## UI Framework Integration Patterns

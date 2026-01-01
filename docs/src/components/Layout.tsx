@@ -234,6 +234,8 @@ import { Pick } from '@/pages/Pick';
 import { Pick_ko } from '@/pages/Pick_ko';
 import { Prop } from '@/pages/Prop';
 import { Prop_ko } from '@/pages/Prop_ko';
+import { PropStrict } from '@/pages/PropStrict';
+import { PropStrict_ko } from '@/pages/PropStrict_ko';
 import { PropOr } from '@/pages/PropOr';
 import { PropOr_ko } from '@/pages/PropOr_ko';
 import { Values } from '@/pages/Values';
@@ -569,6 +571,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/object/pick': Pick_ko,
   '/object/prop': Prop,
   '/ko/object/prop': Prop_ko,
+  '/object/propStrict': PropStrict,
+  '/ko/object/propStrict': PropStrict_ko,
   '/object/propOr': PropOr,
   '/ko/object/propOr': PropOr_ko,
   '/object/values': Values,

@@ -1,24 +1,29 @@
 import { CodeBlock } from '@/components/CodeBlock';
 import { navigateTo } from '@/store';
 
-export const Prop = () => (
+export const PropStrict = () => (
   <div class="prose prose-lg dark:prose-invert max-w-none">
     <h1 class="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6">
-      prop
+      propStrict
     </h1>
 
     <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
-      Safely read a property by key (returns undefined if missing)
+      Read a property by key and throw if the value is null or undefined
     </p>
 
     <CodeBlock
       language="typescript"
-      code={`import { prop } from 'fp-pack';
+      code={`import { propStrict } from 'fp-pack';
 
 const user = { id: 1, name: 'Ada' };
 
-prop('name', user); // 'Ada'
-prop('age', user);  // undefined`}
+propStrict('name', user); // 'Ada'
+
+try {
+  propStrict('age', user); // throws
+} catch (error) {
+  console.error(error);
+}`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -28,11 +33,11 @@ prop('age', user);  // undefined`}
     </h2>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-      View the implementation of <code class="text-sm">prop</code> on GitHub to see how it works internally.
+      View the implementation of <code class="text-sm">propStrict</code> on GitHub to see how it works internally.
     </p>
 
     <a
-      href="https://github.com/superlucky84/fp-pack/blob/main/src/implement/object/prop.ts"
+      href="https://github.com/superlucky84/fp-pack/blob/main/src/implement/object/propStrict.ts"
       target="_blank"
       rel="noopener noreferrer"
       class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
@@ -54,6 +59,21 @@ prop('age', user);  // undefined`}
         class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer"
         onClick={(e: Event) => {
           e.preventDefault();
+          navigateTo('/object/prop');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          prop
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Read a property safely (returns undefined if missing)
+        </p>
+      </div>
+
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-purple-400 dark:hover:border-purple-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
           navigateTo('/object/propOr');
         }}
       >
@@ -66,22 +86,7 @@ prop('age', user);  // undefined`}
       </div>
 
       <div
-        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer"
-        onClick={(e: Event) => {
-          e.preventDefault();
-          navigateTo('/object/propStrict');
-        }}
-      >
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-          propStrict
-        </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          Read a property and throw if it is missing or nullish
-        </p>
-      </div>
-
-      <div
-        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-purple-400 dark:hover:border-purple-500 transition-colors cursor-pointer"
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-green-400 dark:hover:border-green-500 transition-colors cursor-pointer"
         onClick={(e: Event) => {
           e.preventDefault();
           navigateTo('/object/path');
@@ -92,21 +97,6 @@ prop('age', user);  // undefined`}
         </h3>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Read a nested path safely
-        </p>
-      </div>
-
-      <div
-        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-green-400 dark:hover:border-green-500 transition-colors cursor-pointer"
-        onClick={(e: Event) => {
-          e.preventDefault();
-          navigateTo('/object/pathOr');
-        }}
-      >
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-          pathOr
-        </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          Read a nested path with a default
         </p>
       </div>
 

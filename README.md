@@ -284,6 +284,7 @@ Functions for working with arrays. All operations are immutable and return new a
 Functions for working with objects and records. All operations are immutable.
 
 - **prop** - Safely access object property
+- **propStrict** - Access property and throw if it is null or undefined
 - **propOr** - Access property with default value
 - **path** - Safely access nested property path
 - **pathOr** - Access nested path with default value

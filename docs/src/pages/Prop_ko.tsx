@@ -66,6 +66,21 @@ prop('age', user);  // undefined`}
       </div>
 
       <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/object/propStrict');
+        }}
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          propStrict
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          값이 없으면 예외를 던지는 엄격한 조회
+        </p>
+      </div>
+
+      <div
         class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-purple-400 dark:hover:border-purple-500 transition-colors cursor-pointer"
         onClick={(e: Event) => {
           e.preventDefault();

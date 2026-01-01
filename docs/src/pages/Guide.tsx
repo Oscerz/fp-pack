@@ -731,7 +731,7 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>Execute SideEffect</strong>: <code class="text-sm">runPipeResult&lt;T, R&gt;</code> (call OUTSIDE pipelines, provide generics)</li>
       <li><strong>Large datasets</strong>: <code class="text-sm">stream/*</code> functions</li>
       <li><strong>Conditionals</strong>: <code class="text-sm">ifElse</code>, <code class="text-sm">when</code>, <code class="text-sm">unless</code>, <code class="text-sm">cond</code></li>
-      <li><strong>Object access</strong>: <code class="text-sm">prop</code>, <code class="text-sm">path</code>, <code class="text-sm">pick</code>, <code class="text-sm">omit</code></li>
+      <li><strong>Object access</strong>: <code class="text-sm">prop</code>, <code class="text-sm">propStrict</code>, <code class="text-sm">path</code>, <code class="text-sm">pick</code>, <code class="text-sm">omit</code></li>
       <li><strong>Object updates</strong>: <code class="text-sm">assoc</code>, <code class="text-sm">merge</code>, <code class="text-sm">evolve</code></li>
     </ul>
 

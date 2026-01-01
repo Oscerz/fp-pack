@@ -1,4 +1,5 @@
 export { default as prop } from './prop';
+export { default as propStrict } from './propStrict';
 export { default as propOr } from './propOr';
 export { default as path } from './path';
 export { default as pathOr } from './pathOr';

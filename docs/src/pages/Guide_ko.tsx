@@ -730,7 +730,7 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>SideEffect 실행</strong>: <code class="text-sm">runPipeResult&lt;T, R&gt;</code> (파이프라인 외부에서 호출, 제네릭 제공)</li>
       <li><strong>대용량 데이터셋</strong>: <code class="text-sm">stream/*</code> 함수</li>
       <li><strong>조건문</strong>: <code class="text-sm">ifElse</code>, <code class="text-sm">when</code>, <code class="text-sm">unless</code>, <code class="text-sm">cond</code></li>
-      <li><strong>객체 접근</strong>: <code class="text-sm">prop</code>, <code class="text-sm">path</code>, <code class="text-sm">pick</code>, <code class="text-sm">omit</code></li>
+      <li><strong>객체 접근</strong>: <code class="text-sm">prop</code>, <code class="text-sm">propStrict</code>, <code class="text-sm">path</code>, <code class="text-sm">pick</code>, <code class="text-sm">omit</code></li>
       <li><strong>객체 업데이트</strong>: <code class="text-sm">assoc</code>, <code class="text-sm">merge</code>, <code class="text-sm">evolve</code></li>
     </ul>
 

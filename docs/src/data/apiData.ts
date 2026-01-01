@@ -130,6 +130,7 @@ export const apiData = [
   { title: 'pathOr', path: '/object/pathOr', category: 'Object' },
   { title: 'pick', path: '/object/pick', category: 'Object' },
   { title: 'prop', path: '/object/prop', category: 'Object' },
+  { title: 'propStrict', path: '/object/propStrict', category: 'Object' },
   { title: 'propOr', path: '/object/propOr', category: 'Object' },
   { title: 'values', path: '/object/values', category: 'Object' },
 
