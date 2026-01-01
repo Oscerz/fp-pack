@@ -1,17 +1,17 @@
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/20cf4276-761d-4967-b1a5-1adc0c3b9ffd" alt="fp-kit" width="200" />
+  <img src="https://github.com/user-attachments/assets/20cf4276-761d-4967-b1a5-1adc0c3b9ffd" alt="fp-pack" width="200" />
 
-  # fp-kit
+  # fp-pack
 
   **A practical functional toolkit for JavaScript and TypeScript.**
 </div>
 
-Written in TypeScript with full type safety, fp-kit works seamlessly in both JavaScript and TypeScript projects.
+Written in TypeScript with full type safety, fp-pack works seamlessly in both JavaScript and TypeScript projects.
 
-fp-kit is a focused collection of functional programming utilities designed for real-world applications.
+fp-pack is a focused collection of functional programming utilities designed for real-world applications.
 It emphasizes **function composition, immutability, and declarative code** through `pipe` and `pipeAsync`, while remaining approachable for everyday developers.
 
-The concept is simple: if you understand functions, pipes, and currying, you can use fp-kit immediately.
+The concept is simple: if you understand functions, pipes, and currying, you can use fp-pack immediately.
 
 There's no framework and no heavy abstractions—just well-chosen helpers that make functional style easier to adopt and maintain in production code.
 
@@ -48,7 +48,7 @@ const curriedChunk = curry(chunk) as Chunk;
 export default curriedChunk;
 ```
 
-## Why fp-kit?
+## Why fp-pack?
 
 - 🔄 **Pipe-First Philosophy**
   Built around `pipe` and `pipeAsync` for clean, left-to-right function composition.
@@ -103,22 +103,22 @@ export default curriedChunk;
 ## Installation
 
 ```bash
-npm install fp-kit
+npm install fp-pack
 # or
-pnpm add fp-kit
+pnpm add fp-pack
 # or
-yarn add fp-kit
+yarn add fp-pack
 ```
 
 ## AI Agent Skills (Optional)
 
-fp-kit includes an AI agent skills file that helps AI coding assistants (Claude Code, GitHub Copilot, Cursor, etc.) automatically write fp-kit-style functional code.
+fp-pack includes an AI agent skills file that helps AI coding assistants (Claude Code, GitHub Copilot, Cursor, etc.) automatically write fp-pack-style functional code.
 
 When you have this skills file in your project, AI assistants will:
 - Default to using `pipe`/`pipeAsync` for pure transformations, and `pipeSideEffect`/`pipeAsyncSideEffect` when SideEffect is involved
 - Use the `SideEffect` pattern instead of try-catch
 - Prefer `stream/*` functions for large datasets
-- Write declarative, functional code using fp-kit utilities
+- Write declarative, functional code using fp-pack utilities
 
 ### Setup for Claude Code
 
@@ -126,26 +126,26 @@ Copy the skills file to your project's `.claude/skills/` directory:
 
 ```bash
 # Unix/macOS/Linux
-cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+cp node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/
 
 # Windows (PowerShell)
-Copy-Item node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+Copy-Item node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/
 
 # Or manually create the directory and copy
 mkdir -p .claude/skills
-cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+cp node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/
 ```
 
-Once configured, AI assistants will automatically apply fp-kit coding patterns when helping you write code.
+Once configured, AI assistants will automatically apply fp-pack coding patterns when helping you write code.
 
-> **Note:** The skills file is located at `node_modules/fp-kit/dist/skills/fp-kit.md` after installation. You can also view it in the [GitHub repository](https://github.com/yourusername/fp-kit/blob/main/fp-kit.md).
+> **Note:** The skills file is located at `node_modules/fp-pack/dist/skills/fp-pack.md` after installation. You can also view it in the [GitHub repository](https://github.com/superlucky84/fp-pack/blob/main/fp-pack.md).
 
 ## Quick Start
 
 ### Basic Pipe Composition
 
 ```typescript
-import { pipe, map, filter, take } from 'fp-kit';
+import { pipe, map, filter, take } from 'fp-pack';
 
 // Synchronous data transformation
 const processUsers = pipe(
@@ -160,7 +160,7 @@ const result = processUsers(users);
 ### Async Operations with pipeAsync
 
 ```typescript
-import { pipeAsync } from 'fp-kit';
+import { pipeAsync } from 'fp-pack';
 
 // Async pipe composition
 const fetchUserProfile = pipeAsync(
@@ -175,7 +175,7 @@ const profile = await fetchUserProfile('user-123');
 ### Object Transformation
 
 ```typescript
-import { pipe, pick, mapValues, assoc } from 'fp-kit';
+import { pipe, pick, mapValues, assoc } from 'fp-pack';
 
 // Transform and clean data
 const prepareUserData = pipe(
@@ -190,8 +190,8 @@ const cleanData = prepareUserData(rawUserInput);
 ### Lazy Stream Processing
 
 ```typescript
-import { pipe } from 'fp-kit';
-import { filter, map, take, toArray, range } from 'fp-kit/stream';
+import { pipe } from 'fp-pack';
+import { filter, map, take, toArray, range } from 'fp-pack/stream';
 
 // Process only what you need - memory efficient
 const processLargeDataset = pipe(
@@ -417,7 +417,7 @@ Functions for debugging and development.
 **The SideEffect solution:** Write normal functions that compose naturally. When you need to terminate early (validation failure, missing data, errors), return `SideEffect.of(() => ...)`. `pipeSideEffect`/`pipeAsyncSideEffect` pipelines automatically stop—no ceremony, no wrappers, no plumbing.
 
 ```typescript
-import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
+import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-pack';
 
 // Optional chaining pattern - return null to gracefully terminate
 const findUser = (id: string) => {
@@ -466,7 +466,7 @@ const result = runPipeResult(paymentPipeline(userCard));
 **Type-safe result handling with `isSideEffect`:**
 
 ```typescript
-import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-pack';
 
 const processNumbers = pipeSideEffect(
   (nums: number[]) => nums.filter(n => n % 2 === 1),
@@ -557,7 +557,7 @@ Once you use `pipeSideEffect` or `pipeAsyncSideEffect`, the result is **always `
 If you want to continue composing this result, you **MUST** keep using SideEffect-aware pipes. You **CANNOT** switch back to `pipe` or `pipeAsync` because they don't handle `SideEffect`.
 
 ```typescript
-import { pipe, pipeSideEffect, SideEffect } from 'fp-kit';
+import { pipe, pipeSideEffect, SideEffect } from 'fp-pack';
 
 const validateUserPipeline = pipeSideEffect(
   findUser,
@@ -602,8 +602,8 @@ Use `stream/*` for:
 - Async data sources (AsyncIterable)
 
 ```typescript
-import { pipe } from 'fp-kit';
-import * as Stream from 'fp-kit/stream';
+import { pipe } from 'fp-pack';
+import * as Stream from 'fp-pack/stream';
 
 // Memory efficient - processes only 10 items
 const first10Evens = pipe(
@@ -628,10 +628,10 @@ first10Evens(Stream.range(1, 1000000)); // Only processes ~10 items, not 1 milli
 
 ```typescript
 // Main library (implement/*)
-import { pipe, map, filter, pipeAsync } from 'fp-kit';
+import { pipe, map, filter, pipeAsync } from 'fp-pack';
 
 // Stream functions (lazy iterables)
-import { map, filter, toArray, range } from 'fp-kit/stream';
+import { map, filter, toArray, range } from 'fp-pack/stream';
 ```
 
 ## Development
@@ -652,12 +652,12 @@ pnpm dev
 
 ## Acknowledgements
 
-fp-kit was inspired by and learned from excellent functional programming libraries in the JavaScript ecosystem:
+fp-pack was inspired by and learned from excellent functional programming libraries in the JavaScript ecosystem:
 
 - **[Ramda](https://ramdajs.com/)** - A practical functional library that pioneered many of the patterns we use today
 - **[FxJS](https://github.com/marpple/FxJS)** and **[FxTS](https://github.com/marpple/FxTS)** - Inspired by their exceptional combination of lazy evaluation and functional tooling patterns
 
-While fp-kit's implementation approaches differ (using generator functions, the SideEffect pattern, and pipe-first composition), we're deeply grateful for the influence these projects had on functional programming in JavaScript.
+While fp-pack's implementation approaches differ (using generator functions, the SideEffect pattern, and pipe-first composition), we're deeply grateful for the influence these projects had on functional programming in JavaScript.
 
 ## License
 

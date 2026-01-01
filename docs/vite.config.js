@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import lithentVitePlugin from '@lithent/lithent-vite';
 
 export default defineConfig({
-  base: '/fp-kit/',
+  base: '/fp-pack/',
   plugins: [
     lithentVitePlugin(),
     tailwindcss(),

@@ -8,7 +8,7 @@ export const Guide = () => (
     </h1>
 
     <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
-      This guide provides comprehensive guidelines for writing clean, declarative, functional code using fp-kit's utilities.
+      This guide provides comprehensive guidelines for writing clean, declarative, functional code using fp-pack's utilities.
     </p>
 
     <div class="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-5 mb-8">
@@ -71,7 +71,7 @@ export const Guide = () => (
     </h2>
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-      fp-kit is a TypeScript functional programming library focused on:
+      fp-pack is a TypeScript functional programming library focused on:
     </p>
 
     <ol class="space-y-3 text-gray-700 dark:text-gray-300 list-decimal list-inside mb-8">
@@ -98,7 +98,7 @@ export const Guide = () => (
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, map, filter, take } from 'fp-kit';
+      code={`import { pipe, map, filter, take } from 'fp-pack';
 
 // GOOD: Declarative pipe composition
 const processUsers = pipe(
@@ -136,7 +136,7 @@ const processUsers = (users: User[]) => {
 
     <CodeBlock
       language="typescript"
-      code={`import { pipeAsync } from 'fp-kit';
+      code={`import { pipeAsync } from 'fp-pack';
 
 // GOOD: Async pipe composition
 const fetchUserData = pipeAsync(
@@ -186,7 +186,7 @@ const fetchUserData = async (userId: string) => {
     <CodeBlock
       language="typescript"
       code={`// MOST CASES: Just use pipe with regular error handling
-import { pipe, map, filter } from 'fp-kit';
+import { pipe, map, filter } from 'fp-pack';
 
 const processData = pipe(
   validateInput,
@@ -201,7 +201,7 @@ try {
 }
 
 // SPECIAL CASES: Use pipeSideEffect when you need early termination with side effects
-import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
+import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-pack';
 
 const processDataPipeline = pipeSideEffect(
   validateInput,
@@ -248,7 +248,7 @@ const finalValue = runPipeResult(processDataPipeline(input));`}
 
     <CodeBlock
       language="typescript"
-      code={`import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+      code={`import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-pack';
 
 const processNumbers = pipeSideEffect(
   (nums: number[]) => nums.filter(n => n % 2 === 1),
@@ -295,8 +295,8 @@ const result = runPipeResult<number[], string>(oddsDoubled);
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe } from 'fp-kit';
-import { map, filter, take, toArray, range } from 'fp-kit/stream';
+      code={`import { pipe } from 'fp-pack';
+import { map, filter, take, toArray, range } from 'fp-pack/stream';
 
 // GOOD: Lazy stream processing
 const processLargeDataset = pipe(
@@ -362,7 +362,7 @@ const result = filter(isPositive)(numbers);`}
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, map, filter } from 'fp-kit';
+      code={`import { pipe, map, filter } from 'fp-pack';
 
 // GOOD: Curried usage in pipe
 const processUsers = pipe(
@@ -389,7 +389,7 @@ const processUsers = pipe(filterActive, getNames);`}
 
     <CodeBlock
       language="typescript"
-      code={`import { curry } from 'fp-kit';
+      code={`import { curry } from 'fp-pack';
 
 // Fixed signature: curry is enough
 function split(separator: string, str: string): string[] {
@@ -438,7 +438,7 @@ export default curriedChunk;`}
     </h2>
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-      fp-kit works seamlessly with React. Here are common patterns for integrating fp-kit into React applications.
+      fp-pack works seamlessly with React. Here are common patterns for integrating fp-pack into React applications.
     </p>
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -447,7 +447,7 @@ export default curriedChunk;`}
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, prop, trim, tap, assoc } from 'fp-kit';
+      code={`import { pipe, prop, trim, tap, assoc } from 'fp-pack';
 
 // Handle form input changes
 const handleNameChange = pipe(
@@ -481,7 +481,7 @@ const handleSubmit = pipe(
     <CodeBlock
       language="typescript"
       code={`import { useMemo } from 'react';
-import { pipe, filter, sortBy, map, take } from 'fp-kit';
+import { pipe, filter, sortBy, map, take } from 'fp-pack';
 
 function UserList({ users }: { users: User[] }) {
   // Memoize expensive transformations
@@ -506,7 +506,7 @@ function UserList({ users }: { users: User[] }) {
     <CodeBlock
       language="typescript"
       code={`import { useEffect } from 'react';
-import { pipeAsync, tap } from 'fp-kit';
+import { pipeAsync, tap } from 'fp-pack';
 
 function UserProfile({ userId }: { userId: string }) {
   useEffect(() => {
@@ -530,7 +530,7 @@ function UserProfile({ userId }: { userId: string }) {
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, assoc, dissoc, map } from 'fp-kit';
+      code={`import { pipe, assoc, dissoc, map } from 'fp-pack';
 
 // Update nested state immutably
 const updateUserName = (name: string) => {
@@ -617,8 +617,8 @@ const updateUser = (user: User) => ({
   lastLogin: new Date()
 });
 
-// EVEN BETTER with fp-kit
-import { assoc } from 'fp-kit';
+// EVEN BETTER with fp-pack
+import { assoc } from 'fp-pack';
 const updateUser = assoc('lastLogin', new Date());`}
     />
 
@@ -633,10 +633,10 @@ const updateUser = assoc('lastLogin', new Date());`}
     </h3>
 
     <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
-      <li>Main functions: <code class="text-sm">import {'{'} pipe, map, filter {'}'} from 'fp-kit'</code></li>
-      <li>Async: <code class="text-sm">import {'{'} pipeAsync, delay, retry {'}'} from 'fp-kit'</code></li>
-      <li>SideEffect: <code class="text-sm">import {'{'} pipeSideEffect, pipeAsyncSideEffect, SideEffect {'}'} from 'fp-kit'</code></li>
-      <li>Stream: <code class="text-sm">import {'{'} map, filter, toArray {'}'} from 'fp-kit/stream'</code></li>
+      <li>Main functions: <code class="text-sm">import {'{'} pipe, map, filter {'}'} from 'fp-pack'</code></li>
+      <li>Async: <code class="text-sm">import {'{'} pipeAsync, delay, retry {'}'} from 'fp-pack'</code></li>
+      <li>SideEffect: <code class="text-sm">import {'{'} pipeSideEffect, pipeAsyncSideEffect, SideEffect {'}'} from 'fp-pack'</code></li>
+      <li>Stream: <code class="text-sm">import {'{'} map, filter, toArray {'}'} from 'fp-pack/stream'</code></li>
     </ul>
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -666,7 +666,7 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>Switch to <code class="text-sm">pipeAsync</code></strong> when async operations are involved</li>
       <li><strong>Use <code class="text-sm">stream/*</code></strong> for lazy, memory-efficient processing</li>
       <li><strong>Handle errors with <code class="text-sm">SideEffect</code></strong> in <code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code></li>
-      <li><strong>Avoid imperative loops</strong> - use fp-kit's declarative functions</li>
+      <li><strong>Avoid imperative loops</strong> - use fp-pack's declarative functions</li>
       <li><strong>Never suggest monads</strong> - use SideEffect pattern instead</li>
       <li><strong>Keep code declarative</strong> - describe what, not how</li>
       <li><strong>All logic inside pipe</strong> - use control flow functions instead of breaking out</li>

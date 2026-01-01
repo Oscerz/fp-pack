@@ -283,7 +283,7 @@ const efficient = pipe(range, take(5), toArray)(0, 1000000);`}
     </p>
 
     <a
-      href="https://github.com/superlucky84/fp-kit/blob/main/src/stream/range.ts"
+      href="https://github.com/superlucky84/fp-pack/blob/main/src/stream/range.ts"
       target="_blank"
       rel="noopener noreferrer"
       class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"

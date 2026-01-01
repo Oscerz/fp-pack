@@ -4,7 +4,7 @@ import { CodeBlock } from '@/components/CodeBlock';
 export const Home_ko = () => (
   <div class="prose prose-lg dark:prose-invert max-w-none">
     <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-      fp-kit
+      fp-pack
     </h1>
 
     <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
@@ -58,7 +58,7 @@ export const Home_ko = () => (
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
-      왜 fp-kit인가?
+      왜 fp-pack인가?
     </h2>
 
     <ul class="space-y-3 text-gray-700 dark:text-gray-300">
@@ -140,7 +140,7 @@ export const Home_ko = () => (
         </p>
         <CodeBlock
           language="typescript"
-          code={`import * as Stream from 'fp-kit/stream';
+          code={`import * as Stream from 'fp-pack/stream';
 
 const first100 = pipe(
   Stream.filter(n => n % 2 === 0),
@@ -287,7 +287,7 @@ const result = runPipeResult(paymentPipeline(userCard));
     </h2>
 
     <p class="text-gray-700 dark:text-gray-300 mb-4">
-      fp-kit은 AI 코딩 어시스턴트(Claude Code, GitHub Copilot, Cursor 등)가 자동으로 fp-kit 스타일의 함수형 코드를 작성하도록 돕는 스킬 파일을 포함합니다.
+      fp-pack은 AI 코딩 어시스턴트(Claude Code, GitHub Copilot, Cursor 등)가 자동으로 fp-pack 스타일의 함수형 코드를 작성하도록 돕는 스킬 파일을 포함합니다.
     </p>
 
     <div class="border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20 p-4 md:p-6 mb-6 rounded-r">
@@ -309,7 +309,7 @@ const result = runPipeResult(paymentPipeline(userCard));
         </li>
         <li class="flex items-start">
           <span class="mr-2">•</span>
-          <span>fp-kit 유틸리티를 사용한 선언적, 함수형 코드 작성</span>
+          <span>fp-pack 유틸리티를 사용한 선언적, 함수형 코드 작성</span>
         </li>
       </ul>
     </div>
@@ -319,7 +319,7 @@ const result = runPipeResult(paymentPipeline(userCard));
     </h3>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
-      AI 코딩 어시스턴트가 스킬 파일을 지원한다면, <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">fp-kit.md</code>를 적절한 디렉토리에 복사하세요.
+      AI 코딩 어시스턴트가 스킬 파일을 지원한다면, <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">fp-pack.md</code>를 적절한 디렉토리에 복사하세요.
     </p>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
@@ -329,14 +329,14 @@ const result = runPipeResult(paymentPipeline(userCard));
     <CodeBlock
       language="bash"
       code={`# Unix/macOS/Linux
-cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+cp node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/
 
 # Windows (PowerShell)
-Copy-Item node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+Copy-Item node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/
 
 # 또는 수동으로 디렉토리 생성 후 복사
 mkdir -p .claude/skills
-cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/`}
+cp node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/`}
     />
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mt-4 mb-2">
@@ -344,7 +344,7 @@ cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/`}
     </p>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-6">
-      설정을 완료하면 AI 어시스턴트가 코드 작성 시 자동으로 fp-kit 코딩 패턴을 적용합니다.
+      설정을 완료하면 AI 어시스턴트가 코드 작성 시 자동으로 fp-pack 코딩 패턴을 적용합니다.
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

@@ -1,12 +1,12 @@
-# fp-kit AI Agent Skills
+# fp-pack AI Agent Skills
 
 Document Version: {{version}}
 
-This document provides guidelines for AI coding assistants when working in projects that use fp-kit. Follow these instructions to write clean, declarative, functional code using fp-kit's utilities.
+This document provides guidelines for AI coding assistants when working in projects that use fp-pack. Follow these instructions to write clean, declarative, functional code using fp-pack's utilities.
 
 ## Project Philosophy
 
-fp-kit is a TypeScript functional programming library focused on:
+fp-pack is a TypeScript functional programming library focused on:
 
 1. **Function Composition**: Use `pipe` and `pipeAsync` as the primary tools for combining operations
 2. **Declarative Code**: Prefer function composition over imperative loops and mutations
@@ -21,7 +21,7 @@ fp-kit is a TypeScript functional programming library focused on:
 **Always prefer `pipe` for synchronous operations** instead of manual imperative code.
 
 ```typescript
-import { pipe, map, filter, take } from 'fp-kit';
+import { pipe, map, filter, take } from 'fp-pack';
 
 // GOOD: Declarative pipe composition
 const processUsers = pipe(
@@ -50,7 +50,7 @@ const processUsers = (users: User[]) => {
 **Use `pipeAsync` for any async operations** including API calls, database queries, or async transformations.
 
 ```typescript
-import { pipeAsync } from 'fp-kit';
+import { pipeAsync } from 'fp-pack';
 
 // GOOD: Async pipe composition
 const fetchUserData = pipeAsync(
@@ -82,7 +82,7 @@ For regular error handling, standard try-catch or error propagation is perfectly
 
 ```typescript
 // MOST CASES: Just use pipe with regular error handling
-import { pipe, map, filter } from 'fp-kit';
+import { pipe, map, filter } from 'fp-pack';
 
 const processData = pipe(
   validateInput,
@@ -97,7 +97,7 @@ try {
 }
 
 // SPECIAL CASES: Use pipeSideEffect when you need early termination with side effects
-import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
+import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-pack';
 
 const processDataPipeline = pipeSideEffect(
   validateInput,
@@ -127,7 +127,7 @@ const finalValue = runPipeResult(processDataPipeline(input));
 **Type-safe result handling:**
 
 ```typescript
-import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-pack';
 
 const processNumbers = pipeSideEffect(
   (nums: number[]) => nums.filter(n => n % 2 === 1),
@@ -171,8 +171,8 @@ const value = runPipeResult<number[], string>(result);  // result: number[] | st
 **Use `stream/*` functions for lazy, memory-efficient data processing** instead of array methods.
 
 ```typescript
-import { pipe } from 'fp-kit';
-import { map, filter, take, toArray, range } from 'fp-kit/stream';
+import { pipe } from 'fp-pack';
+import { map, filter, take, toArray, range } from 'fp-pack/stream';
 
 // GOOD: Lazy stream processing
 const processLargeDataset = pipe(
@@ -303,10 +303,10 @@ If a function signature or argument order is unclear, check the local declaratio
 - Main utilities (fallback): `src/implement/**`
 - Stream utilities (fallback): `src/stream/**`
 - Installed package:
-  - `node_modules/fp-kit/dist/index.d.ts`
-  - `node_modules/fp-kit/dist/stream/index.d.ts`
-  - `node_modules/fp-kit/src/implement/**`
-  - `node_modules/fp-kit/src/stream/**`
+  - `node_modules/fp-pack/dist/index.d.ts`
+  - `node_modules/fp-pack/dist/stream/index.d.ts`
+  - `node_modules/fp-pack/src/implement/**`
+  - `node_modules/fp-pack/src/stream/**`
 
 ### 1. Always Prefer pipe/pipeAsync
 
@@ -331,7 +331,7 @@ const result = filter(isPositive)(numbers);
 Most multi-arg functions are curried. Many single-arg utilities are not (e.g. `uniq`, `flatten`, `flattenDeep`, `head`, `tail`, `last`, `init`, `range`, `sum`, `mean`, `min`, `max`, `round`, `floor`, `ceil`, `trim`, `toLower`, `toUpper`, `isNil`, `isEmpty`, `isType`). Call those directly (there's no curried variant).
 
 ```typescript
-import { pipe, map, filter } from 'fp-kit';
+import { pipe, map, filter } from 'fp-pack';
 
 // GOOD: Curried usage in pipe
 const processUsers = pipe(
@@ -413,7 +413,7 @@ Once you use `pipeSideEffect` or `pipeAsyncSideEffect`, the result is **always `
 If you want to continue composing this result, you **MUST** keep using SideEffect-aware pipes. You **CANNOT** switch back to `pipe` or `pipeAsync` because they don't handle `SideEffect`.
 
 ```typescript
-import { pipe, pipeSideEffect, SideEffect } from 'fp-kit';
+import { pipe, pipeSideEffect, SideEffect } from 'fp-pack';
 
 const validateUserPipeline = pipeSideEffect(
   findUser,
@@ -452,8 +452,8 @@ const extendedAsyncPipeline = pipeAsyncSideEffect(
 ### 4. Use stream/* for Large Datasets
 
 ```typescript
-import { pipe } from 'fp-kit';
-import { filter, map, take, toArray, range } from 'fp-kit/stream';
+import { pipe } from 'fp-pack';
+import { filter, map, take, toArray, range } from 'fp-pack/stream';
 
 // GOOD: Lazy processing
 const getFirst100Even = pipe(
@@ -469,7 +469,7 @@ const result = getFirst100Even(range(1, 1000000));
 ### 5. Handle Errors with SideEffect
 
 ```typescript
-import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
+import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-pack';
 
 const safeDividePipeline = pipeSideEffect(
   (input: { a: number; b: number }) => {
@@ -490,7 +490,7 @@ const result = runPipeResult(safeDividePipeline({ a: 10, b: 2 })); // 5
 ### 6. Use Control Flow Functions
 
 ```typescript
-import { pipe, ifElse, when, cond } from 'fp-kit';
+import { pipe, ifElse, when, cond } from 'fp-pack';
 
 // GOOD: Declarative conditionals
 const processAge = pipe(
@@ -513,7 +513,7 @@ const gradeToLetter = cond([
 ### 7. Object Transformations
 
 ```typescript
-import { pipe, pick, mapValues, merge } from 'fp-kit';
+import { pipe, pick, mapValues, merge } from 'fp-pack';
 
 // GOOD: Declarative object operations
 const processUser = pipe(
@@ -600,18 +600,18 @@ const updateUser = (user: User) => ({
   lastLogin: new Date()
 });
 
-// EVEN BETTER with fp-kit
-import { assoc } from 'fp-kit';
+// EVEN BETTER with fp-pack
+import { assoc } from 'fp-pack';
 const updateUser = assoc('lastLogin', new Date());
 ```
 
 ## Quick Reference
 
 ### Import Paths
-- Main functions: `import { pipe, map, filter } from 'fp-kit'`
-- Async: `import { pipeAsync, delay, retry } from 'fp-kit'`
-- SideEffect: `import { pipeSideEffect, pipeAsyncSideEffect, SideEffect } from 'fp-kit'`
-- Stream: `import { map, filter, toArray } from 'fp-kit/stream'`
+- Main functions: `import { pipe, map, filter } from 'fp-pack'`
+- Async: `import { pipeAsync, delay, retry } from 'fp-pack'`
+- SideEffect: `import { pipeSideEffect, pipeAsyncSideEffect, SideEffect } from 'fp-pack'`
+- Stream: `import { map, filter, toArray } from 'fp-pack/stream'`
 
 ### When to Use What
 - **Pure sync transformations**: `pipe` + array/object functions
@@ -626,7 +626,7 @@ const updateUser = assoc('lastLogin', new Date());
 
 ## UI Framework Integration Patterns
 
-fp-kit works seamlessly with UI frameworks. Here are common patterns organized by **use case**, not framework.
+fp-pack works seamlessly with UI frameworks. Here are common patterns organized by **use case**, not framework.
 
 ### Pattern 1: Handling User Input
 
@@ -634,7 +634,7 @@ fp-kit works seamlessly with UI frameworks. Here are common patterns organized b
 **Where to use**: Event handlers (onChange, @input, on:click, etc.)
 
 ```typescript
-import { pipe, pipeAsyncSideEffect, trim, prop, assoc, tap, SideEffect, runPipeResult } from 'fp-kit';
+import { pipe, pipeAsyncSideEffect, trim, prop, assoc, tap, SideEffect, runPipeResult } from 'fp-pack';
 
 // GOOD: Process form input declaratively
 const handleNameChange = pipe(
@@ -680,7 +680,7 @@ const handleSubmit = (e: Event) => runPipeResult(handleSubmitPipeline(e));
 **Where to use**: Computed properties, memoized values, derived state
 
 ```typescript
-import { pipe, filter, sortBy, map, take } from 'fp-kit';
+import { pipe, filter, sortBy, map, take } from 'fp-pack';
 
 // GOOD: Create reusable data transformation
 const processUsers = pipe(
@@ -720,8 +720,8 @@ const searchUsers = (query: string, page: number) =>
 **Where to use**: Lifecycle hooks, effects, async event handlers
 
 ```typescript
-import { pipeAsync, pipeAsyncSideEffect, tap, SideEffect, runPipeResult } from 'fp-kit';
-import { filter, map } from 'fp-kit';
+import { pipeAsync, pipeAsyncSideEffect, tap, SideEffect, runPipeResult } from 'fp-pack';
+import { filter, map } from 'fp-pack';
 
 // GOOD: Fetch + transform + update state
 const fetchAndProcessUsers = pipeAsync(
@@ -767,7 +767,7 @@ const safeFetchUsers = () => runPipeResult(safeFetchUsersPipeline());
 **Where to use**: Component render logic, computed values
 
 ```typescript
-import { pipe, filter, sortBy, groupBy, map } from 'fp-kit';
+import { pipe, filter, sortBy, groupBy, map } from 'fp-pack';
 
 // GOOD: Complete table data pipeline
 const processTableData = (
@@ -813,7 +813,7 @@ const groupProductsByCategory = pipe(
 **Where to use**: Form submission, field updates, validation
 
 ```typescript
-import { pipe, pipeSideEffect, assoc, pick, mapValues, SideEffect, runPipeResult } from 'fp-kit';
+import { pipe, pipeSideEffect, assoc, pick, mapValues, SideEffect, runPipeResult } from 'fp-pack';
 
 // GOOD: Update nested form state immutably
 const updateField = (fieldName: string, value: any) =>
@@ -866,7 +866,7 @@ const goToNextStep = (state: any) => runPipeResult(goToNextStepPipeline(state));
 **Where to use**: WebSocket handlers, event listeners
 
 ```typescript
-import { pipe, filter, map, take } from 'fp-kit';
+import { pipe, filter, map, take } from 'fp-pack';
 
 // GOOD: Process incoming WebSocket messages
 const handleWebSocketMessage = pipe(
@@ -884,8 +884,8 @@ const handleWebSocketMessage = pipe(
 // websocket.onmessage = handleWebSocketMessage;
 
 // GOOD: Batch updates with stream
-import { pipe as streamPipe, filter as streamFilter, take as streamTake, toArray } from 'fp-kit/stream';
-import { pipeAsync, runPipeResult } from 'fp-kit';
+import { pipe as streamPipe, filter as streamFilter, take as streamTake, toArray } from 'fp-pack/stream';
+import { pipeAsync, runPipeResult } from 'fp-pack';
 
 const processBatchUpdates = async (updates: AsyncIterable<Update>) => {
   const processed = await streamPipe(
@@ -904,7 +904,7 @@ const processBatchUpdates = async (updates: AsyncIterable<Update>) => {
 **Where to use**: Component composition, prop drilling
 
 ```typescript
-import { pipe, pick, map, merge } from 'fp-kit';
+import { pipe, pick, map, merge } from 'fp-pack';
 
 // GOOD: Transform data for child component
 const prepareUserCardProps = pipe(
@@ -940,9 +940,9 @@ const prepareListItems = pipe(
 **Where to use**: Redux/Zustand/Pinia reducers, state update functions
 
 ```typescript
-import { pipe, assoc, dissoc, merge, evolve } from 'fp-kit';
+import { pipe, assoc, dissoc, merge, evolve } from 'fp-pack';
 
-// GOOD: Redux-style reducer with fp-kit
+// GOOD: Redux-style reducer with fp-pack
 const userReducer = (state: State, action: Action) => {
   switch (action.type) {
     case 'ADD_USER':
@@ -990,7 +990,7 @@ const updateNestedState = evolve({
 **Where to use**: Create/update/delete operations
 
 ```typescript
-import { pipe, pipeAsync, append, filter } from 'fp-kit';
+import { pipe, pipeAsync, append, filter } from 'fp-pack';
 
 // GOOD: Optimistic create with rollback
 const createItemOptimistically = (newItem: Item) => {
@@ -1027,7 +1027,7 @@ const createItemOptimistically = (newItem: Item) => {
 **Where to use**: Routing, search parameters, filters
 
 ```typescript
-import { pipe, pick, mapValues, merge } from 'fp-kit';
+import { pipe, pick, mapValues, merge } from 'fp-pack';
 
 // GOOD: Parse query params to state
 const parseQueryParams = pipe(
@@ -1063,8 +1063,8 @@ const stateToQueryParams = pipe(
 **Where to use**: Scroll handlers, pagination, large dataset rendering
 
 ```typescript
-import { pipe, pipeAsyncSideEffect, when, tap, runPipeResult } from 'fp-kit';
-import { pipe as streamPipe, filter as streamFilter, take as streamTake, toArray } from 'fp-kit/stream';
+import { pipe, pipeAsyncSideEffect, when, tap, runPipeResult } from 'fp-pack';
+import { pipe as streamPipe, filter as streamFilter, take as streamTake, toArray } from 'fp-pack/stream';
 
 // GOOD: Infinite scroll with pipe - all logic inside
 const handleScroll = pipe(
@@ -1139,7 +1139,7 @@ const handleIntersection = pipe(
 **Where to use**: Any state update with business logic
 
 ```typescript
-import { pipe, ifElse, when, cond, tap, assoc, prop, append, map, filter, merge } from 'fp-kit';
+import { pipe, ifElse, when, cond, tap, assoc, prop, append, map, filter, merge } from 'fp-pack';
 
 // GOOD: Use ifElse instead of if/else
 const toggleUserStatus = pipe(
@@ -1232,7 +1232,7 @@ const updateCartItem = (itemId: string, quantity: number) => pipe(
 
 ## Library Integration Quick Reference
 
-This section shows how to integrate fp-kit with popular UI libraries. All examples keep logic **inside pipe chains** using fp-kit control flow functions.
+This section shows how to integrate fp-pack with popular UI libraries. All examples keep logic **inside pipe chains** using fp-pack control flow functions.
 
 ### React Ecosystem
 
@@ -1240,7 +1240,7 @@ This section shows how to integrate fp-kit with popular UI libraries. All exampl
 
 ```typescript
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { pipe, filter, sortBy, map, tap, when } from 'fp-kit';
+import { pipe, filter, sortBy, map, tap, when } from 'fp-pack';
 
 // GOOD: Transform data in select using pipe
 const { data: activeUsers } = useQuery({
@@ -1293,7 +1293,7 @@ const updateMutation = useMutation({
 
 ```typescript
 import create from 'zustand';
-import { pipe, append, filter, map, merge, ifElse, when, tap, prop, sortBy, assoc } from 'fp-kit';
+import { pipe, append, filter, map, merge, ifElse, when, tap, prop, sortBy, assoc } from 'fp-pack';
 
 // GOOD: All actions use pipe
 const useStore = create((set, get) => ({
@@ -1351,7 +1351,7 @@ const useStore = create((set, get) => ({
 
 ```typescript
 import { createSlice } from '@reduxjs/toolkit';
-import { pipe, append, filter, map, merge, sortBy, cond, assoc } from 'fp-kit';
+import { pipe, append, filter, map, merge, sortBy, cond, assoc } from 'fp-pack';
 
 // GOOD: Reducers with pipe - no manual mutations
 const userSlice = createSlice({
@@ -1408,7 +1408,7 @@ const userSlice = createSlice({
 
 ```typescript
 import { useForm } from 'react-hook-form';
-import { pipe, pipeSideEffect, pipeAsyncSideEffect, pick, mapValues, trim, when, tap, SideEffect, runPipeResult } from 'fp-kit';
+import { pipe, pipeSideEffect, pipeAsyncSideEffect, pick, mapValues, trim, when, tap, SideEffect, runPipeResult } from 'fp-pack';
 
 // GOOD: Validation with pipeSideEffect
 const validateFormDataPipeline = pipeSideEffect(
@@ -1452,7 +1452,7 @@ const onSubmit = (data: any) => runPipeResult(onSubmitPipeline(data));
 
 ```typescript
 import { defineStore } from 'pinia';
-import { pipe, append, filter, map, merge, sortBy, when, tap } from 'fp-kit';
+import { pipe, append, filter, map, merge, sortBy, when, tap } from 'fp-pack';
 
 // GOOD: All actions use pipe
 export const useUserStore = defineStore('user', {
@@ -1492,7 +1492,7 @@ export const useUserStore = defineStore('user', {
 
 ```typescript
 import { useFetch } from '@vueuse/core';
-import { pipe, filter, map, sortBy, tap } from 'fp-kit';
+import { pipe, filter, map, sortBy, tap } from 'fp-pack';
 
 // GOOD: Transform response with pipe
 const { data } = useFetch('/api/users', {
@@ -1519,7 +1519,7 @@ const refreshIfNeeded = pipe(
 
 ### State Management Patterns
 
-All state management libraries benefit from fp-kit's immutable update patterns:
+All state management libraries benefit from fp-pack's immutable update patterns:
 
 ```typescript
 // GOOD: Generic state update pattern (works with any library)
@@ -1564,25 +1564,25 @@ While the patterns above are framework-agnostic, here's where to apply them:
 - **Vue**: `state.value = pipe(...)(state.value)`
 - **Svelte**: `$state = pipe(...)($state)`
 
-All patterns use the same fp-kit functions - only the framework's state/reactive wrapper changes.
+All patterns use the same fp-pack functions - only the framework's state/reactive wrapper changes.
 
 ## Summary
 
-As an AI coding assistant working with fp-kit:
+As an AI coding assistant working with fp-pack:
 
 1. **Default to `pipe`** for all data transformations
 2. **Switch to `pipeAsync`** when async operations are involved (use `pipeAsyncSideEffect` if SideEffect is in the flow)
 3. **Use `stream/*`** for lazy, memory-efficient processing
 4. **Handle errors with `SideEffect`** in `pipeSideEffect`/`pipeAsyncSideEffect`, not try-catch
-5. **Avoid imperative loops** - use fp-kit's declarative functions
+5. **Avoid imperative loops** - use fp-pack's declarative functions
 6. **Never suggest monads** - use SideEffect pattern instead
 7. **Keep code declarative** - describe what, not how
 8. **All logic inside pipe** - never break out of pipe chains for conditionals or loops
 9. **Use control flow functions** - `when`, `unless`, `ifElse`, `cond` instead of if/else/switch
 10. **Call `runPipeResult` OUTSIDE pipelines** - `runPipeResult` / `matchSideEffect` must be called outside `pipeSideEffect`/`pipeAsyncSideEffect` for proper type safety
 11. **Use `isSideEffect` for type narrowing** - get precise types in both success and error branches
-12. **Apply use-case patterns** - recognize scenarios (form handling, list processing, etc.) and apply appropriate fp-kit patterns
-13. **Framework-agnostic core** - write fp-kit logic independent of UI framework, only wrap at the boundaries
+12. **Apply use-case patterns** - recognize scenarios (form handling, list processing, etc.) and apply appropriate fp-pack patterns
+13. **Framework-agnostic core** - write fp-pack logic independent of UI framework, only wrap at the boundaries
 14. **Library integration** - use pipe in select/resolver/action functions of popular libraries (React Query, Zustand, Pinia, etc.)
 
 ### Key Principles
@@ -1641,4 +1641,4 @@ const processAction = (action) => {
 };
 ```
 
-Your goal is to write clean, readable, functional code that leverages fp-kit's full potential in real-world UI applications.
+Your goal is to write clean, readable, functional code that leverages fp-pack's full potential in real-world UI applications.

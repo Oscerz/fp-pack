@@ -5,15 +5,15 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/stream/index.ts'),
-      name: 'FpKitStream',
+      name: 'FpPackStream',
     },
     rollupOptions: {
       external: [],
       output: [
         {
           format: 'umd',
-          name: 'FpKitStream',
-          entryFileNames: 'fp-kit-stream.umd.js',
+          name: 'FpPackStream',
+          entryFileNames: 'fp-pack-stream.umd.js',
           globals: {},
         },
       ],

@@ -4,7 +4,7 @@ import { CodeBlock } from '@/components/CodeBlock';
 export const Home = () => (
   <div class="prose prose-lg dark:prose-invert max-w-none">
     <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-      fp-kit
+      fp-pack
     </h1>
 
     <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
@@ -58,7 +58,7 @@ export const Home = () => (
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
-      Why fp-kit?
+      Why fp-pack?
     </h2>
 
     <ul class="space-y-3 text-gray-700 dark:text-gray-300">
@@ -140,7 +140,7 @@ export const Home = () => (
         </p>
         <CodeBlock
           language="typescript"
-          code={`import * as Stream from 'fp-kit/stream';
+          code={`import * as Stream from 'fp-pack/stream';
 
 const first100 = pipe(
   Stream.filter(n => n % 2 === 0),
@@ -287,7 +287,7 @@ const result = runPipeResult(paymentPipeline(userCard));
     </h2>
 
     <p class="text-gray-700 dark:text-gray-300 mb-4">
-      fp-kit includes an AI agent skills file that helps AI coding assistants (Claude Code, GitHub Copilot, Cursor, etc.) automatically write fp-kit-style functional code.
+      fp-pack includes an AI agent skills file that helps AI coding assistants (Claude Code, GitHub Copilot, Cursor, etc.) automatically write fp-pack-style functional code.
     </p>
 
     <div class="border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20 p-4 md:p-6 mb-6 rounded-r">
@@ -309,7 +309,7 @@ const result = runPipeResult(paymentPipeline(userCard));
         </li>
         <li class="flex items-start">
           <span class="mr-2">•</span>
-          <span>Write declarative, functional code using fp-kit utilities</span>
+          <span>Write declarative, functional code using fp-pack utilities</span>
         </li>
       </ul>
     </div>
@@ -319,7 +319,7 @@ const result = runPipeResult(paymentPipeline(userCard));
     </h3>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
-      If your AI coding assistant supports skills files, copy <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">fp-kit.md</code> to the appropriate directory.
+      If your AI coding assistant supports skills files, copy <code class="text-xs md:text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">fp-pack.md</code> to the appropriate directory.
     </p>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
@@ -329,14 +329,14 @@ const result = runPipeResult(paymentPipeline(userCard));
     <CodeBlock
       language="bash"
       code={`# Unix/macOS/Linux
-cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+cp node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/
 
 # Windows (PowerShell)
-Copy-Item node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/
+Copy-Item node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/
 
 # Or manually create the directory and copy
 mkdir -p .claude/skills
-cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/`}
+cp node_modules/fp-pack/dist/skills/fp-pack.md .claude/skills/`}
     />
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mt-4 mb-2">
@@ -344,7 +344,7 @@ cp node_modules/fp-kit/dist/skills/fp-kit.md .claude/skills/`}
     </p>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-6">
-      Once configured, your AI assistant will automatically apply fp-kit coding patterns when helping you write code.
+      Once configured, your AI assistant will automatically apply fp-pack coding patterns when helping you write code.
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

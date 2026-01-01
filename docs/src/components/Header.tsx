@@ -22,7 +22,7 @@ export const Header = mount(renew => {
                   }}
                   class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all cursor-pointer"
                 >
-                  fp-kit
+                  fp-pack
                 </a>
               </div>
 
@@ -84,7 +84,7 @@ export const Header = mount(renew => {
               </div>
 
               <a
-                href="https://github.com/superlucky84/fp-kit"
+                href="https://github.com/superlucky84/fp-pack"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hidden sm:block text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"

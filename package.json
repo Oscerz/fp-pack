@@ -1,5 +1,5 @@
 {
-  "name": "fp-kit",
+  "name": "fp-pack",
   "version": "0.1.0",
   "type": "module",
   "description": "Functional programming utilities library for TypeScript",
@@ -21,24 +21,24 @@
     "side-effect"
   ],
   "license": "MIT",
-  "homepage": "https://superlucky84.github.io/fp-kit/",
-  "repository": "https://github.com/superlucky84/fp-kit",
+  "homepage": "https://superlucky84.github.io/fp-pack/",
+  "repository": "https://github.com/superlucky84/fp-pack",
   "bugs": {
-    "url": "https://github.com/superlucky84/fp-kit/issues"
+    "url": "https://github.com/superlucky84/fp-pack/issues"
   },
-  "main": "./dist/fp-kit.umd.js",
+  "main": "./dist/fp-pack.umd.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/fp-kit.umd.js"
+      "require": "./dist/fp-pack.umd.js"
     },
     "./stream": {
       "types": "./dist/stream/index.d.ts",
       "import": "./dist/stream/index.mjs",
-      "require": "./dist/fp-kit-stream.umd.js"
+      "require": "./dist/fp-pack-stream.umd.js"
     }
   },
   "typesVersions": {

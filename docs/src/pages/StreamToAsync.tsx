@@ -77,7 +77,7 @@ await pipeAsync(toAsync, chunk(2), toArray)([
     </p>
 
     <a
-      href="https://github.com/superlucky84/fp-kit/blob/main/src/stream/toAsync.ts"
+      href="https://github.com/superlucky84/fp-pack/blob/main/src/stream/toAsync.ts"
       target="_blank"
       rel="noopener noreferrer"
       class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"

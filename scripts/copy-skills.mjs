@@ -12,10 +12,10 @@ const packageJson = JSON.parse(
   readFileSync(`${projectRoot}/package.json`, 'utf8')
 );
 const version = packageJson.version ?? '0.0.0';
-const source = readFileSync(`${projectRoot}/fp-kit.md`, 'utf8');
+const source = readFileSync(`${projectRoot}/fp-pack.md`, 'utf8');
 const withVersion = source.replace('{{version}}', version);
 
-// Copy fp-kit.md to dist/skills/ with version injected
-writeFileSync(`${projectRoot}/dist/skills/fp-kit.md`, withVersion);
+// Copy fp-pack.md to dist/skills/ with version injected
+writeFileSync(`${projectRoot}/dist/skills/fp-pack.md`, withVersion);
 
-console.log('✓ Copied fp-kit.md to dist/skills/');
+console.log('✓ Copied fp-pack.md to dist/skills/');

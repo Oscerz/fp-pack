@@ -8,7 +8,7 @@ export const Guide_ko = () => (
     </h1>
 
     <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
-      이 가이드는 fp-kit 유틸리티를 사용하여 깔끔하고 선언적인 함수형 코드를 작성하기 위한 포괄적인 지침을 제공합니다.
+      이 가이드는 fp-pack 유틸리티를 사용하여 깔끔하고 선언적인 함수형 코드를 작성하기 위한 포괄적인 지침을 제공합니다.
     </p>
 
     <div class="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-5 mb-8">
@@ -71,7 +71,7 @@ export const Guide_ko = () => (
     </h2>
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-      fp-kit은 다음에 중점을 둔 TypeScript 함수형 프로그래밍 라이브러리입니다:
+      fp-pack은 다음에 중점을 둔 TypeScript 함수형 프로그래밍 라이브러리입니다:
     </p>
 
     <ol class="space-y-3 text-gray-700 dark:text-gray-300 list-decimal list-inside mb-8">
@@ -98,7 +98,7 @@ export const Guide_ko = () => (
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, map, filter, take } from 'fp-kit';
+      code={`import { pipe, map, filter, take } from 'fp-pack';
 
 // 좋음: 선언적 파이프 조합
 const processUsers = pipe(
@@ -136,7 +136,7 @@ const processUsers = (users: User[]) => {
 
     <CodeBlock
       language="typescript"
-      code={`import { pipeAsync } from 'fp-kit';
+      code={`import { pipeAsync } from 'fp-pack';
 
 // 좋음: 비동기 파이프 조합
 const fetchUserData = pipeAsync(
@@ -186,7 +186,7 @@ const fetchUserData = async (userId: string) => {
     <CodeBlock
       language="typescript"
       code={`// 대부분의 경우: 일반 에러 처리와 함께 pipe만 사용
-import { pipe, map, filter } from 'fp-kit';
+import { pipe, map, filter } from 'fp-pack';
 
 const processData = pipe(
   validateInput,
@@ -201,7 +201,7 @@ try {
 }
 
 // 특수 사례: 부수 효과와 함께 조기 종료가 필요한 경우 pipeSideEffect 사용
-import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
+import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-pack';
 
 const processDataPipeline = pipeSideEffect(
   validateInput,
@@ -248,7 +248,7 @@ const finalValue = runPipeResult(processDataPipeline(input));`}
 
     <CodeBlock
       language="typescript"
-      code={`import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+      code={`import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-pack';
 
 const processNumbers = pipeSideEffect(
   (nums: number[]) => nums.filter(n => n % 2 === 1),
@@ -295,8 +295,8 @@ const result = runPipeResult<number[], string>(oddsDoubled);
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe } from 'fp-kit';
-import { map, filter, take, toArray, range } from 'fp-kit/stream';
+      code={`import { pipe } from 'fp-pack';
+import { map, filter, take, toArray, range } from 'fp-pack/stream';
 
 // 좋음: 지연 스트림 처리
 const processLargeDataset = pipe(
@@ -362,7 +362,7 @@ const result = filter(isPositive)(numbers);`}
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, map, filter } from 'fp-kit';
+      code={`import { pipe, map, filter } from 'fp-pack';
 
 // 좋음: 파이프에서 커리된 사용
 const processUsers = pipe(
@@ -388,7 +388,7 @@ const processUsers = pipe(filterActive, getNames);`}
 
     <CodeBlock
       language="typescript"
-      code={`import { curry } from 'fp-kit';
+      code={`import { curry } from 'fp-pack';
 
 // 고정 시그니처: curry만으로 충분
 function split(separator: string, str: string): string[] {
@@ -437,7 +437,7 @@ export default curriedChunk;`}
     </h2>
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-      fp-kit은 React와 완벽하게 통합됩니다. React 애플리케이션에서 fp-kit을 활용하는 일반적인 패턴들을 소개합니다.
+      fp-pack은 React와 완벽하게 통합됩니다. React 애플리케이션에서 fp-pack을 활용하는 일반적인 패턴들을 소개합니다.
     </p>
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -446,7 +446,7 @@ export default curriedChunk;`}
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, prop, trim, tap, assoc } from 'fp-kit';
+      code={`import { pipe, prop, trim, tap, assoc } from 'fp-pack';
 
 // 폼 입력 변경 처리
 const handleNameChange = pipe(
@@ -480,7 +480,7 @@ const handleSubmit = pipe(
     <CodeBlock
       language="typescript"
       code={`import { useMemo } from 'react';
-import { pipe, filter, sortBy, map, take } from 'fp-kit';
+import { pipe, filter, sortBy, map, take } from 'fp-pack';
 
 function UserList({ users }: { users: User[] }) {
   // 비용이 큰 변환을 메모이제이션
@@ -505,7 +505,7 @@ function UserList({ users }: { users: User[] }) {
     <CodeBlock
       language="typescript"
       code={`import { useEffect } from 'react';
-import { pipeAsync, tap } from 'fp-kit';
+import { pipeAsync, tap } from 'fp-pack';
 
 function UserProfile({ userId }: { userId: string }) {
   useEffect(() => {
@@ -529,7 +529,7 @@ function UserProfile({ userId }: { userId: string }) {
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, assoc, dissoc, map } from 'fp-kit';
+      code={`import { pipe, assoc, dissoc, map } from 'fp-pack';
 
 // 중첩된 상태를 불변으로 업데이트
 const updateUserName = (name: string) => {
@@ -616,8 +616,8 @@ const updateUser = (user: User) => ({
   lastLogin: new Date()
 });
 
-// fp-kit을 사용하면 더욱 좋음
-import { assoc } from 'fp-kit';
+// fp-pack을 사용하면 더욱 좋음
+import { assoc } from 'fp-pack';
 const updateUser = assoc('lastLogin', new Date());`}
     />
 
@@ -632,10 +632,10 @@ const updateUser = assoc('lastLogin', new Date());`}
     </h3>
 
     <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
-      <li>주요 함수: <code class="text-sm">import {'{'} pipe, map, filter {'}'} from 'fp-kit'</code></li>
-      <li>비동기: <code class="text-sm">import {'{'} pipeAsync, delay, retry {'}'} from 'fp-kit'</code></li>
-      <li>SideEffect: <code class="text-sm">import {'{'} pipeSideEffect, pipeAsyncSideEffect, SideEffect {'}'} from 'fp-kit'</code></li>
-      <li>스트림: <code class="text-sm">import {'{'} map, filter, toArray {'}'} from 'fp-kit/stream'</code></li>
+      <li>주요 함수: <code class="text-sm">import {'{'} pipe, map, filter {'}'} from 'fp-pack'</code></li>
+      <li>비동기: <code class="text-sm">import {'{'} pipeAsync, delay, retry {'}'} from 'fp-pack'</code></li>
+      <li>SideEffect: <code class="text-sm">import {'{'} pipeSideEffect, pipeAsyncSideEffect, SideEffect {'}'} from 'fp-pack'</code></li>
+      <li>스트림: <code class="text-sm">import {'{'} map, filter, toArray {'}'} from 'fp-pack/stream'</code></li>
     </ul>
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -665,7 +665,7 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>비동기 연산이 포함되면 <code class="text-sm">pipeAsync</code>로 전환</strong></li>
       <li><strong>지연, 메모리 효율적인 처리를 위해 <code class="text-sm">stream/*</code> 사용</strong></li>
       <li><strong><code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code>에서 <code class="text-sm">SideEffect</code>로 에러 처리</strong></li>
-      <li><strong>명령형 루프 피하기</strong> - fp-kit의 선언적 함수 사용</li>
+      <li><strong>명령형 루프 피하기</strong> - fp-pack의 선언적 함수 사용</li>
       <li><strong>모나드 제안하지 않기</strong> - 대신 SideEffect 패턴 사용</li>
       <li><strong>코드를 선언적으로 유지</strong> - 무엇을 할지 기술, 어떻게가 아님</li>
       <li><strong>모든 로직을 파이프 안에</strong> - 분기하지 말고 제어 흐름 함수 사용</li>
