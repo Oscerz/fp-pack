@@ -1,4 +1,5 @@
 import { CodeBlock } from '@/components/CodeBlock';
+import { navigateTo } from '@/store';
 
 export const PipeAsync_ko = () => (
   <div class="prose prose-lg dark:prose-invert max-w-none">
@@ -66,7 +67,18 @@ await getUserName('42'); // 'Ada'`}
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <strong>pipeAsync</strong>는 순수 비동기 합성에 집중합니다. <strong class="font-semibold">SideEffect</strong>
-      조기 종료가 필요하다면 <strong>pipeAsyncSideEffect</strong>를 사용하세요.
+      조기 종료가 필요하다면 <strong>pipeAsyncSideEffect</strong>를 사용하세요. 엄격한 유니온이 필요하면{' '}
+      <a
+        href="/async/pipeAsyncSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/async/pipeAsyncSideEffectStrict');
+        }}
+        class="font-semibold text-blue-700 dark:text-blue-300"
+      >
+        pipeAsyncSideEffectStrict
+      </a>
+      를 사용하세요.
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

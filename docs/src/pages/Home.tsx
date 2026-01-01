@@ -29,7 +29,7 @@ export const Home = () => (
         <span class="text-purple-500 font-bold mr-3 text-2xl">⚡</span>
         <div>
           <strong class="text-lg">SideEffect Pattern</strong>
-          <p class="mt-1">Handle errors and side effects declaratively in SideEffect-aware pipelines. Use <code class="text-sm">pipeSideEffect</code> / <code class="text-sm">pipeAsyncSideEffect</code> to short-circuit on <code class="text-sm">SideEffect</code> without breaking composition. Focus on business logic, not error plumbing.</p>
+          <p class="mt-1">Handle errors and side effects declaratively in SideEffect-aware pipelines. Use <code class="text-sm">pipeSideEffect</code> / <code class="text-sm">pipeAsyncSideEffect</code> to short-circuit on <code class="text-sm">SideEffect</code> without breaking composition. Focus on business logic, not error plumbing. For stricter unions, use <code class="text-sm">pipeSideEffectStrict</code> / <code class="text-sm">pipeAsyncSideEffectStrict</code>.</p>
         </div>
       </li>
       <li class="flex items-start">
@@ -117,7 +117,7 @@ export const Home = () => (
           SideEffect for Error Handling
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
-          Monadic composition without the wrapper overhead. <code class="text-xs md:text-sm">SideEffect</code> enables clean error handling in <code class="text-xs md:text-sm">pipeSideEffect</code>/<code class="text-xs md:text-sm">pipeAsyncSideEffect</code> pipelines—just business logic, no infrastructure code.
+          Monadic composition without the wrapper overhead. <code class="text-xs md:text-sm">SideEffect</code> enables clean error handling in <code class="text-xs md:text-sm">pipeSideEffect</code>/<code class="text-xs md:text-sm">pipeAsyncSideEffect</code> pipelines—just business logic, no infrastructure code. Use <code class="text-xs md:text-sm">pipeSideEffectStrict</code>/<code class="text-xs md:text-sm">pipeAsyncSideEffectStrict</code> for tighter TypeScript unions.
         </p>
         <CodeBlock
           language="typescript"

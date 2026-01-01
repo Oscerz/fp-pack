@@ -437,6 +437,36 @@ const finalPipeline = pipeSideEffect(
       </p>
     </div>
 
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      Strict Variants
+    </h3>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      If you want precise union types for SideEffect results across branches, use{' '}
+      <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="font-semibold text-blue-700 dark:text-blue-300"
+      >
+        pipeSideEffectStrict
+      </a>{' '}
+      or{' '}
+      <a
+        href="/async/pipeAsyncSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/async/pipeAsyncSideEffectStrict');
+        }}
+        class="font-semibold text-blue-700 dark:text-blue-300"
+      >
+        pipeAsyncSideEffectStrict
+      </a>
+      .
+    </p>
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
@@ -483,6 +513,22 @@ const finalPipeline = pipeSideEffect(
       </a>
 
       <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          pipeSideEffectStrict →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Strict union types for SideEffect results.
+        </p>
+      </a>
+
+      <a
         href="/async/pipeAsyncSideEffect"
         onClick={(e: Event) => {
           e.preventDefault();
@@ -495,6 +541,22 @@ const finalPipeline = pipeSideEffect(
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
           Async composition with SideEffect short-circuiting.
+        </p>
+      </a>
+
+      <a
+        href="/async/pipeAsyncSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/async/pipeAsyncSideEffectStrict');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          pipeAsyncSideEffectStrict →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Async pipelines with strict SideEffect unions.
         </p>
       </a>
 

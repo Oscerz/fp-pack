@@ -109,6 +109,28 @@ function pipeSideEffect(...funcs: Array<(input: any) => any>): (input: any) => a
       and returns it.
     </p>
 
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4">
+      Strict Variant
+    </h3>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      <code class="text-sm">pipeSideEffectStrict</code> keeps a strict union of all SideEffect result types instead of
+      widening to <code class="text-sm">any</code>. Use it when you want precise type narrowing across branches.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipeSideEffectStrict, SideEffect } from 'fp-pack';
+
+const pipeline = pipeSideEffectStrict(
+  (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
+  (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
+);
+
+// Result type: number | SideEffect<'NEGATIVE' | 0>
+const result = pipeline(5);`}
+    />
+
     <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
       <p class="text-sm md:text-base text-red-800 dark:text-red-200 leading-relaxed">
         <span class="font-medium">🚨 Critical: runPipeResult Type Safety</span>
@@ -355,6 +377,22 @@ const correctPipeline = pipeSideEffect(
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
           Pure left-to-right function composition without SideEffect short-circuiting.
+        </p>
+      </a>
+
+      <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          pipeSideEffectStrict →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          SideEffect pipelines with strict effect unions.
         </p>
       </a>
 

@@ -1,4 +1,5 @@
 type UnaryFn<A, R> = (a: A) => R;
+type ZeroFn<R> = () => R;
 type PipeInput<Fns extends UnaryFn<any, any>[]> = Fns extends [UnaryFn<infer A, any>, ...UnaryFn<any, any>[]]
   ? A
   : never;
@@ -11,6 +12,17 @@ type PipeOutput<Fns extends UnaryFn<any, any>[]> = Fns extends [UnaryFn<any, inf
     : never;
 type Pipe<Fns extends UnaryFn<any, any>[]> = (input: PipeInput<Fns>) => PipeOutput<Fns>;
 
+function pipe<R>(ab: ZeroFn<R>): () => R;
+function pipe<B, R>(ab: ZeroFn<B>, bc: UnaryFn<B, R>): () => R;
+function pipe<B, C, R>(ab: ZeroFn<B>, bc: UnaryFn<B, C>, cd: UnaryFn<C, R>): () => R;
+function pipe<B, C, D, R>(ab: ZeroFn<B>, bc: UnaryFn<B, C>, cd: UnaryFn<C, D>, de: UnaryFn<D, R>): () => R;
+function pipe<B, C, D, E, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, R>
+): () => R;
 function pipe<A, R>(ab: UnaryFn<A, R>): (a: A) => R;
 function pipe<A, B, R>(ab: UnaryFn<A, B>, bc: UnaryFn<B, R>): (a: A) => R;
 function pipe<A, B, C, R>(ab: UnaryFn<A, B>, bc: UnaryFn<B, C>, cd: UnaryFn<C, R>): (a: A) => R;

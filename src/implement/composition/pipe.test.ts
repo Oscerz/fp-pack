@@ -28,4 +28,12 @@ describe('pipe', () => {
     expect(fn(5)).toBe(25);
   });
 
+  it('supports zero-arity starts', () => {
+    const start = () => 3;
+    const addOne = (n: number) => n + 1;
+    const fn = pipe(start, addOne);
+
+    expect(fn()).toBe(4);
+  });
+
 });

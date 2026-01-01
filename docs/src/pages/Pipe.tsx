@@ -350,7 +350,18 @@ calculate(5);  // 5
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <strong>pipe</strong> is a pure composition tool. If you need pipelines that can
       short-circuit on <strong class="font-semibold">SideEffect</strong>, use{' '}
-      <strong>pipeSideEffect</strong> instead.
+      <strong>pipeSideEffect</strong> instead. For strict union typing, use{' '}
+      <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="font-semibold text-blue-700 dark:text-blue-300"
+      >
+        pipeSideEffectStrict
+      </a>
+      .
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -395,6 +406,22 @@ calculate(5);  // 5
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
           Compose functions left-to-right with SideEffect short-circuiting.
+        </p>
+      </a>
+
+      <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          pipeSideEffectStrict →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          SideEffect pipelines with strict effect unions.
         </p>
       </a>
 

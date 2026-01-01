@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import pipeSideEffect from './pipeSideEffect';
+import pipeSideEffectStrict from './pipeSideEffectStrict';
 import SideEffect from './sideEffect';
 
-describe('pipeSideEffect', () => {
+describe('pipeSideEffectStrict', () => {
   it('short-circuits when SideEffect is returned', () => {
     const effect = new SideEffect(() => 'effect');
     const stop = (_value: number) => effect;
     const after = (_value: number) => _value + 1;
 
-    const fn = pipeSideEffect((n: number) => n + 1, stop, after);
+    const fn = pipeSideEffectStrict((n: number) => n + 1, stop, after);
     const result = fn(1);
 
     expect(result).toBe(effect);
@@ -16,16 +16,8 @@ describe('pipeSideEffect', () => {
 
   it('returns SideEffect inputs without executing the pipeline', () => {
     const effect = new SideEffect(() => 'effect');
-    const fn = pipeSideEffect((n: number) => n + 1);
+    const fn = pipeSideEffectStrict((n: number) => n + 1);
 
     expect(fn(effect)).toBe(effect);
-  });
-
-  it('supports zero-arity starts', () => {
-    const start = () => 3;
-    const addOne = (n: number) => n + 1;
-    const fn = pipeSideEffect(start, addOne);
-
-    expect(fn()).toBe(4);
   });
 });

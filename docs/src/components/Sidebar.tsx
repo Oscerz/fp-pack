@@ -20,12 +20,14 @@ export const Sidebar = mount(renew => {
         items: [
           { title: 'pipe', path: '/composition/pipe' },
           { title: 'pipeSideEffect', path: '/composition/pipeSideEffect' },
+          { title: 'pipeSideEffectStrict', path: '/composition/pipeSideEffectStrict' },
           { title: 'compose', path: '/composition/compose' },
           { title: 'curry', path: '/composition/curry' },
           { title: 'partial', path: '/composition/partial' },
           { title: 'flip', path: '/composition/flip' },
           { title: 'identity', path: '/composition/identity' },
           { title: 'constant', path: '/composition/constant' },
+          { title: 'from', path: '/composition/from' },
           { title: 'complement', path: '/composition/complement' },
           { title: 'memoize', path: '/composition/memoize' },
           { title: 'once', path: '/composition/once' },
@@ -57,6 +59,7 @@ export const Sidebar = mount(renew => {
         items: [
           { title: 'pipeAsync', path: '/async/pipeAsync' },
           { title: 'pipeAsyncSideEffect', path: '/async/pipeAsyncSideEffect' },
+          { title: 'pipeAsyncSideEffectStrict', path: '/async/pipeAsyncSideEffectStrict' },
           { title: 'delay', path: '/async/delay' },
           { title: 'timeout', path: '/async/timeout' },
           { title: 'retry', path: '/async/retry' },

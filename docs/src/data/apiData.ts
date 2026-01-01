@@ -8,12 +8,14 @@ export const apiData = [
   // Composition
   { title: 'pipe', path: '/composition/pipe', category: 'Composition' },
   { title: 'pipeSideEffect', path: '/composition/pipeSideEffect', category: 'Composition' },
+  { title: 'pipeSideEffectStrict', path: '/composition/pipeSideEffectStrict', category: 'Composition' },
   { title: 'compose', path: '/composition/compose', category: 'Composition' },
   { title: 'curry', path: '/composition/curry', category: 'Composition' },
   { title: 'partial', path: '/composition/partial', category: 'Composition' },
   { title: 'flip', path: '/composition/flip', category: 'Composition' },
   { title: 'identity', path: '/composition/identity', category: 'Composition' },
   { title: 'constant', path: '/composition/constant', category: 'Composition' },
+  { title: 'from', path: '/composition/from', category: 'Composition' },
   { title: 'complement', path: '/composition/complement', category: 'Composition' },
   { title: 'memoize', path: '/composition/memoize', category: 'Composition' },
   { title: 'once', path: '/composition/once', category: 'Composition' },
@@ -36,6 +38,7 @@ export const apiData = [
   // Async
   { title: 'pipeAsync', path: '/async/pipeAsync', category: 'Async' },
   { title: 'pipeAsyncSideEffect', path: '/async/pipeAsyncSideEffect', category: 'Async' },
+  { title: 'pipeAsyncSideEffectStrict', path: '/async/pipeAsyncSideEffectStrict', category: 'Async' },
   { title: 'delay', path: '/async/delay', category: 'Async' },
   { title: 'timeout', path: '/async/timeout', category: 'Async' },
   { title: 'retry', path: '/async/retry', category: 'Async' },

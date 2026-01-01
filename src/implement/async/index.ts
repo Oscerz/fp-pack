@@ -1,5 +1,6 @@
 export { default as pipeAsync } from './pipeAsync';
 export { default as pipeAsyncSideEffect } from './pipeAsyncSideEffect';
+export { default as pipeAsyncSideEffectStrict } from './pipeAsyncSideEffectStrict';
 export { default as delay } from './delay';
 export { default as timeout } from './timeout';
 export { default as retry } from './retry';

@@ -1,4 +1,5 @@
 import { CodeBlock } from '@/components/CodeBlock';
+import { navigateTo } from '@/store';
 
 export const PipeAsync = () => (
   <div class="prose prose-lg dark:prose-invert max-w-none">
@@ -66,7 +67,18 @@ await getUserName('42'); // 'Ada'`}
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <strong>pipeAsync</strong> focuses on pure async composition. If you need early exits via{' '}
-      <strong class="font-semibold">SideEffect</strong>, use <strong>pipeAsyncSideEffect</strong>.
+      <strong class="font-semibold">SideEffect</strong>, use <strong>pipeAsyncSideEffect</strong>. For strict unions, use{' '}
+      <a
+        href="/async/pipeAsyncSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/async/pipeAsyncSideEffectStrict');
+        }}
+        class="font-semibold text-blue-700 dark:text-blue-300"
+      >
+        pipeAsyncSideEffectStrict
+      </a>
+      .
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

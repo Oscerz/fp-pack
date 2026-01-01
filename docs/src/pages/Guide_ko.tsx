@@ -78,7 +78,7 @@ export const Guide_ko = () => (
       <li><strong>함수 조합</strong>: <code class="text-sm">pipe</code>와 <code class="text-sm">pipeAsync</code>를 연산 결합의 주요 도구로 사용</li>
       <li><strong>선언적 코드</strong>: 명령형 루프 및 변이보다 함수 조합 선호</li>
       <li><strong>모나드 패턴 없음</strong>: 전통적인 FP 모나드(Option, Either 등)는 사용하지 않음 - <code class="text-sm">pipe</code>와 잘 조합되지 않음</li>
-      <li><strong>SideEffect 패턴</strong>: <code class="text-sm">pipeSideEffect</code> / <code class="text-sm">pipeAsyncSideEffect</code> 파이프라인과 함께 <code class="text-sm">SideEffect</code>를 사용하여 에러 및 부수 효과 처리</li>
+      <li><strong>SideEffect 패턴</strong>: <code class="text-sm">pipeSideEffect</code> / <code class="text-sm">pipeAsyncSideEffect</code> 파이프라인과 함께 <code class="text-sm">SideEffect</code>를 사용하여 에러 및 부수 효과 처리. 엄격한 유니온 타입이 필요하면 <code class="text-sm">pipeSideEffectStrict</code> / <code class="text-sm">pipeAsyncSideEffectStrict</code> 사용</li>
       <li><strong>지연 평가</strong>: 효율적인 이터러블 처리를 위해 <code class="text-sm">stream/*</code> 함수 사용</li>
     </ol>
 
@@ -122,7 +122,7 @@ const processUsers = (users: User[]) => {
 
     <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded">
       <p class="text-sm md:text-base text-blue-900 dark:text-blue-100">
-        SideEffect 기반 조기 종료의 경우 <code class="text-sm">pipeSideEffect</code>를 사용하세요.
+        SideEffect 기반 조기 종료의 경우 <code class="text-sm">pipeSideEffect</code>를 사용하세요. 타입 유니온을 엄격히 유지하려면 <code class="text-sm">pipeSideEffectStrict</code>가 적합합니다.
       </p>
     </div>
 
@@ -155,7 +155,7 @@ const fetchUserData = async (userId: string) => {
 
     <div class="mt-6 p-4 bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-500 rounded">
       <p class="text-sm md:text-base text-purple-900 dark:text-purple-100">
-        SideEffect를 인식하는 비동기 파이프라인의 경우 <code class="text-sm">pipeAsyncSideEffect</code>를 사용하세요.
+        SideEffect를 인식하는 비동기 파이프라인의 경우 <code class="text-sm">pipeAsyncSideEffect</code>를 사용하세요. 엄격한 유니온이 필요하면 <code class="text-sm">pipeAsyncSideEffectStrict</code>를 사용하세요.
       </p>
     </div>
 
@@ -181,6 +181,10 @@ const fetchUserData = async (userId: string) => {
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
       일반 에러 처리의 경우 표준 try-catch 또는 에러 전파가 완벽하게 괜찮습니다.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      분기별 SideEffect 결과 타입을 정밀하게 유지하려면 <code class="text-sm">pipeSideEffectStrict</code> /{' '}
+      <code class="text-sm">pipeAsyncSideEffectStrict</code>를 사용하세요.
     </p>
 
     <CodeBlock
@@ -220,6 +224,27 @@ const processDataPipeline = pipeSideEffect(
 
 // runPipeResult는 파이프라인 외부에서 호출해야 함
 const finalValue = runPipeResult(processDataPipeline(input));`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      엄격한 SideEffect 유니온
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      분기별 SideEffect 결과 타입을 정확한 유니온으로 유지하고 싶다면 strict 버전을 사용하세요.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipeSideEffectStrict, SideEffect } from 'fp-pack';
+
+const pipeline = pipeSideEffectStrict(
+  (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
+  (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
+);
+
+// 결과 타입: number | SideEffect<'NEGATIVE' | 0>
+const result = pipeline(5);`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -409,6 +434,60 @@ function chunk<T>(size: number, arr: T[]): T[][] {
 
 const curriedChunk = curry(chunk) as Chunk;
 export default curriedChunk;`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      2.2 타입 안전 팁
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      일부 유틸리티는 안전을 위해 더 넓은 타입을 반환합니다. 기본값/가드를 추가해 타입을 좁혀서
+      파이프라인이 불필요하게 넓어지지 않게 하세요.
+    </p>
+
+    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
+      <li>
+        <code class="text-sm">prop</code>는 <code class="text-sm">T[K] | undefined</code>를 반환합니다. 배열
+        연산 전에는 <code class="text-sm">propOr</code>나 가드를 사용하세요.
+      </li>
+      <li>
+        <code class="text-sm">ifElse</code>는 양쪽 분기에 <strong>함수</strong>를 기대합니다. 이미 값이 있다면{' '}
+        <code class="text-sm">() =&gt; value</code>로 감싸세요.
+      </li>
+      <li>
+        <code class="text-sm">cond</code>는 <code class="text-sm">R | undefined</code>를 반환합니다. 기본 분기를 두고
+        필요하면 <code class="text-sm">??</code>로 보정하세요.
+      </li>
+      <li>
+        <code class="text-sm">pipeSideEffect</code>에서는 단계별 반환 타입을 가급적 동일하게 유지하세요.
+      </li>
+    </ul>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, propOr, append, assoc, ifElse, cond } from 'fp-pack';
+
+// propOr로 배열 타입을 유지
+const addTodo = (text: string, state: AppState) =>
+  pipe(
+    propOr([], 'todos'),
+    append(createTodo(text)),
+    (todos) => assoc('todos', todos, state)
+  )(state);
+
+// ifElse는 값이 아니라 함수가 필요
+const toggleTodo = (id: string) => ifElse(
+  (todo: Todo) => todo.id === id,
+  assoc('completed', true),
+  (todo) => todo
+);
+
+// cond는 R | undefined이므로 보정
+const grade = (score: number) =>
+  cond([
+    [(n: number) => n >= 90, () => 'A'],
+    [() => true, () => 'F']
+  ])(score) ?? 'F';`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -634,7 +713,7 @@ const updateUser = assoc('lastLogin', new Date());`}
     <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
       <li>주요 함수: <code class="text-sm">import {'{'} pipe, map, filter {'}'} from 'fp-pack'</code></li>
       <li>비동기: <code class="text-sm">import {'{'} pipeAsync, delay, retry {'}'} from 'fp-pack'</code></li>
-      <li>SideEffect: <code class="text-sm">import {'{'} pipeSideEffect, pipeAsyncSideEffect, SideEffect {'}'} from 'fp-pack'</code></li>
+      <li>SideEffect: <code class="text-sm">import {'{'} pipeSideEffect, pipeSideEffectStrict, pipeAsyncSideEffect, pipeAsyncSideEffectStrict, SideEffect {'}'} from 'fp-pack'</code></li>
       <li>스트림: <code class="text-sm">import {'{'} map, filter, toArray {'}'} from 'fp-pack/stream'</code></li>
     </ul>
 
@@ -646,6 +725,7 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>순수 동기 변환</strong>: <code class="text-sm">pipe</code> + 배열/객체 함수</li>
       <li><strong>순수 비동기 연산</strong>: <code class="text-sm">pipeAsync</code></li>
       <li><strong>SideEffect를 사용한 에러 처리</strong>: <code class="text-sm">pipeSideEffect</code> (동기) / <code class="text-sm">pipeAsyncSideEffect</code> (비동기)</li>
+      <li><strong>엄격한 SideEffect 유니온</strong>: <code class="text-sm">pipeSideEffectStrict</code> (동기) / <code class="text-sm">pipeAsyncSideEffectStrict</code> (비동기)</li>
       <li><strong>런타임 타입 체크</strong>: <code class="text-sm">isSideEffect</code>로 SideEffect 여부 확인</li>
       <li><strong>SideEffect 실행</strong>: <code class="text-sm">runPipeResult&lt;T, R&gt;</code> (파이프라인 외부에서 호출, 제네릭 제공)</li>
       <li><strong>대용량 데이터셋</strong>: <code class="text-sm">stream/*</code> 함수</li>
@@ -665,6 +745,7 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>비동기 연산이 포함되면 <code class="text-sm">pipeAsync</code>로 전환</strong></li>
       <li><strong>지연, 메모리 효율적인 처리를 위해 <code class="text-sm">stream/*</code> 사용</strong></li>
       <li><strong><code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code>에서 <code class="text-sm">SideEffect</code>로 에러 처리</strong></li>
+      <li><strong>엄격한 유니온이 필요하면</strong> <code class="text-sm">pipeSideEffectStrict</code>/<code class="text-sm">pipeAsyncSideEffectStrict</code> 사용</li>
       <li><strong>명령형 루프 피하기</strong> - fp-pack의 선언적 함수 사용</li>
       <li><strong>모나드 제안하지 않기</strong> - 대신 SideEffect 패턴 사용</li>
       <li><strong>코드를 선언적으로 유지</strong> - 무엇을 할지 기술, 어떻게가 아님</li>

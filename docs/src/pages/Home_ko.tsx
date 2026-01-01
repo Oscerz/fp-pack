@@ -29,7 +29,7 @@ export const Home_ko = () => (
         <span class="text-purple-500 font-bold mr-3 text-2xl">⚡</span>
         <div>
           <strong class="text-lg">SideEffect 패턴</strong>
-          <p class="mt-1">SideEffect-aware 파이프라인에서 에러와 사이드 이펙트를 선언적으로 처리합니다. <code class="text-sm">SideEffect</code>로 예외 경로를 표시하면 <code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code>가 자동으로 조기 종료를 처리합니다. 에러 배관이 아닌, 비즈니스 로직에 집중하세요.</p>
+          <p class="mt-1">SideEffect-aware 파이프라인에서 에러와 사이드 이펙트를 선언적으로 처리합니다. <code class="text-sm">SideEffect</code>로 예외 경로를 표시하면 <code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code>가 자동으로 조기 종료를 처리합니다. 에러 배관이 아닌, 비즈니스 로직에 집중하세요. 더 엄격한 유니온 타입이 필요하면 <code class="text-sm">pipeSideEffectStrict</code>/<code class="text-sm">pipeAsyncSideEffectStrict</code>를 사용하세요.</p>
         </div>
       </li>
       <li class="flex items-start">
@@ -117,7 +117,7 @@ export const Home_ko = () => (
           에러 처리를 위한 SideEffect
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
-          래퍼 오버헤드 없는 모나딕 합성. <code class="text-xs md:text-sm">SideEffect</code>로 <code class="text-xs md:text-sm">pipeSideEffect</code>/<code class="text-xs md:text-sm">pipeAsyncSideEffect</code> 파이프라인에서 깔끔한 에러 처리—비즈니스 로직만, 인프라 코드는 없이.
+          래퍼 오버헤드 없는 모나딕 합성. <code class="text-xs md:text-sm">SideEffect</code>로 <code class="text-xs md:text-sm">pipeSideEffect</code>/<code class="text-xs md:text-sm">pipeAsyncSideEffect</code> 파이프라인에서 깔끔한 에러 처리—비즈니스 로직만, 인프라 코드는 없이. 더 정밀한 타입 유니온이 필요하면 <code class="text-xs md:text-sm">pipeSideEffectStrict</code>/<code class="text-xs md:text-sm">pipeAsyncSideEffectStrict</code>를 선택하세요.
         </p>
         <CodeBlock
           language="typescript"

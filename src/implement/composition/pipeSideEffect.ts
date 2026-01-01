@@ -3,6 +3,7 @@ import SideEffect, { isSideEffect } from './sideEffect';
 type MaybeSideEffect<T> = T | SideEffect<any>;
 type NonSideEffect<T> = Exclude<T, SideEffect<any>>;
 type UnaryFn<A, R> = (a: A) => MaybeSideEffect<R>;
+type ZeroFn<R> = () => MaybeSideEffect<R>;
 type PipeInput<Fns extends UnaryFn<any, any>[]> = Fns extends [UnaryFn<infer A, any>, ...UnaryFn<any, any>[]]
   ? A
   : never;
@@ -18,6 +19,22 @@ type PipeSideEffect<Fns extends UnaryFn<any, any>[]> = (
   input: PipeInput<Fns> | SideEffect<any>
 ) => Resolve<PipeOutput<Fns>>;
 
+function pipeSideEffect<R>(ab: ZeroFn<R>): () => MaybeSideEffect<R>;
+function pipeSideEffect<B, R>(ab: ZeroFn<B>, bc: UnaryFn<B, R>): () => MaybeSideEffect<R>;
+function pipeSideEffect<B, C, R>(ab: ZeroFn<B>, bc: UnaryFn<B, C>, cd: UnaryFn<C, R>): () => MaybeSideEffect<R>;
+function pipeSideEffect<B, C, D, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, R>
+): () => MaybeSideEffect<R>;
+function pipeSideEffect<B, C, D, E, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, R>
+): () => MaybeSideEffect<R>;
 function pipeSideEffect<A, R>(ab: UnaryFn<A, R>): (a: A | SideEffect<any>) => MaybeSideEffect<R>;
 function pipeSideEffect<A, B, R>(
   ab: UnaryFn<A, B>,

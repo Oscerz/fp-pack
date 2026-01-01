@@ -241,7 +241,18 @@ calculate(5);  // 5
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <strong>pipe</strong>는 순수 합성 도구입니다. <strong class="font-semibold">SideEffect</strong>로
-      조기 종료가 필요한 파이프라인은 <strong>pipeSideEffect</strong>를 사용하세요.
+      조기 종료가 필요한 파이프라인은 <strong>pipeSideEffect</strong>를 사용하세요. 엄격한 유니온 타입이 필요하면{' '}
+      <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="font-semibold text-blue-700 dark:text-blue-300"
+      >
+        pipeSideEffectStrict
+      </a>
+      를 사용하세요.
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -286,6 +297,22 @@ calculate(5);  // 5
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
           SideEffect 조기 종료를 지원하는 왼쪽→오른쪽 합성.
+        </p>
+      </a>
+
+      <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          pipeSideEffectStrict →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          SideEffect 결과 타입을 엄격 유니온으로 유지하는 합성.
         </p>
       </a>
 

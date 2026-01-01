@@ -78,7 +78,7 @@ export const Guide = () => (
       <li><strong>Function Composition</strong>: Use <code class="text-sm">pipe</code> and <code class="text-sm">pipeAsync</code> as the primary tools for combining operations</li>
       <li><strong>Declarative Code</strong>: Prefer function composition over imperative loops and mutations</li>
       <li><strong>No Monad Pattern</strong>: Traditional FP monads (Option, Either, etc.) are NOT used - they don't compose well with <code class="text-sm">pipe</code></li>
-      <li><strong>SideEffect Pattern</strong>: Handle errors and side effects using <code class="text-sm">SideEffect</code> with <code class="text-sm">pipeSideEffect</code> / <code class="text-sm">pipeAsyncSideEffect</code> pipelines</li>
+      <li><strong>SideEffect Pattern</strong>: Handle errors and side effects using <code class="text-sm">SideEffect</code> with <code class="text-sm">pipeSideEffect</code> / <code class="text-sm">pipeAsyncSideEffect</code> pipelines. For strict unions, use <code class="text-sm">pipeSideEffectStrict</code> / <code class="text-sm">pipeAsyncSideEffectStrict</code></li>
       <li><strong>Lazy Evaluation</strong>: Use <code class="text-sm">stream/*</code> functions for efficient iterable processing</li>
     </ol>
 
@@ -122,7 +122,7 @@ const processUsers = (users: User[]) => {
 
     <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded">
       <p class="text-sm md:text-base text-blue-900 dark:text-blue-100">
-        For SideEffect-based early exits, use <code class="text-sm">pipeSideEffect</code>.
+        For SideEffect-based early exits, use <code class="text-sm">pipeSideEffect</code>. If you need strict union typing, use <code class="text-sm">pipeSideEffectStrict</code>.
       </p>
     </div>
 
@@ -155,7 +155,7 @@ const fetchUserData = async (userId: string) => {
 
     <div class="mt-6 p-4 bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-500 rounded">
       <p class="text-sm md:text-base text-purple-900 dark:text-purple-100">
-        For SideEffect-aware async pipelines, use <code class="text-sm">pipeAsyncSideEffect</code>.
+        For SideEffect-aware async pipelines, use <code class="text-sm">pipeAsyncSideEffect</code>. For strict unions, use <code class="text-sm">pipeAsyncSideEffectStrict</code>.
       </p>
     </div>
 
@@ -181,6 +181,10 @@ const fetchUserData = async (userId: string) => {
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
       For regular error handling, standard try-catch or error propagation is perfectly fine.
+    </p>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      If you want precise SideEffect unions across branches, use <code class="text-sm">pipeSideEffectStrict</code> /{' '}
+      <code class="text-sm">pipeAsyncSideEffectStrict</code>.
     </p>
 
     <CodeBlock
@@ -220,6 +224,27 @@ const processDataPipeline = pipeSideEffect(
 
 // runPipeResult must be called OUTSIDE the pipeline
 const finalValue = runPipeResult(processDataPipeline(input));`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      Strict SideEffect Unions
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Use strict variants when you want precise union types for SideEffect results across branches.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipeSideEffectStrict, SideEffect } from 'fp-pack';
+
+const pipeline = pipeSideEffectStrict(
+  (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
+  (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
+);
+
+// Result type: number | SideEffect<'NEGATIVE' | 0>
+const result = pipeline(5);`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -410,6 +435,60 @@ function chunk<T>(size: number, arr: T[]): T[][] {
 
 const curriedChunk = curry(chunk) as Chunk;
 export default curriedChunk;`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      2.2 Type-Safe Composition Tips
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Some utilities intentionally return wider types for safety. Add defaults or guards to keep
+      your pipelines precise and avoid unexpected unions.
+    </p>
+
+    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
+      <li>
+        <code class="text-sm">prop</code> returns <code class="text-sm">T[K] | undefined</code>. Use{' '}
+        <code class="text-sm">propOr</code> or guard before array operations.
+      </li>
+      <li>
+        <code class="text-sm">ifElse</code> expects <strong>functions</strong> for both branches. If you already
+        have a value, wrap it with <code class="text-sm">() =&gt; value</code>.
+      </li>
+      <li>
+        <code class="text-sm">cond</code> returns <code class="text-sm">R | undefined</code>. Add a default branch
+        and coalesce when you need a strict result.
+      </li>
+      <li>
+        In <code class="text-sm">pipeSideEffect</code>, keep step return types aligned to avoid wide unions.
+      </li>
+    </ul>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, propOr, append, assoc, ifElse, cond } from 'fp-pack';
+
+// propOr keeps the type strict for array ops
+const addTodo = (text: string, state: AppState) =>
+  pipe(
+    propOr([], 'todos'),
+    append(createTodo(text)),
+    (todos) => assoc('todos', todos, state)
+  )(state);
+
+// ifElse expects functions, not values
+const toggleTodo = (id: string) => ifElse(
+  (todo: Todo) => todo.id === id,
+  assoc('completed', true),
+  (todo) => todo
+);
+
+// cond still returns R | undefined, so coalesce if needed
+const grade = (score: number) =>
+  cond([
+    [(n: number) => n >= 90, () => 'A'],
+    [() => true, () => 'F']
+  ])(score) ?? 'F';`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -635,7 +714,7 @@ const updateUser = assoc('lastLogin', new Date());`}
     <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
       <li>Main functions: <code class="text-sm">import {'{'} pipe, map, filter {'}'} from 'fp-pack'</code></li>
       <li>Async: <code class="text-sm">import {'{'} pipeAsync, delay, retry {'}'} from 'fp-pack'</code></li>
-      <li>SideEffect: <code class="text-sm">import {'{'} pipeSideEffect, pipeAsyncSideEffect, SideEffect {'}'} from 'fp-pack'</code></li>
+      <li>SideEffect: <code class="text-sm">import {'{'} pipeSideEffect, pipeSideEffectStrict, pipeAsyncSideEffect, pipeAsyncSideEffectStrict, SideEffect {'}'} from 'fp-pack'</code></li>
       <li>Stream: <code class="text-sm">import {'{'} map, filter, toArray {'}'} from 'fp-pack/stream'</code></li>
     </ul>
 
@@ -647,6 +726,7 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>Pure sync transformations</strong>: <code class="text-sm">pipe</code> + array/object functions</li>
       <li><strong>Pure async operations</strong>: <code class="text-sm">pipeAsync</code></li>
       <li><strong>Error handling with SideEffect</strong>: <code class="text-sm">pipeSideEffect</code> (sync) / <code class="text-sm">pipeAsyncSideEffect</code> (async)</li>
+      <li><strong>Strict SideEffect unions</strong>: <code class="text-sm">pipeSideEffectStrict</code> (sync) / <code class="text-sm">pipeAsyncSideEffectStrict</code> (async)</li>
       <li><strong>Runtime type checking</strong>: <code class="text-sm">isSideEffect</code> to check if value is SideEffect</li>
       <li><strong>Execute SideEffect</strong>: <code class="text-sm">runPipeResult&lt;T, R&gt;</code> (call OUTSIDE pipelines, provide generics)</li>
       <li><strong>Large datasets</strong>: <code class="text-sm">stream/*</code> functions</li>
@@ -666,6 +746,7 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>Switch to <code class="text-sm">pipeAsync</code></strong> when async operations are involved</li>
       <li><strong>Use <code class="text-sm">stream/*</code></strong> for lazy, memory-efficient processing</li>
       <li><strong>Handle errors with <code class="text-sm">SideEffect</code></strong> in <code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code></li>
+      <li><strong>Choose strict SideEffect unions</strong> with <code class="text-sm">pipeSideEffectStrict</code>/<code class="text-sm">pipeAsyncSideEffectStrict</code> when needed</li>
       <li><strong>Avoid imperative loops</strong> - use fp-pack's declarative functions</li>
       <li><strong>Never suggest monads</strong> - use SideEffect pattern instead</li>
       <li><strong>Keep code declarative</strong> - describe what, not how</li>

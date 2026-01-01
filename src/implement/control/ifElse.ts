@@ -1,22 +1,24 @@
 import curry from '../composition/curry';
 
+type NoInfer<T> = [T][T extends any ? 0 : never];
+
 type IfElse = {
   <T, RTrue, RFalse>(
     ...args: [predicate: (value: T) => boolean]
   ): (onTrue: (value: T) => RTrue) => (onFalse: (value: T) => RFalse) => (value: T) => RTrue | RFalse;
   <T, RTrue, RFalse>(
-    ...args: [predicate: (value: T) => boolean, onTrue: (value: T) => RTrue]
+    ...args: [predicate: (value: NoInfer<T>) => boolean, onTrue: (value: T) => RTrue]
   ): (onFalse: (value: T) => RFalse) => (value: T) => RTrue | RFalse;
   <T, RTrue, RFalse>(
     ...args: [
-      predicate: (value: T) => boolean,
+      predicate: (value: NoInfer<T>) => boolean,
       onTrue: (value: T) => RTrue,
       onFalse: (value: T) => RFalse
     ]
   ): (value: T) => RTrue | RFalse;
   <T, RTrue, RFalse>(
     ...args: [
-      predicate: (value: T) => boolean,
+      predicate: (value: NoInfer<T>) => boolean,
       onTrue: (value: T) => RTrue,
       onFalse: (value: T) => RFalse,
       value: T

@@ -108,6 +108,28 @@ function pipeSideEffect(...funcs: Array<(input: any) => any>): (input: any) => a
       각 단계는 일반 값 또는 SideEffect를 반환할 수 있습니다. SideEffect가 등장하면 파이프라인은 즉시 종료됩니다.
     </p>
 
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4">
+      엄격 버전
+    </h3>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      <code class="text-sm">pipeSideEffectStrict</code>는 파이프라인에서 발생 가능한 SideEffect 결과 타입을
+      유니온으로 엄격하게 유지합니다. 분기 타입을 더 정확히 추론하고 싶을 때 사용하세요.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipeSideEffectStrict, SideEffect } from 'fp-pack';
+
+const pipeline = pipeSideEffectStrict(
+  (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
+  (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
+);
+
+// 결과 타입: number | SideEffect<'NEGATIVE' | 0>
+const result = pipeline(5);`}
+    />
+
     <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
       <p class="text-sm md:text-base text-red-800 dark:text-red-200 leading-relaxed">
         <span class="font-medium">🚨 중요: runPipeResult 타입 안전성</span>
@@ -355,6 +377,22 @@ const correctPipeline = pipeSideEffect(
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
           SideEffect 조기 종료 없이 순수하게 합성합니다.
+        </p>
+      </a>
+
+      <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          pipeSideEffectStrict →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          SideEffect 결과 타입을 엄격 유니온으로 유지합니다.
         </p>
       </a>
 

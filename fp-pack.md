@@ -11,7 +11,7 @@ fp-pack is a TypeScript functional programming library focused on:
 1. **Function Composition**: Use `pipe` and `pipeAsync` as the primary tools for combining operations
 2. **Declarative Code**: Prefer function composition over imperative loops and mutations
 3. **No Monad Pattern**: Traditional FP monads (Option, Either, etc.) are NOT used - they don't compose well with `pipe`
-4. **SideEffect Pattern**: Handle errors and side effects using `SideEffect` with `pipeSideEffect` / `pipeAsyncSideEffect` pipelines
+4. **SideEffect Pattern**: Handle errors and side effects using `SideEffect` with `pipeSideEffect` / `pipeAsyncSideEffect` pipelines (use `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict` for strict unions)
 5. **Lazy Evaluation**: Use `stream/*` functions for efficient iterable processing
 
 ## Core Composition Functions
@@ -43,7 +43,7 @@ const processUsers = (users: User[]) => {
 };
 ```
 
-> For SideEffect-based early exits, use `pipeSideEffect`.
+> For SideEffect-based early exits, use `pipeSideEffect` (or `pipeSideEffectStrict` when you want strict unions).
 
 ### pipeAsync - Asynchronous Function Composition
 
@@ -67,7 +67,7 @@ const fetchUserData = async (userId: string) => {
 };
 ```
 
-> For SideEffect-aware async pipelines, use `pipeAsyncSideEffect`.
+> For SideEffect-aware async pipelines, use `pipeAsyncSideEffect` (or `pipeAsyncSideEffectStrict` for strict unions).
 
 ## SideEffect Pattern - For Special Cases Only
 
@@ -79,6 +79,7 @@ const fetchUserData = async (userId: string) => {
 - Optional chaining patterns
 
 For regular error handling, standard try-catch or error propagation is perfectly fine.
+If you want precise SideEffect unions across branches, use `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict`.
 
 ```typescript
 // MOST CASES: Just use pipe with regular error handling
@@ -201,6 +202,7 @@ const result = Array.from({ length: 1000000 }, (_, i) => i + 1)
 ### Composition
 - `pipe` - Left-to-right function composition (sync)
 - `pipeSideEffect` - Left-to-right composition with SideEffect short-circuiting
+- `pipeSideEffectStrict` - SideEffect composition with strict effect unions
 - `compose` - Right-to-left function composition
 - `curry` - Curry a function
 - `partial` - Partial application
@@ -208,6 +210,7 @@ const result = Array.from({ length: 1000000 }, (_, i) => i + 1)
 - `complement` - Logical negation
 - `identity` - Return input unchanged
 - `constant` - Always return the same value
+- `from` - Ignore input and return a fixed value
 - `tap` - Execute side effect and return original value
 - `once` - Execute function only once
 - `memoize` - Cache function results
@@ -219,6 +222,7 @@ const result = Array.from({ length: 1000000 }, (_, i) => i + 1)
 ### Async
 - `pipeAsync` - Async function composition
 - `pipeAsyncSideEffect` - Async composition with SideEffect short-circuiting
+- `pipeAsyncSideEffectStrict` - Async SideEffect composition with strict effect unions
 - `delay` - Delay execution
 - `timeout` - Add timeout to promise
 - `retry` - Retry failed operations
@@ -386,8 +390,10 @@ Most data transformations are pure and don't need SideEffect handling. Use `pipe
 - **`pipeAsync`** - Async, **pure** transformations (99% of cases)
 - **`pipeSideEffect`** - **Only when you need** SideEffect short-circuiting (sync)
 - **`pipeAsyncSideEffect`** - **Only when you need** SideEffect short-circuiting (async)
+- **`pipeSideEffectStrict`** - Sync SideEffect pipelines with strict effect unions
+- **`pipeAsyncSideEffectStrict`** - Async SideEffect pipelines with strict effect unions
 
-**Important:** `pipe` and `pipeAsync` are for **pure** functions only—they don't handle `SideEffect`. If your pipeline can return `SideEffect`, use `pipeSideEffect` or `pipeAsyncSideEffect` instead.
+**Important:** `pipe` and `pipeAsync` are for **pure** functions only—they don't handle `SideEffect`. If your pipeline can return `SideEffect`, use `pipeSideEffect` or `pipeAsyncSideEffect` instead. Choose the strict variants when you need precise unions for SideEffect results.
 
 ```typescript
 // Sync: use pipe
@@ -408,7 +414,7 @@ const processUsers = pipeAsync(
 
 **🔄 Critical Rule: SideEffect Contagion**
 
-Once you use `pipeSideEffect` or `pipeAsyncSideEffect`, the result is **always `T | SideEffect`** (or `Promise<T | SideEffect>` for async).
+Once you use `pipeSideEffect` or `pipeAsyncSideEffect`, the result is **always `T | SideEffect`** (or `Promise<T | SideEffect>` for async). The same rule applies to strict variants.
 
 If you want to continue composing this result, you **MUST** keep using SideEffect-aware pipes. You **CANNOT** switch back to `pipe` or `pipeAsync` because they don't handle `SideEffect`.
 
@@ -508,6 +514,47 @@ const gradeToLetter = cond([
   [(n: number) => n >= 70, () => 'C'],
   [() => true, () => 'F']
 ]);
+```
+
+### 6.1 Type-Safety Tips (prop/ifElse/cond)
+
+- `prop` returns `T[K] | undefined`. Use `propOr` (or guard) before array operations.
+- `ifElse` expects **functions** for both branches. If you already have a value, wrap it: `() => value`.
+- Use `from(value)` when you need a unary function that ignores input (handy for `ifElse` branches).
+- `cond` returns `R | undefined`. Add a default branch and coalesce when you need a strict result.
+- In `pipeSideEffect`, keep step return types aligned to avoid wide unions.
+
+```typescript
+import { pipe, propOr, append, assoc, ifElse, cond, from } from 'fp-pack';
+
+// propOr keeps the type strict for array ops
+const addTodo = (text: string, state: AppState) =>
+  pipe(
+    propOr([], 'todos'),
+    append(createTodo(text)),
+    (todos) => assoc('todos', todos, state)
+  )(state);
+
+// ifElse expects functions, not values
+const toggleTodo = (id: string) => ifElse(
+  (todo: Todo) => todo.id === id,
+  assoc('completed', true),
+  (todo) => todo
+);
+
+// from is useful for constant branches
+const statusLabel = ifElse(
+  (score: number) => score >= 60,
+  from('pass'),
+  from('fail')
+);
+
+// cond still returns R | undefined, so coalesce if needed
+const grade = (score: number) =>
+  cond([
+    [(n: number) => n >= 90, () => 'A'],
+    [() => true, () => 'F']
+  ])(score) ?? 'F';
 ```
 
 ### 7. Object Transformations
@@ -610,13 +657,14 @@ const updateUser = assoc('lastLogin', new Date());
 ### Import Paths
 - Main functions: `import { pipe, map, filter } from 'fp-pack'`
 - Async: `import { pipeAsync, delay, retry } from 'fp-pack'`
-- SideEffect: `import { pipeSideEffect, pipeAsyncSideEffect, SideEffect } from 'fp-pack'`
+- SideEffect: `import { pipeSideEffect, pipeSideEffectStrict, pipeAsyncSideEffect, pipeAsyncSideEffectStrict, SideEffect } from 'fp-pack'`
 - Stream: `import { map, filter, toArray } from 'fp-pack/stream'`
 
 ### When to Use What
 - **Pure sync transformations**: `pipe` + array/object functions
 - **Pure async operations**: `pipeAsync`
 - **Error handling with SideEffect**: `pipeSideEffect` (sync) / `pipeAsyncSideEffect` (async)
+- **Strict SideEffect unions**: `pipeSideEffectStrict` (sync) / `pipeAsyncSideEffectStrict` (async)
 - **Type-safe result handling**: `isSideEffect` for precise type narrowing (⚠️ **ALWAYS prefer this over bare `runPipeResult`** to avoid `any` types)
 - **Execute SideEffect**: `runPipeResult` (call OUTSIDE pipelines). **⚠️ CRITICAL:** Returns `any` type without type narrowing due to default `R=any` parameter
 - **Large datasets**: `stream/*` functions

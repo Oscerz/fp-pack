@@ -68,4 +68,22 @@ describe('control (curried)', () => {
     expect(applyWhen(5)).toBe(5);
     expect(applyWhen(20)).toBe(21);
   });
+
+  it('infers types across curried stages', () => {
+    const predicate = (value: number) => value > 0;
+    const onTrue = (value: number) => value * 2;
+    const onFalse = (value: number) => value - 2;
+
+    const choose = ifElse(predicate)(onTrue)(onFalse);
+    expect(choose(3)).toBe(6);
+    expect(choose(-1)).toBe(-3);
+
+    const applyWhen = when(predicate)((value) => value + 1);
+    const applyUnless = unless(predicate)((value) => value + 1);
+
+    expect(applyWhen(2)).toBe(3);
+    expect(applyWhen(-2)).toBe(-2);
+    expect(applyUnless(2)).toBe(2);
+    expect(applyUnless(-2)).toBe(-1);
+  });
 });

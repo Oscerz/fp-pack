@@ -54,7 +54,7 @@ export default curriedChunk;
   Built around `pipe` and `pipeAsync` for clean, left-to-right function composition.
 
 - ⚡ **SideEffect Pattern**
-  Handle errors and side effects declaratively in SideEffect-aware pipelines. Use `pipeSideEffect` / `pipeAsyncSideEffect` to short-circuit on `SideEffect` without breaking composition. Focus on business logic, not error plumbing.
+  Handle errors and side effects declaratively in SideEffect-aware pipelines. Use `pipeSideEffect` / `pipeAsyncSideEffect` to short-circuit on `SideEffect` without breaking composition. Focus on business logic, not error plumbing. For strict effect unions, use `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict`.
 
 - 💧 **Lazy Stream Processing**
   Efficient iterable processing with `stream/*` functions for memory-conscious operations on large datasets.
@@ -76,7 +76,7 @@ export default curriedChunk;
   `pipe` (sync) and `pipeAsync` (async) are the primary composition tools. All utilities are designed to work seamlessly in pipe chains.
 
 - **Pragmatic error handling**
-  The `SideEffect` pattern handles errors and side effects declaratively in `pipeSideEffect`/`pipeAsyncSideEffect` pipelines. Write normal functions that compose naturally—these pipelines automatically short-circuit when they encounter a `SideEffect`, eliminating the need for wrapper types everywhere. Use `runPipeResult<T, R>`/`matchSideEffect` **outside** the pipeline with generics for type safety, and `isSideEffect` for runtime type checking.
+  The `SideEffect` pattern handles errors and side effects declaratively in `pipeSideEffect`/`pipeAsyncSideEffect` pipelines. Write normal functions that compose naturally—these pipelines automatically short-circuit when they encounter a `SideEffect`, eliminating the need for wrapper types everywhere. For strict union typing across branches, use `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict`. Use `runPipeResult<T, R>`/`matchSideEffect` **outside** the pipeline with generics for type safety, and `isSideEffect` for runtime type checking.
 
 - **Immutable & Pure by default**
   Core utilities avoid mutations and side effects. Any exception is explicitly named (e.g. `tap`, `log`).
@@ -115,7 +115,7 @@ yarn add fp-pack
 fp-pack includes an AI agent skills file that helps AI coding assistants (Claude Code, GitHub Copilot, Cursor, etc.) automatically write fp-pack-style functional code.
 
 When you have this skills file in your project, AI assistants will:
-- Default to using `pipe`/`pipeAsync` for pure transformations, and `pipeSideEffect`/`pipeAsyncSideEffect` when SideEffect is involved
+- Default to using `pipe`/`pipeAsync` for pure transformations, and `pipeSideEffect`/`pipeAsyncSideEffect` when SideEffect is involved (use strict variants when you need strict effect unions)
 - Use the `SideEffect` pattern instead of try-catch
 - Prefer `stream/*` functions for large datasets
 - Write declarative, functional code using fp-pack utilities
@@ -213,6 +213,7 @@ Functions for composing and transforming other functions.
 
 - **pipe** - Compose functions left to right (f → g → h)
 - **pipeSideEffect** - Compose functions left to right with SideEffect short-circuiting
+- **pipeSideEffectStrict** - SideEffect composition with strict effect unions
 - **compose** - Compose functions right to left (h → g → f)
 - **curry** - Transform a function to support partial application
 - **partial** - Pre-fill function arguments
@@ -220,6 +221,7 @@ Functions for composing and transforming other functions.
 - **complement** - Logical negation of a predicate
 - **identity** - Return input unchanged
 - **constant** - Always return the same value
+- **from** - Ignore input and return a fixed value
 - **tap** - Execute side effects without changing the value
 - **once** - Create a function that only executes once
 - **memoize** - Cache function results for same inputs
@@ -354,6 +356,7 @@ Functions for asynchronous operations.
 
 - **pipeAsync** - Compose async/sync functions (pure)
 - **pipeAsyncSideEffect** - Async composition with SideEffect short-circuiting
+- **pipeAsyncSideEffectStrict** - Async SideEffect composition with strict effect unions
 - **delay** - Wait for specified milliseconds
 - **timeout** - Execute promise with timeout limit
 - **retry** - Retry failed operations with optional delay
@@ -414,7 +417,7 @@ Functions for debugging and development.
 
 **The JavaScript exception problem:** In functional pipelines, throwing exceptions breaks composition—control jumps out of the pipe. To avoid this, you need `try-catch` (which breaks flow) or wrap every function in `Either`/`Result` (which requires `map`/`chain` everywhere). Both solutions make you think about error plumbing instead of business logic.
 
-**The SideEffect solution:** Write normal functions that compose naturally. When you need to terminate early (validation failure, missing data, errors), return `SideEffect.of(() => ...)`. `pipeSideEffect`/`pipeAsyncSideEffect` pipelines automatically stop—no ceremony, no wrappers, no plumbing.
+**The SideEffect solution:** Write normal functions that compose naturally. When you need to terminate early (validation failure, missing data, errors), return `SideEffect.of(() => ...)`. `pipeSideEffect`/`pipeAsyncSideEffect` pipelines automatically stop—no ceremony, no wrappers, no plumbing. For stricter union typing across branches, use `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict`.
 
 ```typescript
 import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-pack';
@@ -517,8 +520,10 @@ Most data transformations are pure and don't need SideEffect handling. Use `pipe
 - **`pipeAsync`** - Async, **pure** transformations (99% of cases)
 - **`pipeSideEffect`** - **Only when you need** SideEffect short-circuiting (sync)
 - **`pipeAsyncSideEffect`** - **Only when you need** SideEffect short-circuiting (async)
+- **`pipeSideEffectStrict`** - Sync SideEffect pipelines with strict effect unions
+- **`pipeAsyncSideEffectStrict`** - Async SideEffect pipelines with strict effect unions
 
-**Important:** `pipe` and `pipeAsync` are for **pure** functions only—they don't handle `SideEffect`. If your pipeline can return `SideEffect`, use `pipeSideEffect` or `pipeAsyncSideEffect` instead.
+**Important:** `pipe` and `pipeAsync` are for **pure** functions only—they don't handle `SideEffect`. If your pipeline can return `SideEffect`, use `pipeSideEffect` or `pipeAsyncSideEffect` instead. Choose the strict variants when you need precise unions for SideEffect results.
 
 ```typescript
 // Pure sync pipe - no SideEffect handling
@@ -552,7 +557,7 @@ const fetchAndValidate = pipeAsyncSideEffect(
 
 **🔄 Critical Rule: SideEffect Contagion**
 
-Once you use `pipeSideEffect` or `pipeAsyncSideEffect`, the result is **always `T | SideEffect`** (or `Promise<T | SideEffect>` for async).
+Once you use `pipeSideEffect` or `pipeAsyncSideEffect`, the result is **always `T | SideEffect`** (or `Promise<T | SideEffect>` for async). The same rule applies to strict variants.
 
 If you want to continue composing this result, you **MUST** keep using SideEffect-aware pipes. You **CANNOT** switch back to `pipe` or `pipeAsync` because they don't handle `SideEffect`.
 

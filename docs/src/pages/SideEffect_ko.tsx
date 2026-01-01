@@ -438,6 +438,36 @@ const finalPipeline = pipeSideEffect(
       </p>
     </div>
 
+    <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
+      엄격 버전
+    </h3>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      분기별 SideEffect 결과 타입을 정밀한 유니온으로 유지하려면{' '}
+      <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="font-semibold text-blue-700 dark:text-blue-300"
+      >
+        pipeSideEffectStrict
+      </a>{' '}
+      또는{' '}
+      <a
+        href="/async/pipeAsyncSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/async/pipeAsyncSideEffectStrict');
+        }}
+        class="font-semibold text-blue-700 dark:text-blue-300"
+      >
+        pipeAsyncSideEffectStrict
+      </a>
+      를 사용하세요.
+    </p>
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
@@ -484,6 +514,22 @@ const finalPipeline = pipeSideEffect(
       </a>
 
       <a
+        href="/composition/pipeSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/pipeSideEffectStrict');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-blue-600 dark:text-blue-400 mb-2">
+          pipeSideEffectStrict →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          SideEffect 결과 타입을 엄격 유니온으로 유지합니다.
+        </p>
+      </a>
+
+      <a
         href="/async/pipeAsyncSideEffect"
         onClick={(e: Event) => {
           e.preventDefault();
@@ -496,6 +542,22 @@ const finalPipeline = pipeSideEffect(
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
           SideEffect 조기 종료를 지원하는 비동기 합성입니다.
+        </p>
+      </a>
+
+      <a
+        href="/async/pipeAsyncSideEffectStrict"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/async/pipeAsyncSideEffectStrict');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-purple-600 dark:text-purple-400 mb-2">
+          pipeAsyncSideEffectStrict →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          비동기 파이프라인에서 엄격한 SideEffect 유니온을 유지합니다.
         </p>
       </a>
 

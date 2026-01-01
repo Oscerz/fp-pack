@@ -1,17 +1,35 @@
 import curry from '../composition/curry';
 
+type NoInfer<T> = [T][T extends any ? 0 : never];
 type Widen<T> = T extends string ? string : T extends number ? number : T extends boolean ? boolean : T;
 
 type When = {
   <T>(...args: [predicate: (value: Widen<T>) => boolean]): (
     fn: (value: Widen<T>) => Widen<T>
   ) => (value: Widen<T>) => Widen<T>;
+  <T, R>(...args: [predicate: (value: Widen<T>) => boolean]): (
+    fn: (value: Widen<T>) => R
+  ) => (value: Widen<T>) => Widen<T> | R;
   <T>(
-    ...args: [predicate: (value: Widen<T>) => boolean, fn: (value: Widen<T>) => Widen<T>]
+    ...args: [predicate: (value: NoInfer<Widen<T>>) => boolean, fn: (value: Widen<T>) => Widen<T>]
   ): (value: Widen<T>) => Widen<T>;
+  <T, R>(
+    ...args: [predicate: (value: NoInfer<Widen<T>>) => boolean, fn: (value: Widen<T>) => R]
+  ): (value: Widen<T>) => Widen<T> | R;
   <T>(
-    ...args: [predicate: (value: Widen<T>) => boolean, fn: (value: Widen<T>) => Widen<T>, value: Widen<T>]
+    ...args: [
+      predicate: (value: NoInfer<Widen<T>>) => boolean,
+      fn: (value: Widen<T>) => Widen<T>,
+      value: Widen<T>
+    ]
   ): Widen<T>;
+  <T, R>(
+    ...args: [
+      predicate: (value: NoInfer<Widen<T>>) => boolean,
+      fn: (value: Widen<T>) => R,
+      value: Widen<T>
+    ]
+  ): Widen<T> | R;
 };
 
 /**
