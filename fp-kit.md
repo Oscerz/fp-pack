@@ -318,6 +318,37 @@ const getNames = map((user: User) => user.name);
 const processUsers = pipe(filterActive, getNames);
 ```
 
+### 2.1 Custom Utility Authoring (Curry Typing)
+
+When you add your own helpers for `pipe`, follow these rules:
+
+- Keep **data-last** argument order.
+- **Curry multi-arg functions** so they compose well.
+- **Fixed signatures** can use `curry(fn)` directly.
+- **Generic or overloaded signatures** should use an explicit type alias + cast to preserve inference.
+
+```typescript
+// Fixed signature: curry is enough
+function split(separator: string, str: string): string[] {
+  return str.split(separator);
+}
+export default curry(split);
+
+// Generic signature: add a type alias for the curried form
+type Chunk = {
+  (size: number): <T>(arr: T[]) => T[][];
+  <T>(size: number, arr: T[]): T[][];
+};
+
+function chunk<T>(size: number, arr: T[]): T[][] {
+  // ...
+  return [];
+}
+
+const curriedChunk = curry(chunk) as Chunk;
+export default curriedChunk;
+```
+
 ### 3. Choose pipe vs pipeSideEffect
 
 **Default choice: Start with `pipe` / `pipeAsync`**

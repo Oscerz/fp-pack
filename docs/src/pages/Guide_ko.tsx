@@ -11,6 +11,59 @@ export const Guide_ko = () => (
       이 가이드는 fp-kit 유틸리티를 사용하여 깔끔하고 선언적인 함수형 코드를 작성하기 위한 포괄적인 지침을 제공합니다.
     </p>
 
+    <div class="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-5 mb-8">
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
+        목차
+      </h2>
+      <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
+        <li><strong>프로젝트 철학</strong></li>
+        <li>
+          <strong>핵심 조합 함수</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>pipe</li>
+            <li>pipeAsync</li>
+          </ul>
+        </li>
+        <li><strong>SideEffect 패턴</strong></li>
+        <li><strong>스트림 함수</strong></li>
+        <li>
+          <strong>코딩 가이드라인</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>pipe / pipeAsync</li>
+            <li>커리된 함수</li>
+            <li>커스텀 유틸 작성</li>
+            <li>pipe vs pipeSideEffect</li>
+          </ul>
+        </li>
+        <li>
+          <strong>React 통합</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>이벤트 핸들러</li>
+            <li>useMemo</li>
+            <li>useEffect</li>
+            <li>상태 업데이트</li>
+          </ul>
+        </li>
+        <li>
+          <strong>피해야 할 안티패턴</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>루프</li>
+            <li>체이닝</li>
+            <li>변이</li>
+          </ul>
+        </li>
+        <li>
+          <strong>빠른 참고</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>import 경로</li>
+            <li>언제 무엇을 쓸지</li>
+          </ul>
+        </li>
+        <li><strong>핵심 원칙 요약</strong></li>
+        <li><strong>탐색 준비</strong></li>
+      </ul>
+    </div>
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
@@ -280,6 +333,41 @@ const processUsers = pipe(
 const filterActive = filter((user: User) => user.active);
 const getNames = map((user: User) => user.name);
 const processUsers = pipe(filterActive, getNames);`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      2.1 커스텀 유틸리티 작성 (커링 타입)
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      커스텀 함수를 추가할 때는 data-last 인수 순서를 유지하고 다중 인수 함수는
+      커링하세요. 고정 시그니처는 <code class="text-sm">curry(fn)</code>만으로 충분합니다.
+      제네릭/오버로드 시그니처는 타입 별칭과 캐스팅으로 추론을 보강해야 합니다.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { curry } from 'fp-kit';
+
+// 고정 시그니처: curry만으로 충분
+function split(separator: string, str: string): string[] {
+  return str.split(separator);
+}
+export default curry(split);
+
+// 제네릭 시그니처: 커리된 형태를 타입 별칭으로 명시
+type Chunk = {
+  (size: number): <T>(arr: T[]) => T[][];
+  <T>(size: number, arr: T[]): T[][];
+};
+
+function chunk<T>(size: number, arr: T[]): T[][] {
+  // ...
+  return [];
+}
+
+const curriedChunk = curry(chunk) as Chunk;
+export default curriedChunk;`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">

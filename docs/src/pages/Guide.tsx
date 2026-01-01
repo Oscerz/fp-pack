@@ -11,6 +11,59 @@ export const Guide = () => (
       This guide provides comprehensive guidelines for writing clean, declarative, functional code using fp-kit's utilities.
     </p>
 
+    <div class="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-5 mb-8">
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
+        Table of Contents
+      </h2>
+      <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
+        <li><strong>Project Philosophy</strong></li>
+        <li>
+          <strong>Core Composition Functions</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>pipe</li>
+            <li>pipeAsync</li>
+          </ul>
+        </li>
+        <li><strong>SideEffect Pattern</strong></li>
+        <li><strong>Stream Functions</strong></li>
+        <li>
+          <strong>Coding Guidelines</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>pipe / pipeAsync</li>
+            <li>Curried functions</li>
+            <li>Custom utility authoring</li>
+            <li>pipe vs pipeSideEffect</li>
+          </ul>
+        </li>
+        <li>
+          <strong>React Integration</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>Event handlers</li>
+            <li>useMemo</li>
+            <li>useEffect</li>
+            <li>State updates</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Anti-Patterns to Avoid</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>Loops</li>
+            <li>Chained arrays</li>
+            <li>Mutation</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Quick Reference</strong>
+          <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
+            <li>Import paths</li>
+            <li>When to use what</li>
+          </ul>
+        </li>
+        <li><strong>Key Principles Summary</strong></li>
+        <li><strong>Ready to Explore</strong></li>
+      </ul>
+    </div>
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
@@ -280,6 +333,42 @@ const processUsers = pipe(
 const filterActive = filter((user: User) => user.active);
 const getNames = map((user: User) => user.name);
 const processUsers = pipe(filterActive, getNames);`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      2.1 Custom Utility Authoring (Curry Typing)
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      When you add your own helpers, keep data-last argument order and curry multi-arg
+      functions. Fixed signatures can use <code class="text-sm">curry(fn)</code> directly.
+      Generic or overloaded signatures should use an explicit type alias with a cast to
+      preserve inference.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { curry } from 'fp-kit';
+
+// Fixed signature: curry is enough
+function split(separator: string, str: string): string[] {
+  return str.split(separator);
+}
+export default curry(split);
+
+// Generic signature: add a type alias for the curried form
+type Chunk = {
+  (size: number): <T>(arr: T[]) => T[][];
+  <T>(size: number, arr: T[]): T[][];
+};
+
+function chunk<T>(size: number, arr: T[]): T[][] {
+  // ...
+  return [];
+}
+
+const curriedChunk = curry(chunk) as Chunk;
+export default curriedChunk;`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
