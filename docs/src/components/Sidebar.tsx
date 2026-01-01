@@ -12,6 +12,7 @@ export const Sidebar = mount(renew => {
         title: isKorean ? '시작하기' : 'Getting Started',
         items: [
           { title: isKorean ? '소개' : 'Introduction', path: '/' },
+          { title: isKorean ? '상세 가이드' : 'Detailed Guide', path: '/guide' },
         ],
       },
       {

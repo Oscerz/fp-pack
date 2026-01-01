@@ -4,6 +4,8 @@ import { Sidebar } from './Sidebar';
 import { appStore } from '@/store';
 import { Home } from '@/pages/Home';
 import { Home_ko } from '@/pages/Home_ko';
+import { Guide } from '@/pages/Guide';
+import { Guide_ko } from '@/pages/Guide_ko';
 import { Pipe } from '@/pages/Pipe';
 import { Pipe_ko } from '@/pages/Pipe_ko';
 import { PipeSideEffect } from '@/pages/PipeSideEffect';
@@ -287,6 +289,8 @@ const normalizeRoute = (path: string) => {
 const routes: Record<string, PageComponent> = {
   '/': Home,
   '/ko': Home_ko,
+  '/guide': Guide,
+  '/ko/guide': Guide_ko,
   '/composition/pipe': Pipe,
   '/ko/composition/pipe': Pipe_ko,
   '/composition/pipeSideEffect': PipeSideEffect,

@@ -1,0 +1,572 @@
+import { CodeBlock } from '@/components/CodeBlock';
+import { navigateTo } from '@/store';
+
+export const Guide = () => (
+  <div class="prose prose-lg dark:prose-invert max-w-none">
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+      Detailed Guide
+    </h1>
+
+    <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
+      This guide provides comprehensive guidelines for writing clean, declarative, functional code using fp-kit's utilities.
+    </p>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Project Philosophy
+    </h2>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      fp-kit is a TypeScript functional programming library focused on:
+    </p>
+
+    <ol class="space-y-3 text-gray-700 dark:text-gray-300 list-decimal list-inside mb-8">
+      <li><strong>Function Composition</strong>: Use <code class="text-sm">pipe</code> and <code class="text-sm">pipeAsync</code> as the primary tools for combining operations</li>
+      <li><strong>Declarative Code</strong>: Prefer function composition over imperative loops and mutations</li>
+      <li><strong>No Monad Pattern</strong>: Traditional FP monads (Option, Either, etc.) are NOT used - they don't compose well with <code class="text-sm">pipe</code></li>
+      <li><strong>SideEffect Pattern</strong>: Handle errors and side effects using <code class="text-sm">SideEffect</code> with <code class="text-sm">pipeSideEffect</code> / <code class="text-sm">pipeAsyncSideEffect</code> pipelines</li>
+      <li><strong>Lazy Evaluation</strong>: Use <code class="text-sm">stream/*</code> functions for efficient iterable processing</li>
+    </ol>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Core Composition Functions
+    </h2>
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      pipe - Synchronous Function Composition
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <strong>Always prefer <code class="text-sm">pipe</code> for synchronous operations</strong> instead of manual imperative code.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, map, filter, take } from 'fp-kit';
+
+// GOOD: Declarative pipe composition
+const processUsers = pipe(
+  filter((user: User) => user.age >= 18),
+  map(user => user.name.toUpperCase()),
+  take(10)
+);
+
+// BAD: Imperative approach
+const processUsers = (users: User[]) => {
+  const result = [];
+  for (const user of users) {
+    if (user.age >= 18) {
+      result.push(user.name.toUpperCase());
+      if (result.length >= 10) break;
+    }
+  }
+  return result;
+};`}
+    />
+
+    <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded">
+      <p class="text-sm md:text-base text-blue-900 dark:text-blue-100">
+        For SideEffect-based early exits, use <code class="text-sm">pipeSideEffect</code>.
+      </p>
+    </div>
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      pipeAsync - Asynchronous Function Composition
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <strong>Use <code class="text-sm">pipeAsync</code> for any async operations</strong> including API calls, database queries, or async transformations.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipeAsync } from 'fp-kit';
+
+// GOOD: Async pipe composition
+const fetchUserData = pipeAsync(
+  async (userId: string) => fetch(\`/api/users/\${userId}\`),
+  async (response) => response.json(),
+  (data) => data.user
+);
+
+// BAD: Manual async handling
+const fetchUserData = async (userId: string) => {
+  const response = await fetch(\`/api/users/\${userId}\`);
+  const data = await response.json();
+  return data.user;
+};`}
+    />
+
+    <div class="mt-6 p-4 bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-500 rounded">
+      <p class="text-sm md:text-base text-purple-900 dark:text-purple-100">
+        For SideEffect-aware async pipelines, use <code class="text-sm">pipeAsyncSideEffect</code>.
+      </p>
+    </div>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      SideEffect Pattern - For Special Cases Only
+    </h2>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <strong>Most cases: Use <code class="text-sm">pipe</code> / <code class="text-sm">pipeAsync</code> - they're simpler and sufficient for 99% of use cases.</strong>
+    </p>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <code class="text-sm">pipe</code> and <code class="text-sm">pipeAsync</code> are for <strong>pure</strong> functions and don't handle <code class="text-sm">SideEffect</code>. <strong>Only use <code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code> when you specifically need</strong>:
+    </p>
+
+    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
+      <li>Early termination based on validation</li>
+      <li>Error handling with side effects (logging, toasts, etc.)</li>
+      <li>Optional chaining patterns</li>
+    </ul>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      For regular error handling, standard try-catch or error propagation is perfectly fine.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`// MOST CASES: Just use pipe with regular error handling
+import { pipe, map, filter } from 'fp-kit';
+
+const processData = pipe(
+  validateInput,
+  transformData,
+  saveData
+);
+
+try {
+  const result = processData(input);
+} catch (error) {
+  console.error('Processing failed:', error);
+}
+
+// SPECIAL CASES: Use pipeSideEffect when you need early termination with side effects
+import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
+
+const processDataPipeline = pipeSideEffect(
+  validateInput,
+  (data) => {
+    if (!data.isValid) {
+      return SideEffect.of(() => {
+        showToast('Invalid data');  // Side effect
+        logError('validation_failed');  // Side effect
+        return null;
+      });
+    }
+    return data;
+  },
+  transformData
+);
+
+// runPipeResult must be called OUTSIDE the pipeline
+const finalValue = runPipeResult(processDataPipeline(input));`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      Key SideEffect Functions
+    </h3>
+
+    <ul class="space-y-3 text-gray-700 dark:text-gray-300 mb-6">
+      <li><code class="text-sm">SideEffect.of(fn, label?)</code> - Create a side effect container</li>
+      <li><code class="text-sm">isSideEffect(value)</code> - Type guard with <strong>precise type narrowing</strong> for both success and error paths</li>
+      <li><code class="text-sm">runPipeResult(result)</code> - Execute SideEffect or return value (call <strong>OUTSIDE</strong> pipelines)</li>
+      <li><code class="text-sm">matchSideEffect(result, {'{'} value, effect {'}'})</code> - Pattern match on result</li>
+    </ul>
+
+    <div class="mt-6 p-4 bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 rounded">
+      <p class="text-sm md:text-base text-orange-900 dark:text-orange-100 font-semibold mb-2">
+        ⚠️ CRITICAL: runPipeResult Type Safety
+      </p>
+      <p class="text-sm md:text-base text-orange-800 dark:text-orange-200">
+        <code class="text-sm">runPipeResult&lt;T, R=any&gt;</code> has default <code class="text-sm">R=any</code>, so using it without type narrowing returns <code class="text-sm">any</code> type. Use <code class="text-sm">isSideEffect</code> for precise type safety.
+      </p>
+    </div>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Stream Functions - Lazy Iterable Processing
+    </h2>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <strong>Use <code class="text-sm">stream/*</code> functions for lazy, memory-efficient data processing</strong> instead of array methods.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe } from 'fp-kit';
+import { map, filter, take, toArray, range } from 'fp-kit/stream';
+
+// GOOD: Lazy stream processing
+const processLargeDataset = pipe(
+  filter((n: number) => n % 2 === 0),
+  map(n => n * n),
+  take(100),
+  toArray
+);
+
+// Processes only what's needed - memory efficient
+const result = processLargeDataset(range(1, 1000000));
+
+// BAD: Eager array processing
+const result = Array.from({ length: 1000000 }, (_, i) => i + 1)
+  .filter(n => n % 2 === 0)
+  .map(n => n * n)
+  .slice(0, 100); // Processed entire dataset!`}
+    />
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 mt-6">
+      <strong>Stream functions support both sync and async iterables:</strong>
+    </p>
+
+    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
+      <li>Sync: <code class="text-sm">Iterable&lt;T&gt;</code> → <code class="text-sm">IterableIterator&lt;R&gt;</code></li>
+      <li>Async: <code class="text-sm">AsyncIterable&lt;T&gt;</code> → <code class="text-sm">AsyncIterableIterator&lt;R&gt;</code></li>
+    </ul>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Coding Guidelines
+    </h2>
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      1. Always Prefer pipe/pipeAsync
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`// GOOD
+const result = pipe(
+  trim,
+  split(','),
+  map(toNumber),
+  filter(isPositive)
+)(input);
+
+// BAD
+const trimmed = trim(input);
+const parts = split(',')(trimmed);
+const numbers = map(toNumber)(parts);
+const result = filter(isPositive)(numbers);`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      2. Use Curried Functions
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      All functions are designed to work seamlessly with pipe. Multi-argument functions are provided in curried style, while single-argument functions don't need currying and can be used directly (e.g. <code class="text-sm">uniq</code>, <code class="text-sm">flatten</code>, <code class="text-sm">trim</code>, etc.).
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, map, filter } from 'fp-kit';
+
+// GOOD: Curried usage in pipe
+const processUsers = pipe(
+  filter(user => user.active),
+  map(user => user.name)
+);
+
+// GOOD: Partial application
+const filterActive = filter((user: User) => user.active);
+const getNames = map((user: User) => user.name);
+const processUsers = pipe(filterActive, getNames);`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      3. Choose pipe vs pipeSideEffect
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <strong>Default choice: Start with <code class="text-sm">pipe</code> / <code class="text-sm">pipeAsync</code></strong>
+    </p>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Most data transformations are pure and don't need SideEffect handling. Use <code class="text-sm">pipe</code> for sync operations and <code class="text-sm">pipeAsync</code> for async operations.
+    </p>
+
+    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
+      <li><code class="text-sm">pipe</code> - Synchronous, <strong>pure</strong> transformations (99% of cases)</li>
+      <li><code class="text-sm">pipeAsync</code> - Async, <strong>pure</strong> transformations (99% of cases)</li>
+      <li><code class="text-sm">pipeSideEffect</code> - <strong>Only when you need</strong> SideEffect short-circuiting (sync)</li>
+      <li><code class="text-sm">pipeAsyncSideEffect</code> - <strong>Only when you need</strong> SideEffect short-circuiting (async)</li>
+    </ul>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      React Integration
+    </h2>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      fp-kit works seamlessly with React. Here are common patterns for integrating fp-kit into React applications.
+    </p>
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      Event Handlers
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, prop, trim, tap, assoc } from 'fp-kit';
+
+// Handle form input changes
+const handleNameChange = pipe(
+  prop('currentTarget'),
+  (el) => (el as HTMLInputElement).value,
+  trim,
+  tap((value) => {
+    // Use updater form to avoid stale state
+    setFormState(prev => assoc('name', value, prev));
+  })
+);
+
+// Use in JSX
+<input onChange={handleNameChange} />
+
+// Handle form submission
+const handleSubmit = pipe(
+  tap((e: Event) => e.preventDefault()),
+  () => formState,
+  validateForm,
+  tap(submitToAPI)
+);
+
+<form onSubmit={handleSubmit}>...</form>`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      Data Transformation with useMemo
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { useMemo } from 'react';
+import { pipe, filter, sortBy, map, take } from 'fp-kit';
+
+function UserList({ users }: { users: User[] }) {
+  // Memoize expensive transformations
+  const processedUsers = useMemo(
+    () => pipe(
+      filter((u: User) => u.active),
+      sortBy(u => u.name),
+      map(u => ({ ...u, displayName: \`\${u.firstName} \${u.lastName}\` })),
+      take(50)
+    )(users),
+    [users]
+  );
+
+  return <div>{processedUsers.map(u => ...)}</div>;
+}`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      Async Effects with useEffect
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { useEffect } from 'react';
+import { pipeAsync, tap } from 'fp-kit';
+
+function UserProfile({ userId }: { userId: string }) {
+  useEffect(() => {
+    const fetchUser = pipeAsync(
+      (id: string) => fetch(\`/api/users/\${id}\`),
+      response => response.json(),
+      tap(setUser),
+      tap(() => setLoading(false))
+    );
+
+    fetchUser(userId);
+  }, [userId]);
+
+  return ...;
+}`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      State Updates
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, assoc, dissoc, map } from 'fp-kit';
+
+// Update nested state immutably
+const updateUserName = (name: string) => {
+  setState(prev => pipe(
+    assoc('name', name),
+    assoc('updatedAt', Date.now())
+  )(prev));
+};
+
+// Transform array state
+const toggleTodo = (id: string) => {
+  setTodos(prev => pipe(
+    map((todo: Todo) =>
+      todo.id === id
+        ? assoc('completed', !todo.completed, todo)
+        : todo
+    )
+  )(prev));
+};`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Anti-Patterns to Avoid
+    </h2>
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      ❌ Don't use imperative loops
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`// BAD
+const result = [];
+for (const item of items) {
+  if (item.active) {
+    result.push(item.name);
+  }
+}
+
+// GOOD
+const result = pipe(
+  filter((item: Item) => item.active),
+  map(item => item.name)
+)(items);`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      ❌ Don't chain array methods
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`// BAD
+const result = users
+  .filter(u => u.active)
+  .map(u => u.name)
+  .slice(0, 10);
+
+// GOOD
+const result = pipe(
+  filter((u: User) => u.active),
+  map(u => u.name),
+  take(10)
+)(users);`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      ❌ Don't mutate data
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`// BAD
+const updateUser = (user: User) => {
+  user.lastLogin = new Date();
+  return user;
+};
+
+// GOOD
+const updateUser = (user: User) => ({
+  ...user,
+  lastLogin: new Date()
+});
+
+// EVEN BETTER with fp-kit
+import { assoc } from 'fp-kit';
+const updateUser = assoc('lastLogin', new Date());`}
+    />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Quick Reference
+    </h2>
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      Import Paths
+    </h3>
+
+    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
+      <li>Main functions: <code class="text-sm">import {'{'} pipe, map, filter {'}'} from 'fp-kit'</code></li>
+      <li>Async: <code class="text-sm">import {'{'} pipeAsync, delay, retry {'}'} from 'fp-kit'</code></li>
+      <li>SideEffect: <code class="text-sm">import {'{'} pipeSideEffect, pipeAsyncSideEffect, SideEffect {'}'} from 'fp-kit'</code></li>
+      <li>Stream: <code class="text-sm">import {'{'} map, filter, toArray {'}'} from 'fp-kit/stream'</code></li>
+    </ul>
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      When to Use What
+    </h3>
+
+    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
+      <li><strong>Pure sync transformations</strong>: <code class="text-sm">pipe</code> + array/object functions</li>
+      <li><strong>Pure async operations</strong>: <code class="text-sm">pipeAsync</code></li>
+      <li><strong>Error handling with SideEffect</strong>: <code class="text-sm">pipeSideEffect</code> (sync) / <code class="text-sm">pipeAsyncSideEffect</code> (async)</li>
+      <li><strong>Type-safe result handling</strong>: <code class="text-sm">isSideEffect</code> for precise type narrowing</li>
+      <li><strong>Execute SideEffect</strong>: <code class="text-sm">runPipeResult</code> (call OUTSIDE pipelines)</li>
+      <li><strong>Large datasets</strong>: <code class="text-sm">stream/*</code> functions</li>
+      <li><strong>Conditionals</strong>: <code class="text-sm">ifElse</code>, <code class="text-sm">when</code>, <code class="text-sm">unless</code>, <code class="text-sm">cond</code></li>
+      <li><strong>Object access</strong>: <code class="text-sm">prop</code>, <code class="text-sm">path</code>, <code class="text-sm">pick</code>, <code class="text-sm">omit</code></li>
+      <li><strong>Object updates</strong>: <code class="text-sm">assoc</code>, <code class="text-sm">merge</code>, <code class="text-sm">evolve</code></li>
+    </ul>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Key Principles Summary
+    </h2>
+
+    <ol class="space-y-3 text-gray-700 dark:text-gray-300 list-decimal list-inside mb-8">
+      <li><strong>Default to <code class="text-sm">pipe</code></strong> for all data transformations</li>
+      <li><strong>Switch to <code class="text-sm">pipeAsync</code></strong> when async operations are involved</li>
+      <li><strong>Use <code class="text-sm">stream/*</code></strong> for lazy, memory-efficient processing</li>
+      <li><strong>Handle errors with <code class="text-sm">SideEffect</code></strong> in <code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code></li>
+      <li><strong>Avoid imperative loops</strong> - use fp-kit's declarative functions</li>
+      <li><strong>Never suggest monads</strong> - use SideEffect pattern instead</li>
+      <li><strong>Keep code declarative</strong> - describe what, not how</li>
+      <li><strong>All logic inside pipe</strong> - use control flow functions instead of breaking out</li>
+      <li><strong>Call <code class="text-sm">runPipeResult</code> OUTSIDE pipelines</strong> for proper type safety</li>
+      <li><strong>Use <code class="text-sm">isSideEffect</code> for type narrowing</strong> - get precise types in both success and error branches</li>
+    </ol>
+
+    <div class="mt-10 p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg border border-green-200 dark:border-green-800">
+      <h3 class="text-xl font-semibold text-green-900 dark:text-green-100 mb-3">
+        Ready to Explore?
+      </h3>
+      <p class="text-gray-700 dark:text-gray-300 mb-4">
+        Now that you understand the core concepts, explore the API documentation to see all available functions:
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <button
+          onClick={() => navigateTo('/composition/pipe')}
+          class="text-left p-3 bg-white dark:bg-gray-800 rounded border border-green-300 dark:border-green-700 hover:border-green-500 dark:hover:border-green-500 transition-colors"
+        >
+          <div class="font-semibold text-green-700 dark:text-green-300">Composition Functions</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">pipe, compose, curry, and more</div>
+        </button>
+        <button
+          onClick={() => navigateTo('/stream/map')}
+          class="text-left p-3 bg-white dark:bg-gray-800 rounded border border-green-300 dark:border-green-700 hover:border-green-500 dark:hover:border-green-500 transition-colors"
+        >
+          <div class="font-semibold text-green-700 dark:text-green-300">Stream Functions</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Lazy processing for large datasets</div>
+        </button>
+      </div>
+    </div>
+  </div>
+);
