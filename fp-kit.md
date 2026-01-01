@@ -309,10 +309,14 @@ const processUsers = pipe(filterActive, getNames);
 
 ### 3. Choose pipe vs pipeSideEffect
 
-- **Use `pipe`** for synchronous, **pure** transformations (no SideEffect handling)
-- **Use `pipeAsync`** for async operations, **pure** transformations (no SideEffect handling)
-- **Use `pipeSideEffect`** when you need SideEffect short-circuiting (sync)
-- **Use `pipeAsyncSideEffect`** when you need SideEffect short-circuiting (async)
+**Default choice: Start with `pipe` / `pipeAsync`**
+
+Most data transformations are pure and don't need SideEffect handling. Use `pipe` for sync operations and `pipeAsync` for async operations. **Only switch to SideEffect-aware pipes when you actually need** early termination or error handling with side effects.
+
+- **`pipe`** - Synchronous, **pure** transformations (99% of cases)
+- **`pipeAsync`** - Async, **pure** transformations (99% of cases)
+- **`pipeSideEffect`** - **Only when you need** SideEffect short-circuiting (sync)
+- **`pipeAsyncSideEffect`** - **Only when you need** SideEffect short-circuiting (async)
 
 **Important:** `pipe` and `pipeAsync` are for **pure** functions only—they don't handle `SideEffect`. If your pipeline can return `SideEffect`, use `pipeSideEffect` or `pipeAsyncSideEffect` instead.
 

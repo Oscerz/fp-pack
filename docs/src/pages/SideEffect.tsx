@@ -50,6 +50,49 @@ const processAgePipeline = pipeSideEffect(
 runPipeResult(processAgePipeline(15)); // Logs "Age validation failed", returns null`}
     />
 
+    <div class="bg-green-50 dark:bg-green-900/20 p-4 mb-6 rounded border border-green-200 dark:border-green-800 mt-6">
+      <p class="text-sm md:text-base text-green-800 dark:text-green-200 leading-relaxed">
+        <span class="font-medium">✅ When to use SideEffect?</span>
+        <br />
+        <br />
+        <strong>Default choice: Use <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipe</code> or <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipeAsync</code></strong>
+        <br />
+        <br />
+        Most data transformations are pure and don't need SideEffect handling. Start with{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipe</code> or{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipeAsync</code>, and{' '}
+        <strong>only switch to <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipeSideEffect</code> /{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipeAsyncSideEffect</code> when you actually need</strong>:
+        <br />
+        • Early termination based on validation
+        <br />
+        • Error handling with side effects (logging, toasts, etc.)
+        <br />
+        • Optional chaining patterns
+      </p>
+    </div>
+
+    <CodeBlock
+      language="typescript"
+      code={`// ✅ GOOD: 99% of cases - use pipe (pure transformations)
+import { pipe, map, filter, sort } from 'fp-kit';
+
+const processData = pipe(
+  filter(isValid),
+  map(transform),
+  sort(byDate)
+);
+
+// ✅ GOOD: Only when you need SideEffect - use pipeSideEffect
+import { pipeSideEffect, SideEffect } from 'fp-kit';
+
+const processWithValidation = pipeSideEffect(
+  validateOrStop,  // Might return SideEffect for early termination
+  transform,
+  save
+);`}
+    />
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">

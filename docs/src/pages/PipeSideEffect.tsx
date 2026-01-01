@@ -48,6 +48,41 @@ const processAgePipeline = pipeSideEffect(
 runPipeResult(processAgePipeline(15)); // Throws: Error: Must be 18 or older`}
     />
 
+    <div class="bg-green-50 dark:bg-green-900/20 p-4 mb-6 rounded border border-green-200 dark:border-green-800 mt-6">
+      <p class="text-sm md:text-base text-green-800 dark:text-green-200 leading-relaxed">
+        <span class="font-medium">✅ When to use pipeSideEffect?</span>
+        <br />
+        <br />
+        <strong>Default choice: Use <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipe</code></strong>
+        <br />
+        <br />
+        Most data transformations don't need SideEffect. Start with{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipe</code> for pure transformations, and{' '}
+        <strong>only use <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipeSideEffect</code> when you actually need</strong>{' '}
+        early termination or error handling with side effects.
+      </p>
+    </div>
+
+    <CodeBlock
+      language="typescript"
+      code={`// ✅ GOOD: 99% of cases - use pipe (pure transformations)
+import { pipe, map, filter } from 'fp-kit';
+
+const processData = pipe(
+  filter(isValid),
+  map(transform)
+);
+
+// ✅ GOOD: Only when SideEffect needed - use pipeSideEffect
+import { pipeSideEffect, SideEffect } from 'fp-kit';
+
+const processWithValidation = pipeSideEffect(
+  validateOrStop,  // Might return SideEffect
+  transform,
+  save
+);`}
+    />
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">

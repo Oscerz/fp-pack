@@ -48,6 +48,41 @@ const processAgePipeline = pipeSideEffect(
 runPipeResult(processAgePipeline(15)); // Throws: Error: 18세 이상만 가능합니다`}
     />
 
+    <div class="bg-green-50 dark:bg-green-900/20 p-4 mb-6 rounded border border-green-200 dark:border-green-800 mt-6">
+      <p class="text-sm md:text-base text-green-800 dark:text-green-200 leading-relaxed">
+        <span class="font-medium">✅ pipeSideEffect는 언제 사용하나요?</span>
+        <br />
+        <br />
+        <strong>기본 선택: <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipe</code>를 사용하세요</strong>
+        <br />
+        <br />
+        대부분의 데이터 변환에는 SideEffect가 필요하지 않습니다. 순수 변환에는{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipe</code>로 시작하고,{' '}
+        <strong>조기 종료나 부수 효과가 있는 에러 처리가 실제로 필요할 때만{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipeSideEffect</code>를 사용하세요</strong>.
+      </p>
+    </div>
+
+    <CodeBlock
+      language="typescript"
+      code={`// ✅ 좋음: 99%의 경우 - pipe 사용 (순수 변환)
+import { pipe, map, filter } from 'fp-kit';
+
+const processData = pipe(
+  filter(isValid),
+  map(transform)
+);
+
+// ✅ 좋음: SideEffect가 필요할 때만 - pipeSideEffect 사용
+import { pipeSideEffect, SideEffect } from 'fp-kit';
+
+const processWithValidation = pipeSideEffect(
+  validateOrStop,  // SideEffect를 반환할 수 있음
+  transform,
+  save
+);`}
+    />
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">

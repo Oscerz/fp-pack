@@ -44,6 +44,40 @@ const result = await runPipeResult(userPipeline('123'));
 // { error: 'Email not verified', userId: '123' }`}
     />
 
+    <div class="bg-green-50 dark:bg-green-900/20 p-4 mb-6 rounded border border-green-200 dark:border-green-800 mt-6">
+      <p class="text-sm md:text-base text-green-800 dark:text-green-200 leading-relaxed">
+        <span class="font-medium">✅ When to use pipeAsyncSideEffect?</span>
+        <br />
+        <br />
+        <strong>Default choice: Use <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipeAsync</code></strong>
+        <br />
+        <br />
+        Most async data transformations don't need SideEffect. Start with{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipeAsync</code> for pure async operations, and{' '}
+        <strong>only use <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">pipeAsyncSideEffect</code> when you actually need</strong>{' '}
+        early termination or error handling with side effects.
+      </p>
+    </div>
+
+    <CodeBlock
+      language="typescript"
+      code={`// ✅ GOOD: 99% of cases - use pipeAsync (pure async transformations)
+import { pipeAsync } from 'fp-kit';
+
+const fetchAndProcess = pipeAsync(
+  async (id: string) => fetchUser(id),
+  (user) => user.profile
+);
+
+// ✅ GOOD: Only when SideEffect needed - use pipeAsyncSideEffect
+import { pipeAsyncSideEffect, SideEffect } from 'fp-kit';
+
+const fetchAndValidate = pipeAsyncSideEffect(
+  async (id: string) => fetchUser(id),
+  (user) => user.verified ? user : SideEffect.of(() => 'Not verified')
+);`}
+    />
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
