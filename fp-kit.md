@@ -67,22 +67,44 @@ const fetchUserData = async (userId: string) => {
 
 > For SideEffect-aware async pipelines, use `pipeAsyncSideEffect`.
 
-## SideEffect Pattern - Error Handling in Pipes
+## SideEffect Pattern - For Special Cases Only
 
-**Important:** `pipe` and `pipeAsync` are for **pure** functions only—they don't handle `SideEffect`. Use `pipeSideEffect`/`pipeAsyncSideEffect` when your pipeline can return `SideEffect`.
+**Most cases: Use `pipe` / `pipeAsync` - they're simpler and sufficient for 99% of use cases.**
 
-**DO NOT use try-catch blocks in SideEffect-aware pipelines.** Use `pipeSideEffect` / `pipeAsyncSideEffect` with the `SideEffect` class to handle errors declaratively.
+`pipe` and `pipeAsync` are for **pure** functions and don't handle `SideEffect`. **Only use `pipeSideEffect`/`pipeAsyncSideEffect` when you specifically need**:
+- Early termination based on validation
+- Error handling with side effects (logging, toasts, etc.)
+- Optional chaining patterns
+
+For regular error handling, standard try-catch or error propagation is perfectly fine.
 
 ```typescript
+// MOST CASES: Just use pipe with regular error handling
+import { pipe, map, filter } from 'fp-kit';
+
+const processData = pipe(
+  validateInput,
+  transformData,
+  saveData
+);
+
+try {
+  const result = processData(input);
+} catch (error) {
+  console.error('Processing failed:', error);
+}
+
+// SPECIAL CASES: Use pipeSideEffect when you need early termination with side effects
 import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
 
-// GOOD: SideEffect for error handling
 const processDataPipeline = pipeSideEffect(
   validateInput,
   (data) => {
     if (!data.isValid) {
       return SideEffect.of(() => {
-        throw new Error('Invalid data');
+        showToast('Invalid data');  // Side effect
+        logError('validation_failed');  // Side effect
+        return null;
       });
     }
     return data;
@@ -92,17 +114,6 @@ const processDataPipeline = pipeSideEffect(
 
 // runPipeResult must be called OUTSIDE the pipeline
 const finalValue = runPipeResult(processDataPipeline(input));
-
-// BAD: try-catch in imperative code
-const processData = (input: any) => {
-  try {
-    const validated = validateInput(input);
-    if (!validated.isValid) throw new Error('Invalid data');
-    return transformData(validated);
-  } catch (e) {
-    // ...
-  }
-};
 ```
 
 **Key SideEffect functions:**

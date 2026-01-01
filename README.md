@@ -135,28 +135,19 @@ const fetchUserProfile = pipeAsync(
 const profile = await fetchUserProfile('user-123');
 ```
 
-### Error Handling with SideEffect
+### Object Transformation
 
 ```typescript
-import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-kit';
+import { pipe, pick, mapValues, assoc } from 'fp-kit';
 
-const validateAge = (age: number) =>
-  age >= 18
-    ? age
-    : SideEffect.of(() => {
-        alert('Must be 18 or older');
-        return null;
-      });
-
-const agePipeline = pipeSideEffect(
-  validateAge,
-  (age) => `Age: ${age}`,
-  (msg) => console.log(msg)
+// Transform and clean data
+const prepareUserData = pipe(
+  pick(['name', 'email', 'age']),
+  mapValues((val) => typeof val === 'string' ? val.trim() : val),
+  assoc('timestamp', Date.now())
 );
 
-// runPipeResult must be called OUTSIDE the pipeline
-const result = runPipeResult(agePipeline(15));
-// Pipeline stops at SideEffect, alert executes, returns null
+const cleanData = prepareUserData(rawUserInput);
 ```
 
 ### Lazy Stream Processing
