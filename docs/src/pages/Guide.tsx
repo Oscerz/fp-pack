@@ -228,8 +228,8 @@ const finalValue = runPipeResult(processDataPipeline(input));`}
 
     <ul class="space-y-3 text-gray-700 dark:text-gray-300 mb-6">
       <li><code class="text-sm">SideEffect.of(fn, label?)</code> - Create a side effect container</li>
-      <li><code class="text-sm">isSideEffect(value)</code> - Type guard with <strong>precise type narrowing</strong> for both success and error paths</li>
-      <li><code class="text-sm">runPipeResult(result)</code> - Execute SideEffect or return value (call <strong>OUTSIDE</strong> pipelines)</li>
+      <li><code class="text-sm">isSideEffect(value)</code> - Type guard for <strong>runtime checking</strong> whether a value is a SideEffect</li>
+      <li><code class="text-sm">runPipeResult&lt;T, R&gt;(result)</code> - Execute SideEffect or return value (call <strong>OUTSIDE</strong> pipelines, provide generics for type safety)</li>
       <li><code class="text-sm">matchSideEffect(result, {'{'} value, effect {'}'})</code> - Pattern match on result</li>
     </ul>
 
@@ -238,9 +238,50 @@ const finalValue = runPipeResult(processDataPipeline(input));`}
         ⚠️ CRITICAL: runPipeResult Type Safety
       </p>
       <p class="text-sm md:text-base text-orange-800 dark:text-orange-200">
-        <code class="text-sm">runPipeResult&lt;T, R=any&gt;</code> has default <code class="text-sm">R=any</code>, so using it without type narrowing returns <code class="text-sm">any</code> type. Use <code class="text-sm">isSideEffect</code> for precise type safety.
+        <code class="text-sm">runPipeResult&lt;T, R=any&gt;</code> has default <code class="text-sm">R=any</code>, so using it without generics returns <code class="text-sm">any</code> type. Always provide generics to <code class="text-sm">runPipeResult&lt;SuccessType, ErrorType&gt;</code> for type safety. Use <code class="text-sm">isSideEffect</code> for runtime type checking.
       </p>
     </div>
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      Type-Safe Result Handling
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+
+const processNumbers = pipeSideEffect(
+  (nums: number[]) => nums.filter(n => n % 2 === 1),
+  (odds) => {
+    if (odds.length === 0) {
+      return SideEffect.of(() => 'No odd numbers found');
+    }
+    return odds.map(n => n * 2);
+  }
+);
+
+const oddsDoubled = processNumbers([1, 2, 3, 4, 5]);
+
+// ✅ CORRECT: Use isSideEffect for type checking + provide generics to runPipeResult
+if (!isSideEffect(oddsDoubled)) {
+  // TypeScript knows: oddsDoubled is number[]
+  const sum: number = oddsDoubled.reduce((a, b) => a + b, 0);
+  console.log(\`Sum: \${sum}\`);  // sum: number
+} else {
+  // TypeScript knows: oddsDoubled is SideEffect<string>
+  // But runPipeResult still returns number[] | string (not fully narrowed)
+  const result = runPipeResult<number[], string>(oddsDoubled);
+  console.log(\`Error: \${result}\`);  // result: number[] | string
+}
+
+// ❌ WRONG: runPipeResult without generics
+const result = runPipeResult(oddsDoubled);
+// result: any (no type information!)
+
+// ✅ CORRECT: Provide generics to runPipeResult
+const result = runPipeResult<number[], string>(oddsDoubled);
+// result: number[] | string (union type - safe but not narrowed)`}
+    />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
@@ -606,8 +647,8 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>Pure sync transformations</strong>: <code class="text-sm">pipe</code> + array/object functions</li>
       <li><strong>Pure async operations</strong>: <code class="text-sm">pipeAsync</code></li>
       <li><strong>Error handling with SideEffect</strong>: <code class="text-sm">pipeSideEffect</code> (sync) / <code class="text-sm">pipeAsyncSideEffect</code> (async)</li>
-      <li><strong>Type-safe result handling</strong>: <code class="text-sm">isSideEffect</code> for precise type narrowing</li>
-      <li><strong>Execute SideEffect</strong>: <code class="text-sm">runPipeResult</code> (call OUTSIDE pipelines)</li>
+      <li><strong>Runtime type checking</strong>: <code class="text-sm">isSideEffect</code> to check if value is SideEffect</li>
+      <li><strong>Execute SideEffect</strong>: <code class="text-sm">runPipeResult&lt;T, R&gt;</code> (call OUTSIDE pipelines, provide generics)</li>
       <li><strong>Large datasets</strong>: <code class="text-sm">stream/*</code> functions</li>
       <li><strong>Conditionals</strong>: <code class="text-sm">ifElse</code>, <code class="text-sm">when</code>, <code class="text-sm">unless</code>, <code class="text-sm">cond</code></li>
       <li><strong>Object access</strong>: <code class="text-sm">prop</code>, <code class="text-sm">path</code>, <code class="text-sm">pick</code>, <code class="text-sm">omit</code></li>
@@ -629,8 +670,8 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>Never suggest monads</strong> - use SideEffect pattern instead</li>
       <li><strong>Keep code declarative</strong> - describe what, not how</li>
       <li><strong>All logic inside pipe</strong> - use control flow functions instead of breaking out</li>
-      <li><strong>Call <code class="text-sm">runPipeResult</code> OUTSIDE pipelines</strong> for proper type safety</li>
-      <li><strong>Use <code class="text-sm">isSideEffect</code> for type narrowing</strong> - get precise types in both success and error branches</li>
+      <li><strong>Call <code class="text-sm">runPipeResult</code> OUTSIDE pipelines</strong> and provide generics for type safety</li>
+      <li><strong>Use <code class="text-sm">isSideEffect</code> for runtime checking</strong> - check if a value is SideEffect at runtime</li>
     </ol>
 
     <div class="mt-10 p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg border border-green-200 dark:border-green-800">

@@ -228,8 +228,8 @@ const finalValue = runPipeResult(processDataPipeline(input));`}
 
     <ul class="space-y-3 text-gray-700 dark:text-gray-300 mb-6">
       <li><code class="text-sm">SideEffect.of(fn, label?)</code> - 부수 효과 컨테이너 생성</li>
-      <li><code class="text-sm">isSideEffect(value)</code> - 성공 및 에러 경로 모두에 대한 <strong>정확한 타입 좁히기</strong>가 있는 타입 가드</li>
-      <li><code class="text-sm">runPipeResult(result)</code> - SideEffect 실행 또는 값 반환 (파이프라인 <strong>외부</strong>에서 호출)</li>
+      <li><code class="text-sm">isSideEffect(value)</code> - 값이 SideEffect인지 <strong>런타임 체크</strong>하는 타입 가드</li>
+      <li><code class="text-sm">runPipeResult&lt;T, R&gt;(result)</code> - SideEffect 실행 또는 값 반환 (파이프라인 <strong>외부</strong>에서 호출, 타입 안전성을 위해 제네릭 제공)</li>
       <li><code class="text-sm">matchSideEffect(result, {'{'} value, effect {'}'})</code> - 결과에 대한 패턴 매치</li>
     </ul>
 
@@ -238,9 +238,50 @@ const finalValue = runPipeResult(processDataPipeline(input));`}
         ⚠️ 중요: runPipeResult 타입 안전성
       </p>
       <p class="text-sm md:text-base text-orange-800 dark:text-orange-200">
-        <code class="text-sm">runPipeResult&lt;T, R=any&gt;</code>는 기본값 <code class="text-sm">R=any</code>를 가지므로, 타입 좁히기 없이 사용하면 <code class="text-sm">any</code> 타입을 반환합니다. 정확한 타입 안전성을 위해 <code class="text-sm">isSideEffect</code>를 사용하세요.
+        <code class="text-sm">runPipeResult&lt;T, R=any&gt;</code>는 기본값 <code class="text-sm">R=any</code>를 가지므로, 제네릭 없이 사용하면 <code class="text-sm">any</code> 타입을 반환합니다. 타입 안전성을 위해 항상 <code class="text-sm">runPipeResult&lt;성공타입, 에러타입&gt;</code>에 제네릭을 제공하세요. 런타임 타입 체크는 <code class="text-sm">isSideEffect</code>를 사용하세요.
       </p>
     </div>
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      타입 안전 결과 처리
+    </h3>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
+
+const processNumbers = pipeSideEffect(
+  (nums: number[]) => nums.filter(n => n % 2 === 1),
+  (odds) => {
+    if (odds.length === 0) {
+      return SideEffect.of(() => '홀수가 없습니다');
+    }
+    return odds.map(n => n * 2);
+  }
+);
+
+const oddsDoubled = processNumbers([1, 2, 3, 4, 5]);
+
+// ✅ 올바름: isSideEffect로 타입 체크 + runPipeResult에 제네릭 제공
+if (!isSideEffect(oddsDoubled)) {
+  // TypeScript 인식: oddsDoubled는 number[]
+  const sum: number = oddsDoubled.reduce((a, b) => a + b, 0);
+  console.log(\`합계: \${sum}\`);  // sum: number
+} else {
+  // TypeScript 인식: oddsDoubled는 SideEffect<string>
+  // 하지만 runPipeResult는 여전히 number[] | string 반환 (완전히 좁혀지지 않음)
+  const result = runPipeResult<number[], string>(oddsDoubled);
+  console.log(\`에러: \${result}\`);  // result: number[] | string
+}
+
+// ❌ 잘못됨: runPipeResult에 제네릭 없이 사용
+const result = runPipeResult(oddsDoubled);
+// result: any (타입 정보 없음!)
+
+// ✅ 올바름: runPipeResult에 제네릭 제공
+const result = runPipeResult<number[], string>(oddsDoubled);
+// result: number[] | string (유니온 타입 - 안전하지만 좁혀지지 않음)`}
+    />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
@@ -605,8 +646,8 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>순수 동기 변환</strong>: <code class="text-sm">pipe</code> + 배열/객체 함수</li>
       <li><strong>순수 비동기 연산</strong>: <code class="text-sm">pipeAsync</code></li>
       <li><strong>SideEffect를 사용한 에러 처리</strong>: <code class="text-sm">pipeSideEffect</code> (동기) / <code class="text-sm">pipeAsyncSideEffect</code> (비동기)</li>
-      <li><strong>타입 안전한 결과 처리</strong>: 정확한 타입 좁히기를 위한 <code class="text-sm">isSideEffect</code></li>
-      <li><strong>SideEffect 실행</strong>: <code class="text-sm">runPipeResult</code> (파이프라인 외부에서 호출)</li>
+      <li><strong>런타임 타입 체크</strong>: <code class="text-sm">isSideEffect</code>로 SideEffect 여부 확인</li>
+      <li><strong>SideEffect 실행</strong>: <code class="text-sm">runPipeResult&lt;T, R&gt;</code> (파이프라인 외부에서 호출, 제네릭 제공)</li>
       <li><strong>대용량 데이터셋</strong>: <code class="text-sm">stream/*</code> 함수</li>
       <li><strong>조건문</strong>: <code class="text-sm">ifElse</code>, <code class="text-sm">when</code>, <code class="text-sm">unless</code>, <code class="text-sm">cond</code></li>
       <li><strong>객체 접근</strong>: <code class="text-sm">prop</code>, <code class="text-sm">path</code>, <code class="text-sm">pick</code>, <code class="text-sm">omit</code></li>
@@ -628,8 +669,8 @@ const updateUser = assoc('lastLogin', new Date());`}
       <li><strong>모나드 제안하지 않기</strong> - 대신 SideEffect 패턴 사용</li>
       <li><strong>코드를 선언적으로 유지</strong> - 무엇을 할지 기술, 어떻게가 아님</li>
       <li><strong>모든 로직을 파이프 안에</strong> - 분기하지 말고 제어 흐름 함수 사용</li>
-      <li><strong>적절한 타입 안전성을 위해 파이프라인 외부에서 <code class="text-sm">runPipeResult</code> 호출</strong></li>
-      <li><strong>타입 좁히기를 위해 <code class="text-sm">isSideEffect</code> 사용</strong> - 성공 및 에러 브랜치 모두에서 정확한 타입 얻기</li>
+      <li><strong>파이프라인 외부에서 <code class="text-sm">runPipeResult</code> 호출</strong>하고 타입 안전성을 위해 제네릭 제공</li>
+      <li><strong>런타임 체크를 위해 <code class="text-sm">isSideEffect</code> 사용</strong> - 런타임에 값이 SideEffect인지 확인</li>
     </ol>
 
     <div class="mt-10 p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg border border-green-200 dark:border-green-800">

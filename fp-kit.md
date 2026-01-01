@@ -118,11 +118,11 @@ const finalValue = runPipeResult(processDataPipeline(input));
 
 **Key SideEffect functions:**
 - `SideEffect.of(fn, label?)` - Create a side effect container
-- `isSideEffect(value)` - Type guard with **precise type narrowing** for both success and error paths
-- `runPipeResult(result)` - Execute SideEffect or return value (call **OUTSIDE** pipelines). **⚠️ CRITICAL:** `runPipeResult<T, R=any>` has default `R=any`, so using it without type narrowing returns `any` type. Use `isSideEffect` for precise type safety
+- `isSideEffect(value)` - Type guard for **runtime checking** whether a value is a SideEffect
+- `runPipeResult<T, R>(result)` - Execute SideEffect or return value (call **OUTSIDE** pipelines, provide generics for type safety). **⚠️ CRITICAL:** `runPipeResult<T, R=any>` has default `R=any`, so using it without generics returns `any` type. Always provide generics for type safety
 - `matchSideEffect(result, { value, effect })` - Pattern match on result
 
-**Type-safe result handling with `isSideEffect`:**
+**Type-safe result handling:**
 
 ```typescript
 import { pipeSideEffect, SideEffect, isSideEffect, runPipeResult } from 'fp-kit';
@@ -137,28 +137,32 @@ const processNumbers = pipeSideEffect(
 
 const result = processNumbers([1, 2, 3, 4, 5]);
 
-// ✅ Precise type narrowing with isSideEffect
+// ✅ CORRECT: Use isSideEffect for runtime checking + provide generics to runPipeResult
 if (!isSideEffect(result)) {
   // TypeScript knows: result is number[]
   const sum: number = result.reduce((a, b) => a + b, 0);
 } else {
   // TypeScript knows: result is SideEffect<string>
-  const error = runPipeResult<number[], string>(result);  // Exact type: string
+  // But runPipeResult still returns number[] | string (not fully narrowed)
+  const error = runPipeResult<number[], string>(result);  // error: number[] | string
 }
 
-// ❌ Without isSideEffect - less precise
-const value = runPipeResult(result);  // Type: number[] | string (union)
+// ❌ WRONG: runPipeResult without generics
+const value = runPipeResult(result);  // result: any (no type information!)
+
+// ✅ CORRECT: Provide generics to runPipeResult
+const value = runPipeResult<number[], string>(result);  // result: number[] | string (union type - safe but not narrowed)
 ```
 
 **⚠️ CRITICAL: runPipeResult Type Safety**
 
 `runPipeResult<T, R=any>` has a default type parameter `R=any`. This means:
 
-- ❌ **Without type narrowing**: `const result = runPipeResult(pipeline(data));` returns `any` type
-- ✅ **With isSideEffect**: Provides exact type inference in both branches (recommended)
-- ✅ **With explicit types**: `runPipeResult<SuccessType, ErrorType>(result)` for precise types
+- ❌ **Without generics**: `const result = runPipeResult(pipeline(data));` returns `any` type (unsafe!)
+- ✅ **With generics**: `runPipeResult<SuccessType, ErrorType>(result)` returns union type `SuccessType | ErrorType` (type-safe)
+- ✅ **With isSideEffect**: Use for runtime checking whether a value is SideEffect
 
-**Always prefer `isSideEffect` for type safety** unless you don't need precise types.
+**Always provide generics to `runPipeResult`** for type safety. Use `isSideEffect` for runtime type checking.
 
 ## Stream Functions - Lazy Iterable Processing
 
