@@ -82,6 +82,21 @@ function pipeSideEffectStrict<B, C, D, E, R>(
   UnaryFn<NonSideEffect<D>, E>,
   UnaryFn<NonSideEffect<E>, R>
 ]>;
+function pipeSideEffectStrict<B, C, D, E, F, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<NonSideEffect<B>, C>,
+  cd: UnaryFn<NonSideEffect<C>, D>,
+  de: UnaryFn<NonSideEffect<D>, E>,
+  ef: UnaryFn<NonSideEffect<E>, F>,
+  fg: UnaryFn<NonSideEffect<F>, R>
+): PipeSideEffectStrict<[
+  ZeroFn<B>,
+  UnaryFn<NonSideEffect<B>, C>,
+  UnaryFn<NonSideEffect<C>, D>,
+  UnaryFn<NonSideEffect<D>, E>,
+  UnaryFn<NonSideEffect<E>, F>,
+  UnaryFn<NonSideEffect<F>, R>
+]>;
 function pipeSideEffectStrict<A, R>(ab: UnaryFn<A, R>): PipeSideEffectStrict<[UnaryFn<A, R>]>;
 function pipeSideEffectStrict<A, B, R>(
   ab: UnaryFn<A, B>,
@@ -115,6 +130,21 @@ function pipeSideEffectStrict<A, B, C, D, E, R>(
   UnaryFn<NonSideEffect<C>, D>,
   UnaryFn<NonSideEffect<D>, E>,
   UnaryFn<NonSideEffect<E>, R>
+]>;
+function pipeSideEffectStrict<A, B, C, D, E, F, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<B>, C>,
+  cd: UnaryFn<NonSideEffect<C>, D>,
+  de: UnaryFn<NonSideEffect<D>, E>,
+  ef: UnaryFn<NonSideEffect<E>, F>,
+  fg: UnaryFn<NonSideEffect<F>, R>
+): PipeSideEffectStrict<[
+  UnaryFn<A, B>,
+  UnaryFn<NonSideEffect<B>, C>,
+  UnaryFn<NonSideEffect<C>, D>,
+  UnaryFn<NonSideEffect<D>, E>,
+  UnaryFn<NonSideEffect<E>, F>,
+  UnaryFn<NonSideEffect<F>, R>
 ]>;
 
 function pipeSideEffectStrict<Fns extends [AnyFn, ...AnyFn[]]>(...funcs: Fns): PipeSideEffectStrict<Fns>;

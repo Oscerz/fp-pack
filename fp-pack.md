@@ -332,7 +332,7 @@ const result = filter(isPositive)(numbers);
 
 ### 2. Use Curried Functions (Where Available)
 
-Most multi-arg functions are curried. Many single-arg utilities are not (e.g. `uniq`, `flatten`, `flattenDeep`, `head`, `tail`, `last`, `init`, `range`, `sum`, `mean`, `min`, `max`, `round`, `floor`, `ceil`, `trim`, `toLower`, `toUpper`, `isNil`, `isEmpty`, `isType`). Call those directly (there's no curried variant).
+Most multi-arg functions are curried. Single-arg utilities are already unary, so currying adds no benefit; use them directly (e.g. `uniq`, `flatten`, `flattenDeep`, `head`, `tail`, `last`, `init`, `range`, `sum`, `mean`, `min`, `max`, `round`, `floor`, `ceil`, `trim`, `toLower`, `toUpper`, `isNil`, `isEmpty`, `isType`). These are already pipe-friendly without a curried variant.
 
 ```typescript
 import { pipe, map, filter } from 'fp-pack';

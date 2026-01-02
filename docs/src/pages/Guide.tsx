@@ -382,7 +382,7 @@ const result = filter(isPositive)(numbers);`}
     </h3>
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-      All functions are designed to work seamlessly with pipe. Multi-argument functions are provided in curried style, while single-argument functions don't need currying and can be used directly (e.g. <code class="text-sm">uniq</code>, <code class="text-sm">flatten</code>, <code class="text-sm">trim</code>, etc.).
+      All functions are designed to work seamlessly with pipe. Multi-argument functions are provided in curried style, while single-argument utilities are already unary and don't benefit from currying—use them directly (e.g. <code class="text-sm">uniq</code>, <code class="text-sm">flatten</code>, <code class="text-sm">trim</code>, etc.).
     </p>
 
     <CodeBlock

@@ -23,6 +23,14 @@ function pipe<B, C, D, E, R>(
   de: UnaryFn<D, E>,
   ef: UnaryFn<E, R>
 ): () => R;
+function pipe<B, C, D, E, F, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, R>
+): () => R;
 function pipe<A, R>(ab: UnaryFn<A, R>): (a: A) => R;
 function pipe<A, B, R>(ab: UnaryFn<A, B>, bc: UnaryFn<B, R>): (a: A) => R;
 function pipe<A, B, C, R>(ab: UnaryFn<A, B>, bc: UnaryFn<B, C>, cd: UnaryFn<C, R>): (a: A) => R;
@@ -38,6 +46,14 @@ function pipe<A, B, C, D, E, R>(
   cd: UnaryFn<C, D>,
   de: UnaryFn<D, E>,
   ef: UnaryFn<E, R>
+): (a: A) => R;
+function pipe<A, B, C, D, E, F, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, R>
 ): (a: A) => R;
 
 function pipe<Fns extends [UnaryFn<any, any>, ...UnaryFn<any, any>[]]>(...funcs: Fns): Pipe<Fns>;

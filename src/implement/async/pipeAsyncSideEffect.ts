@@ -47,6 +47,14 @@ function pipeAsyncSideEffect<A, B, C, D, E, R>(
   de: AsyncOrSync<Awaited<D>, E>,
   ef: AsyncOrSync<Awaited<E>, R>
 ): (a: A | SideEffect<any>) => Promise<MaybeSideEffect<Awaited<R>>>;
+function pipeAsyncSideEffect<A, B, C, D, E, F, R>(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<Awaited<B>, C>,
+  cd: AsyncOrSync<Awaited<C>, D>,
+  de: AsyncOrSync<Awaited<D>, E>,
+  ef: AsyncOrSync<Awaited<E>, F>,
+  fg: AsyncOrSync<Awaited<F>, R>
+): (a: A | SideEffect<any>) => Promise<MaybeSideEffect<Awaited<R>>>;
 
 function pipeAsyncSideEffect<Fns extends [AsyncOrSync<any, any>, ...AsyncOrSync<any, any>[]]>(
   ...funcs: Fns

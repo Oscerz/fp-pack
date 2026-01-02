@@ -382,7 +382,7 @@ const result = filter(isPositive)(numbers);`}
     </h3>
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-      모든 함수는 파이프와 연결하기 쉽게 설계되었습니다. 다중 인수 함수는 커링 스타일로 제공되며, 단일 인수 함수는 커링이 필요 없으므로 바로 사용할 수 있습니다(예: <code class="text-sm">uniq</code>, <code class="text-sm">flatten</code>, <code class="text-sm">trim</code> 등).
+      모든 함수는 파이프와 연결하기 쉽게 설계되었습니다. 다중 인수 함수는 커링 스타일로 제공되며, 단일 인수 유틸은 이미 unary라 커링 이점이 없으니 그대로 사용하세요(예: <code class="text-sm">uniq</code>, <code class="text-sm">flatten</code>, <code class="text-sm">trim</code> 등).
     </p>
 
     <CodeBlock
