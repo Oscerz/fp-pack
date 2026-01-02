@@ -55,6 +55,48 @@ function pipeAsyncSideEffect<A, B, C, D, E, F, R>(
   ef: AsyncOrSync<Awaited<E>, F>,
   fg: AsyncOrSync<Awaited<F>, R>
 ): (a: A | SideEffect<any>) => Promise<MaybeSideEffect<Awaited<R>>>;
+function pipeAsyncSideEffect<A, B, C, D, E, F, G, R>(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<Awaited<B>, C>,
+  cd: AsyncOrSync<Awaited<C>, D>,
+  de: AsyncOrSync<Awaited<D>, E>,
+  ef: AsyncOrSync<Awaited<E>, F>,
+  fg: AsyncOrSync<Awaited<F>, G>,
+  gh: AsyncOrSync<Awaited<G>, R>
+): (a: A | SideEffect<any>) => Promise<MaybeSideEffect<Awaited<R>>>;
+function pipeAsyncSideEffect<A, B, C, D, E, F, G, H, R>(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<Awaited<B>, C>,
+  cd: AsyncOrSync<Awaited<C>, D>,
+  de: AsyncOrSync<Awaited<D>, E>,
+  ef: AsyncOrSync<Awaited<E>, F>,
+  fg: AsyncOrSync<Awaited<F>, G>,
+  gh: AsyncOrSync<Awaited<G>, H>,
+  hi: AsyncOrSync<Awaited<H>, R>
+): (a: A | SideEffect<any>) => Promise<MaybeSideEffect<Awaited<R>>>;
+function pipeAsyncSideEffect<A, B, C, D, E, F, G, H, I, R>(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<Awaited<B>, C>,
+  cd: AsyncOrSync<Awaited<C>, D>,
+  de: AsyncOrSync<Awaited<D>, E>,
+  ef: AsyncOrSync<Awaited<E>, F>,
+  fg: AsyncOrSync<Awaited<F>, G>,
+  gh: AsyncOrSync<Awaited<G>, H>,
+  hi: AsyncOrSync<Awaited<H>, I>,
+  ij: AsyncOrSync<Awaited<I>, R>
+): (a: A | SideEffect<any>) => Promise<MaybeSideEffect<Awaited<R>>>;
+function pipeAsyncSideEffect<A, B, C, D, E, F, G, H, I, J, R>(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<Awaited<B>, C>,
+  cd: AsyncOrSync<Awaited<C>, D>,
+  de: AsyncOrSync<Awaited<D>, E>,
+  ef: AsyncOrSync<Awaited<E>, F>,
+  fg: AsyncOrSync<Awaited<F>, G>,
+  gh: AsyncOrSync<Awaited<G>, H>,
+  hi: AsyncOrSync<Awaited<H>, I>,
+  ij: AsyncOrSync<Awaited<I>, J>,
+  jk: AsyncOrSync<Awaited<J>, R>
+): (a: A | SideEffect<any>) => Promise<MaybeSideEffect<Awaited<R>>>;
 
 function pipeAsyncSideEffect<Fns extends [AsyncOrSync<any, any>, ...AsyncOrSync<any, any>[]]>(
   ...funcs: Fns

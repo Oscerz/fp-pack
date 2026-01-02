@@ -43,6 +43,48 @@ function pipeSideEffect<B, C, D, E, F, R>(
   ef: UnaryFn<E, F>,
   fg: UnaryFn<F, R>
 ): () => MaybeSideEffect<R>;
+function pipeSideEffect<B, C, D, E, F, G, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, R>
+): () => MaybeSideEffect<R>;
+function pipeSideEffect<B, C, D, E, F, G, H, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, R>
+): () => MaybeSideEffect<R>;
+function pipeSideEffect<B, C, D, E, F, G, H, I, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, I>,
+  ij: UnaryFn<I, R>
+): () => MaybeSideEffect<R>;
+function pipeSideEffect<B, C, D, E, F, G, H, I, J, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, I>,
+  ij: UnaryFn<I, J>,
+  jk: UnaryFn<J, R>
+): () => MaybeSideEffect<R>;
 function pipeSideEffect<A, R>(ab: UnaryFn<A, R>): (a: A | SideEffect<any>) => MaybeSideEffect<R>;
 function pipeSideEffect<A, B, R>(
   ab: UnaryFn<A, B>,
@@ -73,6 +115,48 @@ function pipeSideEffect<A, B, C, D, E, F, R>(
   de: UnaryFn<D, E>,
   ef: UnaryFn<E, F>,
   fg: UnaryFn<F, R>
+): (a: A | SideEffect<any>) => MaybeSideEffect<R>;
+function pipeSideEffect<A, B, C, D, E, F, G, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, R>
+): (a: A | SideEffect<any>) => MaybeSideEffect<R>;
+function pipeSideEffect<A, B, C, D, E, F, G, H, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, R>
+): (a: A | SideEffect<any>) => MaybeSideEffect<R>;
+function pipeSideEffect<A, B, C, D, E, F, G, H, I, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, I>,
+  ij: UnaryFn<I, R>
+): (a: A | SideEffect<any>) => MaybeSideEffect<R>;
+function pipeSideEffect<A, B, C, D, E, F, G, H, I, J, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, I>,
+  ij: UnaryFn<I, J>,
+  jk: UnaryFn<J, R>
 ): (a: A | SideEffect<any>) => MaybeSideEffect<R>;
 
 function pipeSideEffect<Fns extends [UnaryFn<any, any>, ...UnaryFn<any, any>[]]>(...funcs: Fns): PipeSideEffect<Fns>;

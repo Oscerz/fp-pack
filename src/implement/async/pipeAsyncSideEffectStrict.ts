@@ -97,6 +97,86 @@ function pipeAsyncSideEffectStrict<B, C, D, E, F, R>(
   AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
   AsyncOrSync<NonSideEffect<Awaited<F>>, R>
 ]>;
+function pipeAsyncSideEffectStrict<B, C, D, E, F, G, R>(
+  ab: ZeroFn<B>,
+  bc: AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  cd: AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  de: AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  ef: AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  fg: AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  gh: AsyncOrSync<NonSideEffect<Awaited<G>>, R>
+): PipeAsyncSideEffectStrict<[
+  ZeroFn<B>,
+  AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  AsyncOrSync<NonSideEffect<Awaited<G>>, R>
+]>;
+function pipeAsyncSideEffectStrict<B, C, D, E, F, G, H, R>(
+  ab: ZeroFn<B>,
+  bc: AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  cd: AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  de: AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  ef: AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  fg: AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  gh: AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  hi: AsyncOrSync<NonSideEffect<Awaited<H>>, R>
+): PipeAsyncSideEffectStrict<[
+  ZeroFn<B>,
+  AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  AsyncOrSync<NonSideEffect<Awaited<H>>, R>
+]>;
+function pipeAsyncSideEffectStrict<B, C, D, E, F, G, H, I, R>(
+  ab: ZeroFn<B>,
+  bc: AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  cd: AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  de: AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  ef: AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  fg: AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  gh: AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  hi: AsyncOrSync<NonSideEffect<Awaited<H>>, I>,
+  ij: AsyncOrSync<NonSideEffect<Awaited<I>>, R>
+): PipeAsyncSideEffectStrict<[
+  ZeroFn<B>,
+  AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  AsyncOrSync<NonSideEffect<Awaited<H>>, I>,
+  AsyncOrSync<NonSideEffect<Awaited<I>>, R>
+]>;
+function pipeAsyncSideEffectStrict<B, C, D, E, F, G, H, I, J, R>(
+  ab: ZeroFn<B>,
+  bc: AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  cd: AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  de: AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  ef: AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  fg: AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  gh: AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  hi: AsyncOrSync<NonSideEffect<Awaited<H>>, I>,
+  ij: AsyncOrSync<NonSideEffect<Awaited<I>>, J>,
+  jk: AsyncOrSync<NonSideEffect<Awaited<J>>, R>
+): PipeAsyncSideEffectStrict<[
+  ZeroFn<B>,
+  AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  AsyncOrSync<NonSideEffect<Awaited<H>>, I>,
+  AsyncOrSync<NonSideEffect<Awaited<I>>, J>,
+  AsyncOrSync<NonSideEffect<Awaited<J>>, R>
+]>;
 function pipeAsyncSideEffectStrict<A, R>(
   ab: AsyncOrSync<A, R>
 ): PipeAsyncSideEffectStrict<[AsyncOrSync<A, R>]>;
@@ -151,6 +231,86 @@ function pipeAsyncSideEffectStrict<A, B, C, D, E, F, R>(
   AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
   AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
   AsyncOrSync<NonSideEffect<Awaited<F>>, R>
+]>;
+function pipeAsyncSideEffectStrict<A, B, C, D, E, F, G, R>(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  cd: AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  de: AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  ef: AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  fg: AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  gh: AsyncOrSync<NonSideEffect<Awaited<G>>, R>
+): PipeAsyncSideEffectStrict<[
+  AsyncOrSync<A, B>,
+  AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  AsyncOrSync<NonSideEffect<Awaited<G>>, R>
+]>;
+function pipeAsyncSideEffectStrict<A, B, C, D, E, F, G, H, R>(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  cd: AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  de: AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  ef: AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  fg: AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  gh: AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  hi: AsyncOrSync<NonSideEffect<Awaited<H>>, R>
+): PipeAsyncSideEffectStrict<[
+  AsyncOrSync<A, B>,
+  AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  AsyncOrSync<NonSideEffect<Awaited<H>>, R>
+]>;
+function pipeAsyncSideEffectStrict<A, B, C, D, E, F, G, H, I, R>(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  cd: AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  de: AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  ef: AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  fg: AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  gh: AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  hi: AsyncOrSync<NonSideEffect<Awaited<H>>, I>,
+  ij: AsyncOrSync<NonSideEffect<Awaited<I>>, R>
+): PipeAsyncSideEffectStrict<[
+  AsyncOrSync<A, B>,
+  AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  AsyncOrSync<NonSideEffect<Awaited<H>>, I>,
+  AsyncOrSync<NonSideEffect<Awaited<I>>, R>
+]>;
+function pipeAsyncSideEffectStrict<A, B, C, D, E, F, G, H, I, J, R>(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  cd: AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  de: AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  ef: AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  fg: AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  gh: AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  hi: AsyncOrSync<NonSideEffect<Awaited<H>>, I>,
+  ij: AsyncOrSync<NonSideEffect<Awaited<I>>, J>,
+  jk: AsyncOrSync<NonSideEffect<Awaited<J>>, R>
+): PipeAsyncSideEffectStrict<[
+  AsyncOrSync<A, B>,
+  AsyncOrSync<NonSideEffect<Awaited<B>>, C>,
+  AsyncOrSync<NonSideEffect<Awaited<C>>, D>,
+  AsyncOrSync<NonSideEffect<Awaited<D>>, E>,
+  AsyncOrSync<NonSideEffect<Awaited<E>>, F>,
+  AsyncOrSync<NonSideEffect<Awaited<F>>, G>,
+  AsyncOrSync<NonSideEffect<Awaited<G>>, H>,
+  AsyncOrSync<NonSideEffect<Awaited<H>>, I>,
+  AsyncOrSync<NonSideEffect<Awaited<I>>, J>,
+  AsyncOrSync<NonSideEffect<Awaited<J>>, R>
 ]>;
 
 function pipeAsyncSideEffectStrict<Fns extends [AnyFn, ...AnyFn[]]>(...funcs: Fns): PipeAsyncSideEffectStrict<Fns>;

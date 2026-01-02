@@ -31,6 +31,48 @@ function pipe<B, C, D, E, F, R>(
   ef: UnaryFn<E, F>,
   fg: UnaryFn<F, R>
 ): () => R;
+function pipe<B, C, D, E, F, G, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, R>
+): () => R;
+function pipe<B, C, D, E, F, G, H, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, R>
+): () => R;
+function pipe<B, C, D, E, F, G, H, I, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, I>,
+  ij: UnaryFn<I, R>
+): () => R;
+function pipe<B, C, D, E, F, G, H, I, J, R>(
+  ab: ZeroFn<B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, I>,
+  ij: UnaryFn<I, J>,
+  jk: UnaryFn<J, R>
+): () => R;
 function pipe<A, R>(ab: UnaryFn<A, R>): (a: A) => R;
 function pipe<A, B, R>(ab: UnaryFn<A, B>, bc: UnaryFn<B, R>): (a: A) => R;
 function pipe<A, B, C, R>(ab: UnaryFn<A, B>, bc: UnaryFn<B, C>, cd: UnaryFn<C, R>): (a: A) => R;
@@ -54,6 +96,48 @@ function pipe<A, B, C, D, E, F, R>(
   de: UnaryFn<D, E>,
   ef: UnaryFn<E, F>,
   fg: UnaryFn<F, R>
+): (a: A) => R;
+function pipe<A, B, C, D, E, F, G, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, R>
+): (a: A) => R;
+function pipe<A, B, C, D, E, F, G, H, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, R>
+): (a: A) => R;
+function pipe<A, B, C, D, E, F, G, H, I, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, I>,
+  ij: UnaryFn<I, R>
+): (a: A) => R;
+function pipe<A, B, C, D, E, F, G, H, I, J, R>(
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<B, C>,
+  cd: UnaryFn<C, D>,
+  de: UnaryFn<D, E>,
+  ef: UnaryFn<E, F>,
+  fg: UnaryFn<F, G>,
+  gh: UnaryFn<G, H>,
+  hi: UnaryFn<H, I>,
+  ij: UnaryFn<I, J>,
+  jk: UnaryFn<J, R>
 ): (a: A) => R;
 
 function pipe<Fns extends [UnaryFn<any, any>, ...UnaryFn<any, any>[]]>(...funcs: Fns): Pipe<Fns>;
