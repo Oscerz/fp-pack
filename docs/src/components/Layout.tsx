@@ -6,6 +6,8 @@ import { Home } from '@/pages/Home';
 import { Home_ko } from '@/pages/Home_ko';
 import { Guide } from '@/pages/Guide';
 import { Guide_ko } from '@/pages/Guide_ko';
+import { AIAgentSkills } from '@/pages/AIAgentSkills';
+import { AIAgentSkills_ko } from '@/pages/AIAgentSkills_ko';
 import { Pipe } from '@/pages/Pipe';
 import { Pipe_ko } from '@/pages/Pipe_ko';
 import { PipeSideEffect } from '@/pages/PipeSideEffect';
@@ -305,6 +307,8 @@ const routes: Record<string, PageComponent> = {
   '/ko': Home_ko,
   '/guide': Guide,
   '/ko/guide': Guide_ko,
+  '/ai-agent-skills': AIAgentSkills,
+  '/ko/ai-agent-skills': AIAgentSkills_ko,
   '/composition/pipe': Pipe,
   '/ko/composition/pipe': Pipe_ko,
   '/composition/pipeSideEffect': PipeSideEffect,

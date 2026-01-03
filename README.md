@@ -19,7 +19,6 @@ There's no framework and no heavy abstractions—just well-chosen helpers that m
 
 ## Table of Contents
 
-- [Custom Utility Authoring Guide](#custom-utility-authoring-guide-for-pipe)
 - [Why fp-pack?](#why-fp-pack)
 - [Design Principles](#design-principles)
 - [Installation](#installation)
@@ -29,6 +28,7 @@ There's no framework and no heavy abstractions—just well-chosen helpers that m
   - [Async Operations with pipeAsync](#async-operations-with-pipeasync)
   - [Object Transformation](#object-transformation)
   - [Lazy Stream Processing](#lazy-stream-processing)
+- [Custom Utility Authoring Guide](#custom-utility-authoring-guide-for-pipe)
 - [API Reference](#api-reference)
   - [Composition](#composition)
   - [Control Flow](#control-flow)
@@ -53,37 +53,6 @@ There's no framework and no heavy abstractions—just well-chosen helpers that m
 - [License](#license)
 
 ---
-
-## Custom Utility Authoring Guide (for pipe)
-
-When you write your own helpers that should compose cleanly with `pipe`/`pipeAsync`, follow these conventions:
-
-- **Data-last arguments** so partial application works naturally in pipelines.
-- **Curry multi-argument functions** to make them pipe-friendly.
-- **Fixed signatures** can use `curry(fn)` directly.
-- **Generic or overloaded signatures** should be wrapped with an explicit type alias and a cast to preserve inference.
-
-```typescript
-// Fixed signature: curry is enough
-function split(separator: string, str: string): string[] {
-  return str.split(separator);
-}
-export default curry(split);
-
-// Generic signature: add a type alias for the curried form
-type Chunk = {
-  (size: number): <T>(arr: T[]) => T[][];
-  <T>(size: number, arr: T[]): T[][];
-};
-
-function chunk<T>(size: number, arr: T[]): T[][] {
-  // ...
-  return [];
-}
-
-const curriedChunk = curry(chunk) as Chunk;
-export default curriedChunk;
-```
 
 ## Why fp-pack?
 
@@ -296,6 +265,37 @@ const processLargeDataset = pipe(
 
 // Only processes 100 items, not 1 million
 const result = processLargeDataset(range(1, 1000000));
+```
+
+## Custom Utility Authoring Guide (for pipe)
+
+When you write your own helpers that should compose cleanly with `pipe`/`pipeAsync`, follow these conventions:
+
+- **Data-last arguments** so partial application works naturally in pipelines.
+- **Curry multi-argument functions** to make them pipe-friendly.
+- **Fixed signatures** can use `curry(fn)` directly.
+- **Generic or overloaded signatures** should be wrapped with an explicit type alias and a cast to preserve inference.
+
+```typescript
+// Fixed signature: curry is enough
+function split(separator: string, str: string): string[] {
+  return str.split(separator);
+}
+export default curry(split);
+
+// Generic signature: add a type alias for the curried form
+type Chunk = {
+  (size: number): <T>(arr: T[]) => T[][];
+  <T>(size: number, arr: T[]): T[][];
+};
+
+function chunk<T>(size: number, arr: T[]): T[][] {
+  // ...
+  return [];
+}
+
+const curriedChunk = curry(chunk) as Chunk;
+export default curriedChunk;
 ```
 
 ## API Reference
