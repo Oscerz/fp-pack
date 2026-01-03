@@ -25,7 +25,6 @@ export const Guide = () => (
           </ul>
         </li>
         <li><strong>SideEffect Pattern</strong></li>
-        <li><strong>Stream Functions</strong></li>
         <li>
           <strong>Coding Guidelines</strong>
           <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
@@ -52,6 +51,7 @@ export const Guide = () => (
             <li>Mutation</li>
           </ul>
         </li>
+        <li><strong>Stream Functions</strong></li>
         <li>
           <strong>Quick Reference</strong>
           <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
@@ -307,48 +307,6 @@ const result = runPipeResult(oddsDoubled);
 const result = runPipeResult<number[], string>(oddsDoubled);
 // result: number[] | string (union type - safe but not narrowed)`}
     />
-
-    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
-
-    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
-      Stream Functions - Lazy Iterable Processing
-    </h2>
-
-    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-      <strong>Use <code class="text-sm">stream/*</code> functions for lazy, memory-efficient data processing</strong> instead of array methods.
-    </p>
-
-    <CodeBlock
-      language="typescript"
-      code={`import { pipe } from 'fp-pack';
-import { map, filter, take, toArray, range } from 'fp-pack/stream';
-
-// GOOD: Lazy stream processing
-const processLargeDataset = pipe(
-  filter((n: number) => n % 2 === 0),
-  map(n => n * n),
-  take(100),
-  toArray
-);
-
-// Processes only what's needed - memory efficient
-const result = processLargeDataset(range(1, 1000000));
-
-// BAD: Eager array processing
-const result = Array.from({ length: 1000000 }, (_, i) => i + 1)
-  .filter(n => n % 2 === 0)
-  .map(n => n * n)
-  .slice(0, 100); // Processed entire dataset!`}
-    />
-
-    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 mt-6">
-      <strong>Stream functions support both sync and async iterables:</strong>
-    </p>
-
-    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
-      <li>Sync: <code class="text-sm">Iterable&lt;T&gt;</code> → <code class="text-sm">IterableIterator&lt;R&gt;</code></li>
-      <li>Async: <code class="text-sm">AsyncIterable&lt;T&gt;</code> → <code class="text-sm">AsyncIterableIterator&lt;R&gt;</code></li>
-    </ul>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
@@ -831,6 +789,36 @@ const updateUser = (user: User) => ({
 import { assoc } from 'fp-pack';
 const updateUser = assoc('lastLogin', new Date());`}
     />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Stream Functions
+    </h2>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Use <code class="text-sm">stream/*</code> functions for lazy evaluation when working with large datasets.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe } from 'fp-pack';
+import { map, filter, take, toArray, range } from 'fp-pack/stream';
+
+// Lazy stream processing
+const processLargeDataset = pipe(
+  filter((n: number) => n % 2 === 0),
+  map(n => n * n),
+  take(100),
+  toArray
+);
+
+const result = processLargeDataset(range(1, 1000000));`}
+    />
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-6 mt-4">
+      Stream functions support both sync and async iterables.
+    </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 

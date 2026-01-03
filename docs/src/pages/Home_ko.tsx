@@ -33,13 +33,6 @@ export const Home_ko = () => (
         </div>
       </li>
       <li class="flex items-start">
-        <span class="text-green-500 font-bold mr-3 text-2xl">💧</span>
-        <div>
-          <strong class="text-lg">스트림 처리</strong>
-          <p class="mt-1"><code class="text-sm">stream/*</code> 함수들로 효율적인 지연 평가를 제공합니다. <code class="text-sm">Iterable</code>과 <code class="text-sm">AsyncIterable</code> 모두를 지원하여 대용량 데이터셋을 메모리 효율적으로 처리합니다.</p>
-        </div>
-      </li>
-      <li class="flex items-start">
         <span class="text-orange-500 font-bold mr-3 text-2xl">🔀</span>
         <div>
           <strong class="text-lg">비동기 일급 지원</strong>
@@ -51,6 +44,13 @@ export const Home_ko = () => (
         <div>
           <strong class="text-lg">커링 설계</strong>
           <p class="mt-1">모든 다중 인자 유틸리티 함수는 커리드 되거나 커리드 함수처럼 동작하여, 부분 적용과 포인트 프리 스타일을 통해 파이프에서 우아한 합성을 가능하게 합니다.</p>
+        </div>
+      </li>
+      <li class="flex items-start">
+        <span class="text-gray-500 font-bold mr-3 text-2xl">📦</span>
+        <div>
+          <strong class="text-lg">스트림 처리</strong>
+          <p class="mt-1"><code class="text-sm">stream/*</code> 함수로 대용량 데이터셋을 위한 지연 평가를 제공합니다.</p>
         </div>
       </li>
     </ul>
@@ -139,25 +139,6 @@ process(); // [2, 4]`}
         />
       </div>
 
-      <div class="block p-4 md:p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg border border-green-200 dark:border-green-800 overflow-hidden">
-        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2 md:mb-3">
-          지연 스트림 처리
-        </h3>
-        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
-          완전한 <code class="text-xs md:text-sm">AsyncIterable</code> 지원으로 대용량 데이터셋에 대한 메모리 효율적인 연산 제공.
-        </p>
-        <CodeBlock
-          language="typescript"
-          code={`import * as Stream from 'fp-pack/stream';
-
-const first100 = pipe(
-  Stream.filter(n => n % 2 === 0),
-  Stream.take(100),
-  Stream.toArray
-)(Stream.range(1, 1000000));`}
-        />
-      </div>
-
       <div class="block p-4 md:p-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg border border-orange-200 dark:border-orange-800 overflow-hidden">
         <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2 md:mb-3">
           pipeAsync로 비동기 파이프라인
@@ -172,6 +153,25 @@ const first100 = pipe(
   (res) => res.json(),
   (data) => data.user
 );`}
+        />
+      </div>
+
+      <div class="block p-4 md:p-6 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <h3 class="text-lg md:text-xl font-medium text-gray-600 dark:text-gray-400 mb-2 md:mb-3">
+          스트림 처리
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
+          대용량 데이터셋을 위한 지연 평가.
+        </p>
+        <CodeBlock
+          language="typescript"
+          code={`import * as Stream from 'fp-pack/stream';
+
+const first100 = pipe(
+  Stream.filter(n => n % 2 === 0),
+  Stream.take(100),
+  Stream.toArray
+)(Stream.range(1, 1000000));`}
         />
       </div>
     </div>

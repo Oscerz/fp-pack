@@ -25,7 +25,6 @@ export const Guide_ko = () => (
           </ul>
         </li>
         <li><strong>SideEffect 패턴</strong></li>
-        <li><strong>스트림 함수</strong></li>
         <li>
           <strong>코딩 가이드라인</strong>
           <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
@@ -52,6 +51,7 @@ export const Guide_ko = () => (
             <li>변이</li>
           </ul>
         </li>
+        <li><strong>스트림 함수</strong></li>
         <li>
           <strong>빠른 참고</strong>
           <ul class="list-disc list-inside ml-5 mt-1 space-y-1">
@@ -307,48 +307,6 @@ const result = runPipeResult(oddsDoubled);
 const result = runPipeResult<number[], string>(oddsDoubled);
 // result: number[] | string (유니온 타입 - 안전하지만 좁혀지지 않음)`}
     />
-
-    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
-
-    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
-      스트림 함수 - 지연 이터러블 처리
-    </h2>
-
-    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-      <strong>배열 메서드 대신 지연, 메모리 효율적인 데이터 처리를 위해 <code class="text-sm">stream/*</code> 함수를 사용하세요</strong>.
-    </p>
-
-    <CodeBlock
-      language="typescript"
-      code={`import { pipe } from 'fp-pack';
-import { map, filter, take, toArray, range } from 'fp-pack/stream';
-
-// 좋음: 지연 스트림 처리
-const processLargeDataset = pipe(
-  filter((n: number) => n % 2 === 0),
-  map(n => n * n),
-  take(100),
-  toArray
-);
-
-// 필요한 것만 처리 - 메모리 효율적
-const result = processLargeDataset(range(1, 1000000));
-
-// 나쁨: 즉시 배열 처리
-const result = Array.from({ length: 1000000 }, (_, i) => i + 1)
-  .filter(n => n % 2 === 0)
-  .map(n => n * n)
-  .slice(0, 100); // 전체 데이터셋 처리!`}
-    />
-
-    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 mt-6">
-      <strong>스트림 함수는 동기 및 비동기 이터러블을 모두 지원합니다:</strong>
-    </p>
-
-    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
-      <li>동기: <code class="text-sm">Iterable&lt;T&gt;</code> → <code class="text-sm">IterableIterator&lt;R&gt;</code></li>
-      <li>비동기: <code class="text-sm">AsyncIterable&lt;T&gt;</code> → <code class="text-sm">AsyncIterableIterator&lt;R&gt;</code></li>
-    </ul>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
@@ -830,6 +788,32 @@ const updateUser = (user: User) => ({
 import { assoc } from 'fp-pack';
 const updateUser = assoc('lastLogin', new Date());`}
     />
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      스트림 함수
+    </h2>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      대용량 데이터셋을 처리할 때 지연 평가를 위해 stream/* 함수를 사용하세요.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`// 지연 스트림 처리
+const processLargeDataset = pipe(
+  filter((n: number) => n % 2 === 0),
+  map(n => n * n),
+  take(100),
+  toArray
+);
+const result = processLargeDataset(range(1, 1000000));`}
+    />
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      스트림 함수는 동기 및 비동기 이터러블을 모두 지원합니다.
+    </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 

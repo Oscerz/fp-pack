@@ -81,8 +81,8 @@ export default curriedChunk;
 - **Immutable & Pure by default**
   Core utilities avoid mutations and side effects. Any exception is explicitly named (e.g. `tap`, `log`).
 
-- **Lazy evaluation when needed**
-  Array helpers are eager and simple. Stream helpers (`stream/*`) provide lazy, memory-efficient alternatives for large datasets.
+- **Stream functions**
+  Stream helpers (`stream/*`) provide lazy evaluation for large datasets.
 
 - **Curried by design**
   All multi-argument utility functions are curried or behave like curried functions, enabling partial application and point-free style. This design allows elegant composition in pipes without awkward wrapper functions.

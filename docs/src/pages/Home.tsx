@@ -33,13 +33,6 @@ export const Home = () => (
         </div>
       </li>
       <li class="flex items-start">
-        <span class="text-green-500 font-bold mr-3 text-2xl">💧</span>
-        <div>
-          <strong class="text-lg">Stream Processing</strong>
-          <p class="mt-1">Efficient lazy evaluation with <code class="text-sm">stream/*</code> functions. Handle both <code class="text-sm">Iterable</code> and <code class="text-sm">AsyncIterable</code> for memory-conscious operations on large datasets.</p>
-        </div>
-      </li>
-      <li class="flex items-start">
         <span class="text-orange-500 font-bold mr-3 text-2xl">🔀</span>
         <div>
           <strong class="text-lg">Async First-Class</strong>
@@ -51,6 +44,13 @@ export const Home = () => (
         <div>
           <strong class="text-lg">Curried by Design</strong>
           <p class="mt-1">All multi-argument utility functions are curried or behave like curried functions, enabling partial application and point-free style for elegant composition in pipes.</p>
+        </div>
+      </li>
+      <li class="flex items-start">
+        <span class="text-gray-500 font-bold mr-3 text-2xl">📦</span>
+        <div>
+          <strong class="text-lg">Stream Processing</strong>
+          <p class="mt-1">Lazy evaluation with <code class="text-sm">stream/*</code> functions for working with large datasets.</p>
         </div>
       </li>
     </ul>
@@ -139,25 +139,6 @@ process(); // [2, 4]`}
         />
       </div>
 
-      <div class="block p-4 md:p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg border border-green-200 dark:border-green-800 overflow-hidden">
-        <h3 class="text-lg md:text-xl font-medium text-green-600 dark:text-green-400 mb-2 md:mb-3">
-          Lazy Stream Processing
-        </h3>
-        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
-          Memory-efficient operations on large datasets with full <code class="text-xs md:text-sm">AsyncIterable</code> support.
-        </p>
-        <CodeBlock
-          language="typescript"
-          code={`import * as Stream from 'fp-pack/stream';
-
-const first100 = pipe(
-  Stream.filter(n => n % 2 === 0),
-  Stream.take(100),
-  Stream.toArray
-)(Stream.range(1, 1000000));`}
-        />
-      </div>
-
       <div class="block p-4 md:p-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg border border-orange-200 dark:border-orange-800 overflow-hidden">
         <h3 class="text-lg md:text-xl font-medium text-orange-600 dark:text-orange-400 mb-2 md:mb-3">
           Async Pipeline with pipeAsync
@@ -172,6 +153,25 @@ const first100 = pipe(
   (res) => res.json(),
   (data) => data.user
 );`}
+        />
+      </div>
+
+      <div class="block p-4 md:p-6 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <h3 class="text-lg md:text-xl font-medium text-gray-600 dark:text-gray-400 mb-2 md:mb-3">
+          Stream Processing
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
+          Lazy evaluation for large datasets.
+        </p>
+        <CodeBlock
+          language="typescript"
+          code={`import * as Stream from 'fp-pack/stream';
+
+const first100 = pipe(
+  Stream.filter(n => n % 2 === 0),
+  Stream.take(100),
+  Stream.toArray
+)(Stream.range(1, 1000000));`}
         />
       </div>
     </div>
