@@ -254,7 +254,7 @@ const result = pipeline(5);`}
     <ul class="space-y-3 text-gray-700 dark:text-gray-300 mb-6">
       <li><code class="text-sm">SideEffect.of(fn, label?)</code> - 부수 효과 컨테이너 생성</li>
       <li><code class="text-sm">isSideEffect(value)</code> - 값이 SideEffect인지 <strong>런타임 체크</strong>하는 타입 가드</li>
-      <li><code class="text-sm">runPipeResult&lt;T, R&gt;(result)</code> - SideEffect 실행 또는 값 반환 (파이프라인 <strong>외부</strong>에서 호출, 타입 안전성을 위해 제네릭 제공)</li>
+      <li><code class="text-sm">runPipeResult&lt;T, R&gt;(result)</code> - SideEffect 실행 또는 값 반환 (파이프라인 <strong>외부</strong>에서 호출). 입력 타입이 <code class="text-sm">SideEffect&lt;any&gt;</code>로 넓어졌다면 제네릭으로 안전한 유니온을 복구하세요.</li>
       <li><code class="text-sm">matchSideEffect(result, {'{'} value, effect {'}'})</code> - 결과에 대한 패턴 매치</li>
     </ul>
 
@@ -263,7 +263,7 @@ const result = pipeline(5);`}
         ⚠️ 중요: runPipeResult 타입 안전성
       </p>
       <p class="text-sm md:text-base text-orange-800 dark:text-orange-200">
-        <code class="text-sm">runPipeResult&lt;T, R=any&gt;</code>는 기본값 <code class="text-sm">R=any</code>를 가지므로, 제네릭 없이 사용하면 <code class="text-sm">any</code> 타입을 반환합니다. 타입 안전성을 위해 항상 <code class="text-sm">runPipeResult&lt;성공타입, 에러타입&gt;</code>에 제네릭을 제공하세요. 런타임 타입 체크는 <code class="text-sm">isSideEffect</code>를 사용하세요.
+        <code class="text-sm">runPipeResult&lt;T, R=any&gt;</code>는 기본값 <code class="text-sm">R=any</code>를 가집니다. 입력 타입이 정확하면 추론이 유지되고, 입력이 <code class="text-sm">SideEffect&lt;any&gt;</code>(또는 <code class="text-sm">any</code>)로 넓어지면 결과가 <code class="text-sm">any</code>가 됩니다. 이때 제네릭을 제공해 유니온을 복구하세요. 정확한 내로잉은 <code class="text-sm">isSideEffect</code>를 사용하세요.
       </p>
     </div>
 
@@ -287,25 +287,25 @@ const processNumbers = pipeSideEffect(
 
 const oddsDoubled = processNumbers([1, 2, 3, 4, 5]);
 
-// ✅ 올바름: isSideEffect로 타입 체크 + runPipeResult에 제네릭 제공
+// ✅ 올바름: isSideEffect로 타입 체크
 if (!isSideEffect(oddsDoubled)) {
   // TypeScript 인식: oddsDoubled는 number[]
   const sum: number = oddsDoubled.reduce((a, b) => a + b, 0);
   console.log(\`합계: \${sum}\`);  // sum: number
 } else {
-  // TypeScript 인식: oddsDoubled는 SideEffect<string>
-  // 하지만 runPipeResult는 여전히 number[] | string 반환 (완전히 좁혀지지 않음)
-  const result = runPipeResult<number[], string>(oddsDoubled);
-  console.log(\`에러: \${result}\`);  // result: number[] | string
+  // pipeSideEffect는 SideEffect를 any로 넓혀서 runPipeResult가 any가 됨
+  const result = runPipeResult(oddsDoubled);
+  console.log(\`에러: \${result}\`);  // result: any
 }
 
-// ❌ 잘못됨: runPipeResult에 제네릭 없이 사용
-const result = runPipeResult(oddsDoubled);
-// result: any (타입 정보 없음!)
+// ⚠️ 결과 타입이 넓어지면 추론이 깨짐
+const widened: number[] | SideEffect<any> = oddsDoubled;
+const unsafeResult = runPipeResult(widened);
+// unsafeResult: any
 
-// ✅ 올바름: runPipeResult에 제네릭 제공
-const result = runPipeResult<number[], string>(oddsDoubled);
-// result: number[] | string (유니온 타입 - 안전하지만 좁혀지지 않음)`}
+// ✅ 올바름: 제네릭으로 안전한 유니온 복구
+const safeResult = runPipeResult<number[], string>(oddsDoubled);
+// safeResult: number[] | string (유니온 타입 - 안전하지만 좁혀지지 않음)`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

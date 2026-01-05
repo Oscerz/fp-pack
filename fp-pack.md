@@ -122,7 +122,7 @@ const finalValue = runPipeResult(processDataPipeline(input));
 **Key SideEffect functions:**
 - `SideEffect.of(fn, label?)` - Create a side effect container
 - `isSideEffect(value)` - Type guard for **runtime checking** whether a value is a SideEffect
-- `runPipeResult<T, R>(result)` - Execute SideEffect or return value (call **OUTSIDE** pipelines, provide generics for type safety). **⚠️ CRITICAL:** `runPipeResult<T, R=any>` has default `R=any`, so using it without generics returns `any` type. Always provide generics for type safety
+- `runPipeResult<T, R>(result)` - Execute SideEffect or return value (call **OUTSIDE** pipelines). If the input type is precise, inference is preserved. If the input is widened to `SideEffect<any>` or `any`, the result becomes `any` unless you provide generics.
 - `matchSideEffect(result, { value, effect })` - Pattern match on result
 
 **Type-safe result handling:**
@@ -140,32 +140,34 @@ const processNumbers = pipeSideEffect(
 
 const result = processNumbers([1, 2, 3, 4, 5]);
 
-// ✅ CORRECT: Use isSideEffect for runtime checking + provide generics to runPipeResult
+// ✅ CORRECT: Use isSideEffect for runtime checking
 if (!isSideEffect(result)) {
   // TypeScript knows: result is number[]
   const sum: number = result.reduce((a, b) => a + b, 0);
 } else {
   // TypeScript knows: result is SideEffect<string>
-  // But runPipeResult still returns number[] | string (not fully narrowed)
-  const error = runPipeResult<number[], string>(result);  // error: number[] | string
+  // runPipeResult returns number[] | string (not fully narrowed)
+  const error = runPipeResult(result);  // number[] | string
 }
 
-// ❌ WRONG: runPipeResult without generics
-const value = runPipeResult(result);  // result: any (no type information!)
+// ⚠️ If the result type is widened to SideEffect<any>, inference is lost
+const widened: number[] | SideEffect<any> = result;
+const unsafeValue = runPipeResult(widened);  // number[] | any
 
-// ✅ CORRECT: Provide generics to runPipeResult
-const value = runPipeResult<number[], string>(result);  // result: number[] | string (union type - safe but not narrowed)
+// ✅ CORRECT: Provide generics to recover a safe union
+const safeValue = runPipeResult<number[], string>(result);  // result: number[] | string (union type - safe but not narrowed)
 ```
 
 **⚠️ CRITICAL: runPipeResult Type Safety**
 
 `runPipeResult<T, R=any>` has a default type parameter `R=any`. This means:
 
-- ❌ **Without generics**: `const result = runPipeResult(pipeline(data));` returns `any` type (unsafe!)
-- ✅ **With generics**: `runPipeResult<SuccessType, ErrorType>(result)` returns union type `SuccessType | ErrorType` (type-safe)
-- ✅ **With isSideEffect**: Use for runtime checking whether a value is SideEffect
+- ✅ **Precise input types**: `T | SideEffect<'E'>` preserves `T | 'E'` without extra annotations.
+- ⚠️ **Widened inputs**: `T | SideEffect<any>` (or `any`) collapses to `any`.
+- ✅ **With generics**: `runPipeResult<SuccessType, ErrorType>(result)` restores a safe union when inference is lost.
+- ✅ **With isSideEffect**: Prefer for runtime narrowing when you need branch-specific types.
 
-**Always provide generics to `runPipeResult`** for type safety. Use `isSideEffect` for runtime type checking.
+Provide generics when inference is lost; prefer `isSideEffect` for precise narrowing.
 
 ## Stream Functions - Lazy Iterable Processing
 
@@ -520,7 +522,7 @@ const gradeToLetter = cond([
 
 - `prop` returns `T[K] | undefined`. Use `propOr` (or guard) before array operations.
 - `ifElse` expects **functions** for both branches. If you already have a value, wrap it: `() => value` or use `from(value)` for cleaner constant branches.
-- Use `from(value)` when you need a unary function that ignores input (handy for `ifElse`/`cond` branches and data-first patterns).
+- Use `from(value)` when you need a unary function that ignores input (handy for `ifElse`/`cond` branches and data-first patterns). Pipelines that start with `from(...)` can be called without an initial input value.
 - `cond` returns `R | undefined`. Add a default branch and coalesce when you need a strict result.
 - In `pipeSideEffect`, keep step return types aligned to avoid wide unions.
 
@@ -673,8 +675,8 @@ const updateUser = assoc('lastLogin', new Date());
 - **Pure async operations**: `pipeAsync`
 - **Error handling with SideEffect**: `pipeSideEffect` (sync) / `pipeAsyncSideEffect` (async)
 - **Strict SideEffect unions**: `pipeSideEffectStrict` (sync) / `pipeAsyncSideEffectStrict` (async)
-- **Type-safe result handling**: `isSideEffect` for precise type narrowing (⚠️ **ALWAYS prefer this over bare `runPipeResult`** to avoid `any` types)
-- **Execute SideEffect**: `runPipeResult` (call OUTSIDE pipelines). **⚠️ CRITICAL:** Returns `any` type without type narrowing due to default `R=any` parameter
+- **Type-safe result handling**: `isSideEffect` for precise type narrowing (prefer this when you need branch-specific types)
+- **Execute SideEffect**: `runPipeResult` (call OUTSIDE pipelines). If the input is widened to `SideEffect<any>`/`any`, the result becomes `any`; provide generics to recover
 - **Large datasets**: `stream/*` functions
 - **Conditionals**: `ifElse`, `when`, `unless`, `cond`
 - **Object access**: `prop`, `propStrict`, `path`, `pick`, `omit`

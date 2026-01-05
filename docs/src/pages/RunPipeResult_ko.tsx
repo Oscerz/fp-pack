@@ -64,9 +64,9 @@ const result = runPipeResult(processAgePipeline(15));
         기본 타입 파라미터로 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>를 가집니다.
         <br />
         <br />
-        ❌ <strong>타입 좁히기 없이 사용하면 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> 타입을 반환:</strong>
+        ✅ <strong>입력 타입이 정확하면 추론이 유지됩니다.</strong>
         <br />
-        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        ⚠️ <strong>입력이 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> 또는 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code>로 넓어지면 결과가 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code>가 됩니다.</strong>
         <br />
         <br />
         ✅ <strong>정확한 타입 안전성을 위해 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> 타입 가드 사용:</strong>
@@ -217,22 +217,22 @@ const divide = (a: number, b: number) =>
 
 const result = pipeSideEffect((x: number) => divide(10, x))(2);
 
-// ❌ 타입 가드 없는 runPipeResult - 'any' 반환
+// ⚠️ pipeSideEffect는 SideEffect를 any로 넓혀서 runPipeResult가 any가 됨
 const value1 = runPipeResult(result);
-// value1: any (타입 정보 없음!)
+// value1: any
 
 // ✅ 명시적 타입이 있는 runPipeResult - 더 안전
 const value2 = runPipeResult<number, string>(result);
 // value2: number | string (유니온 타입이지만 좁혀지지 않음)
 
-// ✅ 정확한 타입 좁히기를 위한 isSideEffect - 최고
+// ✅ 분기별 타입 좁히기를 위한 isSideEffect - 최고
 if (!isSideEffect(result)) {
   // result는 number (정확한 타입!)
   const doubled: number = result * 2;
   console.log(\`결과: \${doubled}\`);
 } else {
-  // result는 SideEffect<string> (정확한 타입!)
-  const error: string = runPipeResult(result);
+  // 비엄격 파이프라인에서는 SideEffect<any>
+  const error = runPipeResult(result);
   console.error(\`에러: \${error}\`);
 }
 
@@ -258,7 +258,7 @@ if (!isSideEffect(result)) {
         <strong>3. 타입 안전성을 위해 runPipeResult보다 isSideEffect 선호:</strong>
         <br />
         <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">isSideEffect</code>는 정확한 타입 좁히기를 제공합니다.
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult</code>는 명시적 타입 없이 <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">any</code>를 반환합니다.
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult</code>는 입력이 넓어졌을 때 <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">any</code>를 반환합니다. 필요하면 제네릭으로 복구하세요.
       </p>
     </div>
 

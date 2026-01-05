@@ -265,7 +265,7 @@ if (!isSideEffect(result)) {
   // result is number - handle success case
   processResult(result);
 } else {
-  // result is SideEffect<string> - handle error case
+  // result is SideEffect<any> in non-strict pipelines - handle error case
   logError(result.effect());
 }
 

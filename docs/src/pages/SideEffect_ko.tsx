@@ -134,9 +134,11 @@ function runPipeResult<T, R>(value: T | SideEffect<R>): T | R;`}
         <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">runPipeResult&lt;T, R=any&gt;</code>는 기본 타입 매개변수로 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>를 사용합니다.
         <br />
         <br />
-        ❌ <strong>타입 내로잉 없이 runPipeResult를 사용하면 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> 타입이 반환됩니다:</strong>
+        ✅ <strong>입력 타입이 정확하면 추론이 유지됩니다.</strong>
         <br />
-        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        ⚠️ <strong>입력이 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> 또는 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code>로 넓어지면(비엄격 파이프라인에서 흔함) 결과가 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code>가 됩니다.</strong>
+        <br />
+        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any (입력이 넓어짐)</code>
         <br />
         <br />
         ✅ <strong>정확한 타입 안전성을 위해서는 <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> 타입 가드를 사용하세요:</strong>
@@ -341,14 +343,18 @@ if (!isSideEffect(oddsDoubled)) {
   const result: number = oddsDoubled.reduce((a, b) => a + b, 0);
   console.log(\`합계: \${result}\`);  // result: number (정확한 타입!)
 } else {
-  // TypeScript가 인식: oddsDoubled는 SideEffect<string>
-  const result = runPipeResult<number[], string>(oddsDoubled);
-  console.log(\`에러: \${result}\`);  // result: string (정확한 타입!)
+  // TypeScript가 인식: oddsDoubled는 비엄격 파이프라인에서 SideEffect<any>
+  const error = oddsDoubled.effect();
+  console.log(\`에러: \${error}\`);
 }
 
-// ❌ isSideEffect 없이 - 덜 정확한 타입
-const result = runPipeResult(oddsDoubled);
-// result: number[] | string (유니온 타입 - 덜 정확함)`}
+// ⚠️ isSideEffect 없이 - 비엄격 파이프라인에서 타입이 넓어질 수 있음
+const widened = oddsDoubled; // pipeSideEffect는 SideEffect를 any로 넓힘
+const unsafeResult = runPipeResult(widened);
+// unsafeResult: any
+
+const safeResult = runPipeResult<number[], string>(oddsDoubled);
+// safeResult: number[] | string (유니온 타입 - 안전하지만 좁혀지지 않음)`}
     />
 
     <div class="bg-blue-50 dark:bg-blue-900/20 p-4 mb-6 rounded border border-blue-200 dark:border-blue-800">
@@ -360,7 +366,10 @@ const result = runPipeResult(oddsDoubled);
         <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">isSideEffect</code>를 사용하세요.</strong>
         <br />
         <br />
-        ⚠️ <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code>를 타입 내로잉 없이 사용하면 기본 <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">R=any</code> 매개변수로 인해 <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">any</code> 타입이 반환됩니다.
+        ⚠️ <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code>는 입력이{' '}
+        <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> 또는{' '}
+        <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">any</code>로 넓어지면 기본{' '}
+        <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">R=any</code> 매개변수 때문에 <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">any</code>를 반환합니다.
         <br />
         정확한 타입이 필요하지 않거나 명시적인 타입 매개변수를 제공할 때만 <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code>를 사용하세요.
         <br />

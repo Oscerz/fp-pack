@@ -46,8 +46,8 @@ if (!isSideEffect(result)) {
   const sum: number = result.reduce((a, b) => a + b, 0);
   console.log(\`합계: \${sum}\`);
 } else {
-  // TypeScript가 인식: result는 SideEffect<string>
-  const error: string = result.effect();
+  // TypeScript가 인식: 비엄격 파이프라인에서 result는 SideEffect<any>
+  const error = result.effect();
   console.log(\`에러: \${error}\`);
 }`}
     />
@@ -58,13 +58,15 @@ if (!isSideEffect(result)) {
         <br />
         <br />
         <strong>정확한 타입 좁히기:</strong> 유니온 타입을 반환하는 <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">runPipeResult</code>와
-        달리, <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">isSideEffect</code>는
+        달리(<code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> 또는 <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">any</code>로 입력이 넓어지면 <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">any</code> 반환),
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">isSideEffect</code>는
         성공과 에러 분기 모두에서 타입을 좁혀줍니다.
         <br />
         <br />
-        <strong>타입 안전성:</strong> <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">runPipeResult</code>를
-        타입 좁히기 없이 사용하면 기본 <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">R=any</code> 파라미터로
-        인해 <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">any</code> 타입을 반환합니다.
+        <strong>타입 안전성:</strong> <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">runPipeResult</code>는
+        입력이 <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> 또는{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">any</code>로 넓어지면 기본{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">R=any</code> 파라미터 때문에 <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">any</code>를 반환합니다.
         <br />
         <br />
         성공 및 에러 처리 경로 모두에서 정확한 타입이 필요할 때 <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">isSideEffect</code>를
@@ -121,7 +123,7 @@ if (!isSideEffect(userOrError)) {
   console.log(\`사용자 발견: \${userOrError.email}\`);
   sendWelcomeEmail(userOrError);
 } else {
-  // userOrError는 SideEffect<string>
+  // userOrError는 비엄격 파이프라인에서 SideEffect<any>
   const errorMessage = userOrError.effect();
   console.error(\`에러: \${errorMessage}\`);
   showErrorToast(errorMessage);
@@ -150,7 +152,7 @@ const result = calculatePipeline(0);
 
 // ❌ isSideEffect 없이 - 덜 정확한 타입
 const value1 = runPipeResult(result);
-// value1: any (타입 정보 없음!)
+// value1: any (pipeSideEffect에서 타입이 넓어짐)
 
 const value2 = runPipeResult<number, string>(result);
 // value2: number | string (유니온 타입 - 안전하지만 좁혀지지 않음)
@@ -161,8 +163,8 @@ if (!isSideEffect(result)) {
   const doubled: number = result * 2;
   console.log(\`결과: \${doubled}\`);
 } else {
-  // result는 SideEffect<string> (정확한 타입!)
-  const error: string = result.effect();
+  // result는 비엄격 파이프라인에서 SideEffect<any>
+  const error = result.effect();
   console.error(\`에러: \${error}\`);
 }`}
     />
@@ -192,7 +194,7 @@ if (!isSideEffect(endpoint)) {
   // endpoint는 string
   fetch(endpoint).then(/* ... */);
 } else {
-  // endpoint는 SideEffect<null>
+  // endpoint는 비엄격 파이프라인에서 SideEffect<any>
   console.warn('엔드포인트가 설정되지 않았습니다. 기본값 사용');
   fetch(DEFAULT_ENDPOINT).then(/* ... */);
 }`}
@@ -228,7 +230,7 @@ if (!isSideEffect(result)) {
   showSuccessMessage(\`폼 제출 완료: \${result.id}\`);
   redirectToDashboard();
 } else {
-  // result는 SideEffect<ValidationError[]>
+  // result는 비엄격 파이프라인에서 SideEffect<any>
   const errors: ValidationError[] = result.effect();
 
   errors.forEach(error => {

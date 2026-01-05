@@ -134,9 +134,9 @@ function runPipeResult<T, R>(value: T | SideEffect<R>): T | R;`}
         <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">runPipeResult&lt;T, R=any&gt;</code> has a default type parameter <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>.
         <br />
         <br />
-        ❌ <strong>Using runPipeResult without type narrowing returns <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> type:</strong>
+        ✅ <strong>If the input type is precise, inference is preserved.</strong>
         <br />
-        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        ⚠️ <strong>If the input is widened to <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> or <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code>, the result becomes <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code>.</strong>
         <br />
         <br />
         ✅ <strong>For precise type safety, use <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> type guard:</strong>
@@ -341,14 +341,18 @@ if (!isSideEffect(oddsDoubled)) {
   const result: number = oddsDoubled.reduce((a, b) => a + b, 0);
   console.log(\`Sum: \${result}\`);  // result: number (exact type!)
 } else {
-  // TypeScript knows: oddsDoubled is SideEffect<string>
-  const result = runPipeResult<number[], string>(oddsDoubled);
-  console.log(\`Error: \${result}\`);  // result: string (exact type!)
+  // TypeScript knows: oddsDoubled is SideEffect<any> in non-strict pipelines
+  const error = oddsDoubled.effect();
+  console.log(\`Error: \${error}\`);
 }
 
-// ❌ Without isSideEffect - less precise types
-const result = runPipeResult(oddsDoubled);
-// result: number[] | string (union type - less precise)`}
+// ⚠️ Without isSideEffect - types can widen in non-strict pipelines
+const widened = oddsDoubled; // pipeSideEffect widens SideEffect to any
+const unsafeResult = runPipeResult(widened);
+// unsafeResult: any
+
+const safeResult = runPipeResult<number[], string>(oddsDoubled);
+// safeResult: number[] | string (union type - safe but not narrowed)`}
     />
 
     <div class="bg-blue-50 dark:bg-blue-900/20 p-4 mb-6 rounded border border-blue-200 dark:border-blue-800">
@@ -360,9 +364,12 @@ const result = runPipeResult(oddsDoubled);
         <strong>precise type inference</strong> for both success and error paths.
         <br />
         <br />
-        ⚠️ <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code> without type narrowing returns <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">any</code> type due to default <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">R=any</code> parameter.
+        ⚠️ <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code> returns <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">any</code> when the input is widened to{' '}
+        <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> or{' '}
+        <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">any</code> due to the default{' '}
+        <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">R=any</code> parameter.
         <br />
-        Only use <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code> when you don't need precise types or when providing explicit type parameters.
+        Only use <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">runPipeResult</code> when you don't need precise types or when you provide explicit type parameters.
         <br />
         <br />
         Use <code class="bg-blue-100 dark:bg-blue-900/40 px-1 py-0.5 rounded">matchSideEffect</code> for pattern matching when you want to transform both cases to the same return type.

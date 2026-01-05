@@ -90,7 +90,7 @@ There's no framework and no heavy abstractions—just well-chosen helpers that m
   `pipe` (sync) and `pipeAsync` (async) are the primary composition tools. All utilities are designed to work seamlessly in pipe chains.
 
 - **Pragmatic error handling**
-  The `SideEffect` pattern handles errors and side effects declaratively in `pipeSideEffect`/`pipeAsyncSideEffect` pipelines. Write normal functions that compose naturally—these pipelines automatically short-circuit when they encounter a `SideEffect`, eliminating the need for wrapper types everywhere. For strict union typing across branches, use `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict`. Use `runPipeResult<T, R>`/`matchSideEffect` **outside** the pipeline with generics for type safety, and `isSideEffect` for runtime type checking.
+  The `SideEffect` pattern handles errors and side effects declaratively in `pipeSideEffect`/`pipeAsyncSideEffect` pipelines. Write normal functions that compose naturally—these pipelines automatically short-circuit when they encounter a `SideEffect`, eliminating the need for wrapper types everywhere. For strict union typing across branches, use `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict`. Use `runPipeResult`/`matchSideEffect` **outside** the pipeline. If the result type is widened (e.g. `SideEffect<any>`), provide generics to recover a safe union. Use `isSideEffect` for precise runtime narrowing.
 
 - **Immutable & Pure by default**
   Core utilities avoid mutations and side effects. Any exception is explicitly named (e.g. `tap`, `log`).
@@ -329,7 +329,7 @@ Functions for composing and transforming other functions.
 - **SideEffect** - Side effect container for SideEffect-aware pipelines
 - **isSideEffect** - Type guard for runtime checking whether a value is a SideEffect
 - **matchSideEffect** - Pattern match on value or SideEffect
-- **runPipeResult** - Execute SideEffect or return value (call OUTSIDE pipelines). **⚠️ CRITICAL:** `runPipeResult<T, R=any>` has default `R=any`, so using it without generics returns `any` type. Always provide explicit type parameters `runPipeResult<SuccessType, ErrorType>` for type safety. Use `isSideEffect` for runtime type checking
+- **runPipeResult** - Execute SideEffect or return value (call OUTSIDE pipelines). If the input is widened to `SideEffect<any>`/`any`, the result becomes `any`; provide explicit type parameters `runPipeResult<SuccessType, ErrorType>` to recover a safe union. Use `isSideEffect` for precise type narrowing.
 
 ### Control Flow
 
@@ -583,34 +583,35 @@ const processNumbers = pipeSideEffect(
 
 const oddsDoubled = processNumbers([1, 2, 3, 4, 5]);
 
-// ✅ CORRECT: Use isSideEffect for type checking + provide generics to runPipeResult
+// ✅ CORRECT: Use isSideEffect for type checking
 if (!isSideEffect(oddsDoubled)) {
   // TypeScript knows: oddsDoubled is number[]
   const sum: number = oddsDoubled.reduce((a, b) => a + b, 0);
   console.log(`Sum: ${sum}`);  // sum: number
 } else {
-  // TypeScript knows: oddsDoubled is SideEffect<string>
-  // But runPipeResult still returns number[] | string (not fully narrowed)
-  const error = runPipeResult<number[], string>(oddsDoubled);
-  console.log(`Error: ${error}`);  // error: number[] | string
+  // pipeSideEffect widens SideEffect to any, so runPipeResult becomes any here
+  const error = runPipeResult(oddsDoubled);
+  console.log(`Error: ${error}`);  // error: any
 }
 
-// ❌ WRONG: runPipeResult without generics
-const result = runPipeResult(oddsDoubled);  // result: any (no type information!)
+// ⚠️ If the result type is widened, inference is lost
+const widened: number[] | SideEffect<any> = oddsDoubled;
+const unsafeResult = runPipeResult(widened);  // result: any
 
-// ✅ CORRECT: Provide generics to runPipeResult
-const result = runPipeResult<number[], string>(oddsDoubled);  // result: number[] | string (union type - safe but not narrowed)
+// ✅ CORRECT: Provide generics to recover a safe union
+const safeResult = runPipeResult<number[], string>(oddsDoubled);  // result: number[] | string (union type - safe but not narrowed)
 ```
 
 **⚠️ CRITICAL: runPipeResult Type Safety**
 
 `runPipeResult<T, R=any>` has a default type parameter `R=any`. This means:
 
-- ❌ **Without generics**: `const result = runPipeResult(pipeline(data));` returns `any` type (unsafe!)
-- ✅ **With generics**: `runPipeResult<SuccessType, ErrorType>(result)` returns union type `SuccessType | ErrorType` (type-safe)
-- ✅ **With isSideEffect**: Use for runtime checking whether a value is SideEffect
+- ✅ **Precise input types**: `T | SideEffect<'E'>` preserves `T | 'E'` without extra annotations.
+- ⚠️ **Widened inputs**: `T | SideEffect<any>` (or `any`) collapses to `any`.
+- ✅ **With generics**: `runPipeResult<SuccessType, ErrorType>(result)` restores a safe union when inference is lost.
+- ✅ **With isSideEffect**: Use for runtime checking and precise narrowing.
 
-**Always provide generics to `runPipeResult`** for type safety. Use `isSideEffect` for runtime type checking.
+Provide generics when inference is lost; prefer `isSideEffect` for precise narrowing.
 
 ### Pipe vs PipeAsync
 

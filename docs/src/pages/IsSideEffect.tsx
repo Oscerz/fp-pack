@@ -46,8 +46,8 @@ if (!isSideEffect(result)) {
   const sum: number = result.reduce((a, b) => a + b, 0);
   console.log(\`Sum: \${sum}\`);
 } else {
-  // TypeScript knows: result is SideEffect<string>
-  const error: string = result.effect();
+  // TypeScript knows: result is SideEffect<any> in non-strict pipelines
+  const error = result.effect();
   console.log(\`Error: \${error}\`);
 }`}
     />
@@ -58,12 +58,15 @@ if (!isSideEffect(result)) {
         <br />
         <br />
         <strong>Precise type narrowing:</strong> Unlike <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">runPipeResult</code>,
-        which returns a union type, <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">isSideEffect</code> narrows
+        which returns a union type (or <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">any</code> when the input is widened),{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">isSideEffect</code> narrows
         the type in both the success and error branches.
         <br />
         <br />
-        <strong>Type safety:</strong> <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">runPipeResult</code> without
-        type narrowing returns <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">any</code> type due to the default{' '}
+        <strong>Type safety:</strong> <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">runPipeResult</code> returns{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">any</code> when the input is widened to{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> or{' '}
+        <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">any</code> due to the default{' '}
         <code class="bg-green-100 dark:bg-green-900/40 px-1 py-0.5 rounded">R=any</code> parameter.
         <br />
         <br />
@@ -121,7 +124,7 @@ if (!isSideEffect(userOrError)) {
   console.log(\`Found user: \${userOrError.email}\`);
   sendWelcomeEmail(userOrError);
 } else {
-  // userOrError is SideEffect<string>
+  // userOrError is SideEffect<any> in non-strict pipelines
   const errorMessage = userOrError.effect();
   console.error(\`Error: \${errorMessage}\`);
   showErrorToast(errorMessage);
@@ -150,7 +153,7 @@ const result = calculatePipeline(0);
 
 // ❌ WITHOUT isSideEffect - less precise types
 const value1 = runPipeResult(result);
-// value1: any (no type information!)
+// value1: any (result widened by pipeSideEffect)
 
 const value2 = runPipeResult<number, string>(result);
 // value2: number | string (union type - safe but not narrowed)
@@ -161,8 +164,8 @@ if (!isSideEffect(result)) {
   const doubled: number = result * 2;
   console.log(\`Result: \${doubled}\`);
 } else {
-  // result is SideEffect<string> (exact type!)
-  const error: string = result.effect();
+  // result is SideEffect<any> in non-strict pipelines
+  const error = result.effect();
   console.error(\`Error: \${error}\`);
 }`}
     />
@@ -192,7 +195,7 @@ if (!isSideEffect(endpoint)) {
   // endpoint is string
   fetch(endpoint).then(/* ... */);
 } else {
-  // endpoint is SideEffect<null>
+  // endpoint is SideEffect<any> in non-strict pipelines
   console.warn('No endpoint configured, using default');
   fetch(DEFAULT_ENDPOINT).then(/* ... */);
 }`}
@@ -228,7 +231,7 @@ if (!isSideEffect(result)) {
   showSuccessMessage(\`Form submitted: \${result.id}\`);
   redirectToDashboard();
 } else {
-  // result is SideEffect<ValidationError[]>
+  // result is SideEffect<any> in non-strict pipelines
   const errors: ValidationError[] = result.effect();
 
   errors.forEach(error => {

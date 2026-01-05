@@ -64,9 +64,9 @@ const result = runPipeResult(processAgePipeline(15));
         default type parameter <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">R=any</code>.
         <br />
         <br />
-        ❌ <strong>Without type narrowing, runPipeResult returns <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code> type:</strong>
+        ✅ <strong>If the input type is precise, inference is preserved.</strong>
         <br />
-        <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded text-xs">const result = runPipeResult(pipeline(data)); // result: any</code>
+        ⚠️ <strong>If the input is widened to <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">SideEffect&lt;any&gt;</code> or <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code>, the result becomes <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">any</code>.</strong>
         <br />
         <br />
         ✅ <strong>For precise type safety, use <code class="bg-red-100 dark:bg-red-900/40 px-1 py-0.5 rounded">isSideEffect</code> type guard:</strong>
@@ -217,22 +217,22 @@ const divide = (a: number, b: number) =>
 
 const result = pipeSideEffect((x: number) => divide(10, x))(2);
 
-// ❌ runPipeResult without type guard - returns 'any'
+// ⚠️ pipeSideEffect widens SideEffect to any, so runPipeResult becomes any
 const value1 = runPipeResult(result);
-// value1: any (no type information!)
+// value1: any
 
 // ✅ runPipeResult with explicit types - safer
 const value2 = runPipeResult<number, string>(result);
 // value2: number | string (union type, but not narrowed)
 
-// ✅ isSideEffect for precise type narrowing - best
+// ✅ isSideEffect for branch narrowing - best
 if (!isSideEffect(result)) {
   // result is number (exact type!)
   const doubled: number = result * 2;
   console.log(\`Result: \${doubled}\`);
 } else {
-  // result is SideEffect<string> (exact type!)
-  const error: string = runPipeResult(result);
+  // result is SideEffect<any> in non-strict pipelines
+  const error = runPipeResult(result);
   console.error(\`Error: \${error}\`);
 }
 
@@ -258,7 +258,7 @@ if (!isSideEffect(result)) {
         <strong>3. For type safety, prefer isSideEffect over runPipeResult:</strong>
         <br />
         <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">isSideEffect</code> provides exact type narrowing.
-        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult</code> returns <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">any</code> without explicit types.
+        <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">runPipeResult</code> returns <code class="bg-orange-100 dark:bg-orange-900/40 px-1 py-0.5 rounded">any</code> when the input is widened; provide generics to recover.
       </p>
     </div>
 

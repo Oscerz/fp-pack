@@ -254,7 +254,7 @@ const result = pipeline(5);`}
     <ul class="space-y-3 text-gray-700 dark:text-gray-300 mb-6">
       <li><code class="text-sm">SideEffect.of(fn, label?)</code> - Create a side effect container</li>
       <li><code class="text-sm">isSideEffect(value)</code> - Type guard for <strong>runtime checking</strong> whether a value is a SideEffect</li>
-      <li><code class="text-sm">runPipeResult&lt;T, R&gt;(result)</code> - Execute SideEffect or return value (call <strong>OUTSIDE</strong> pipelines, provide generics for type safety)</li>
+      <li><code class="text-sm">runPipeResult&lt;T, R&gt;(result)</code> - Execute SideEffect or return value (call <strong>OUTSIDE</strong> pipelines). If the input is widened to <code class="text-sm">SideEffect&lt;any&gt;</code>, provide generics to recover a safe union.</li>
       <li><code class="text-sm">matchSideEffect(result, {'{'} value, effect {'}'})</code> - Pattern match on result</li>
     </ul>
 
@@ -263,7 +263,7 @@ const result = pipeline(5);`}
         ⚠️ CRITICAL: runPipeResult Type Safety
       </p>
       <p class="text-sm md:text-base text-orange-800 dark:text-orange-200">
-        <code class="text-sm">runPipeResult&lt;T, R=any&gt;</code> has default <code class="text-sm">R=any</code>, so using it without generics returns <code class="text-sm">any</code> type. Always provide generics to <code class="text-sm">runPipeResult&lt;SuccessType, ErrorType&gt;</code> for type safety. Use <code class="text-sm">isSideEffect</code> for runtime type checking.
+        <code class="text-sm">runPipeResult&lt;T, R=any&gt;</code> has default <code class="text-sm">R=any</code>. If the input type is precise, inference is preserved. If the input is widened to <code class="text-sm">SideEffect&lt;any&gt;</code> (or <code class="text-sm">any</code>), the result becomes <code class="text-sm">any</code> unless you provide generics. Prefer <code class="text-sm">isSideEffect</code> for precise narrowing.
       </p>
     </div>
 
@@ -287,25 +287,25 @@ const processNumbers = pipeSideEffect(
 
 const oddsDoubled = processNumbers([1, 2, 3, 4, 5]);
 
-// ✅ CORRECT: Use isSideEffect for type checking + provide generics to runPipeResult
+// ✅ CORRECT: Use isSideEffect for type checking
 if (!isSideEffect(oddsDoubled)) {
   // TypeScript knows: oddsDoubled is number[]
   const sum: number = oddsDoubled.reduce((a, b) => a + b, 0);
   console.log(\`Sum: \${sum}\`);  // sum: number
 } else {
-  // TypeScript knows: oddsDoubled is SideEffect<string>
-  // But runPipeResult still returns number[] | string (not fully narrowed)
-  const result = runPipeResult<number[], string>(oddsDoubled);
-  console.log(\`Error: \${result}\`);  // result: number[] | string
+  // pipeSideEffect widens SideEffect to any, so runPipeResult becomes any here
+  const result = runPipeResult(oddsDoubled);
+  console.log(\`Error: \${result}\`);  // result: any
 }
 
-// ❌ WRONG: runPipeResult without generics
-const result = runPipeResult(oddsDoubled);
-// result: any (no type information!)
+// ⚠️ If the result type is widened, inference is lost
+const widened: number[] | SideEffect<any> = oddsDoubled;
+const unsafeResult = runPipeResult(widened);
+// unsafeResult: any
 
-// ✅ CORRECT: Provide generics to runPipeResult
-const result = runPipeResult<number[], string>(oddsDoubled);
-// result: number[] | string (union type - safe but not narrowed)`}
+// ✅ CORRECT: Provide generics to recover a safe union
+const safeResult = runPipeResult<number[], string>(oddsDoubled);
+// safeResult: number[] | string (union type - safe but not narrowed)`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
