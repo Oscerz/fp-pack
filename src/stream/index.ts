@@ -21,3 +21,4 @@ export { default as toArray } from './toArray';
 export { default as toAsync } from './toAsync';
 export { default as zip } from './zip';
 export { default as zipWith } from './zipWith';
+export type { AnyIterable, AnyIterableInput, PromiseLikeValue } from './utils';

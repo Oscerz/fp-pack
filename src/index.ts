@@ -30,3 +30,6 @@ export * from './implement/nullable';
 
 // Debug
 export * from './implement/debug';
+
+// Stream Types
+export type { AnyIterable, AnyIterableInput, PromiseLikeValue } from './stream/utils';

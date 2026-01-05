@@ -1,6 +1,5 @@
 import curry from '../composition/curry';
-
-type PathKey = string | number | symbol;
+import type { PathKey } from './pathKey';
 
 const isIndexKey = (key: PathKey): key is number | `${number}` => {
   if (typeof key === 'number') {
@@ -62,3 +61,4 @@ function assocPath<T = unknown>(pathArray: PathKey[], value: unknown, obj: unkno
 
 const curriedAssocPath = curry(assocPath) as AssocPath;
 export default curriedAssocPath;
+export type { PathKey };

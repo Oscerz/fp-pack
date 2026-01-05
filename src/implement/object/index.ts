@@ -19,3 +19,4 @@ export { default as mapValues } from './mapValues';
 export { default as evolve } from './evolve';
 export { default as has } from './has';
 export { default as hasPath } from './hasPath';
+export type { PathKey } from './pathKey';

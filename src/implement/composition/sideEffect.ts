@@ -15,7 +15,7 @@ export class SideEffect<T = unknown> {
   }
 }
 
-type MatchHandlers<T, RValue, REffect> = {
+export type MatchHandlers<T, RValue, REffect> = {
   value: (value: T) => RValue;
   effect: (sideEffect: SideEffect) => REffect;
 };

@@ -3,14 +3,14 @@
  * Supports functions with 2-5 parameters and keeps data-last call order.
  */
 
-type Curry2<Fn> = Fn extends (a: infer A, b: infer B) => infer R
+export type Curry2<Fn> = Fn extends (a: infer A, b: infer B) => infer R
   ? {
       (...args: [A]): (b: B) => R;
       (...args: [A, B]): R;
     }
   : never;
 
-type Curry3<Fn> = Fn extends (a: infer A, b: infer B, c: infer C) => infer R
+export type Curry3<Fn> = Fn extends (a: infer A, b: infer B, c: infer C) => infer R
   ? {
       (...args: [A]): (b: B) => (c: C) => R;
       (...args: [A, B]): (c: C) => R;
@@ -18,7 +18,7 @@ type Curry3<Fn> = Fn extends (a: infer A, b: infer B, c: infer C) => infer R
     }
   : never;
 
-type Curry4<Fn> = Fn extends (a: infer A, b: infer B, c: infer C, d: infer D) => infer R
+export type Curry4<Fn> = Fn extends (a: infer A, b: infer B, c: infer C, d: infer D) => infer R
   ? {
       (...args: [A]): (b: B) => (c: C) => (d: D) => R;
       (...args: [A, B]): (c: C) => (d: D) => R;
@@ -27,7 +27,7 @@ type Curry4<Fn> = Fn extends (a: infer A, b: infer B, c: infer C, d: infer D) =>
     }
   : never;
 
-type Curry5<Fn> = Fn extends (a: infer A, b: infer B, c: infer C, d: infer D, e: infer E) => infer R
+export type Curry5<Fn> = Fn extends (a: infer A, b: infer B, c: infer C, d: infer D, e: infer E) => infer R
   ? {
       (...args: [A]): (b: B) => (c: C) => (d: D) => (e: E) => R;
       (...args: [A, B]): (c: C) => (d: D) => (e: E) => R;
@@ -53,7 +53,7 @@ type CurryByArity<Fn extends (...args: any[]) => any> = Parameters<Fn>['length']
         ? Curry5<Fn>
         : CurryVariadic<Fn>;
 
-type Curried<Fn extends (...args: any[]) => any> = CurryByArity<Fn>;
+export type Curried<Fn extends (...args: any[]) => any> = CurryByArity<Fn>;
 
 function curry<Fn extends (...args: any[]) => any>(fn: Fn): Curried<Fn>;
 
