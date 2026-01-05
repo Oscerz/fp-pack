@@ -1,4 +1,4 @@
-import SideEffect from './sideEffect';
+import SideEffect, { runPipeResult } from './sideEffect';
 import from from './from';
 import pipe from './pipe';
 import pipeSideEffect from './pipeSideEffect';
@@ -288,6 +288,15 @@ export type PipeSideEffectStrictEffects = Expect<Equal<StrictSideEffectEffects, 
 type StrictSideEffectValue = ValueUnion<typeof strictPipeSideEffectResult>;
 type StrictSideEffectValueExpected = number;
 export type PipeSideEffectStrictValue = Expect<Equal<StrictSideEffectValue, StrictSideEffectValueExpected>>;
+
+export const strictPipeSideEffectRunResult = runPipeResult(strictPipeSideEffectResult);
+
+type StrictPipeSideEffectRunExpected =
+  | ValueUnion<typeof strictPipeSideEffectResult>
+  | EffectUnion<typeof strictPipeSideEffectResult>;
+export type PipeSideEffectStrictRunPipeResultIsStrict = Expect<
+  Equal<typeof strictPipeSideEffectRunResult, StrictPipeSideEffectRunExpected>
+>;
 
 export const strictPipeSideEffectInput = strictPipeSideEffect(SideEffect.of(() => 'INPUT' as const));
 
