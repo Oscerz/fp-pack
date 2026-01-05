@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import compose from './compose';
+import from from './from';
 
 describe('compose', () => {
   it('applies functions right-to-left', () => {
@@ -25,6 +26,19 @@ describe('compose', () => {
     const square = (n: number) => n * n;
     const fn = compose(square);
     expect(fn(4)).toBe(16);
+  });
+
+  it('supports zero-arity tail functions', () => {
+    const addOne = (n: number) => n + 1;
+    const fn = compose(addOne, () => 2);
+    expect(fn()).toBe(3);
+  });
+
+  it('supports from() as a constant source', () => {
+    const addOne = (n: number) => n + 1;
+    const fn = compose(addOne, from(2));
+    expect(fn()).toBe(3);
+    expect(fn(10)).toBe(3);
   });
 
 });
