@@ -324,6 +324,7 @@ Functions for composing and transforming other functions.
 - **constant** - Always return the same value
 - **from** - Ignore input and return a fixed value
 - **tap** - Execute side effects without changing the value
+- **tap0** - Execute side effects without input
 - **once** - Create a function that only executes once
 - **memoize** - Cache function results for same inputs
 - **SideEffect** - Side effect container for SideEffect-aware pipelines

@@ -12,6 +12,7 @@ export { default as constant } from './constant';
 export { default as from } from './from';
 export type { FromFn } from './from';
 export { default as tap } from './tap';
+export { default as tap0 } from './tap0';
 export { default as once } from './once';
 export { default as memoize } from './memoize';
 export { default as SideEffect } from './sideEffect';

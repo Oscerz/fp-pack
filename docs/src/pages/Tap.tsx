@@ -522,6 +522,22 @@ processValue(3);  // Returns 16, state = { count: 2, lastValue: 6 }`}
       </a>
 
       <a
+        href="/composition/tap0"
+        onClick={(e: Event) => {
+          e.preventDefault();
+          navigateTo('/composition/tap0');
+        }}
+        class="block p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-amber-500 dark:hover:border-amber-500 transition-colors cursor-pointer"
+      >
+        <h3 class="text-lg md:text-xl font-medium text-amber-600 dark:text-amber-400 mb-2">
+          tap0 →
+        </h3>
+        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">
+          Zero-arity side effects with no input value.
+        </p>
+      </a>
+
+      <a
         href="/composition/identity"
         onClick={(e: Event) => {
           e.preventDefault();

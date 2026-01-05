@@ -38,6 +38,8 @@ import { Once } from '@/pages/Once';
 import { Once_ko } from '@/pages/Once_ko';
 import { Tap } from '@/pages/Tap';
 import { Tap_ko } from '@/pages/Tap_ko';
+import { Tap0 } from '@/pages/Tap0';
+import { Tap0_ko } from '@/pages/Tap0_ko';
 import { SideEffect } from '@/pages/SideEffect';
 import { SideEffect_ko } from '@/pages/SideEffect_ko';
 import { IsSideEffect } from '@/pages/IsSideEffect';
@@ -341,6 +343,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/composition/once': Once_ko,
   '/composition/tap': Tap,
   '/ko/composition/tap': Tap_ko,
+  '/composition/tap0': Tap0,
+  '/ko/composition/tap0': Tap0_ko,
   '/composition/sideEffect': SideEffect,
   '/ko/composition/sideEffect': SideEffect_ko,
   '/composition/isSideEffect': IsSideEffect,

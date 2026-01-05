@@ -642,6 +642,17 @@ const handleSubmit = pipe(
 <form onSubmit={handleSubmit}>...</form>`}
     />
 
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mt-6">
+      If you need a side effect without input, use <code class="text-sm">tap0</code>.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { tap0 } from 'fp-pack';
+
+tap0(() => console.log('init'))();`}
+    />
+
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
       Data Transformation with useMemo
     </h3>

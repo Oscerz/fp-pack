@@ -214,6 +214,7 @@ const result = Array.from({ length: 1000000 }, (_, i) => i + 1)
 - `constant` - Always return the same value
 - `from` - Ignore input and return a fixed value
 - `tap` - Execute side effect and return original value
+- `tap0` - Execute side effect without input
 - `once` - Execute function only once
 - `memoize` - Cache function results
 - `SideEffect` - Side effect container

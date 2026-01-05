@@ -641,6 +641,17 @@ const handleSubmit = pipe(
 <form onSubmit={handleSubmit}>...</form>`}
     />
 
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mt-6">
+      입력 없이 부수 효과만 실행하려면 <code class="text-sm">tap0</code>를 사용하세요.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { tap0 } from 'fp-pack';
+
+tap0(() => console.log('init'))();`}
+    />
+
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
       useMemo를 활용한 데이터 변환
     </h3>
