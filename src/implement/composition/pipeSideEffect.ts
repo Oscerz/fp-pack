@@ -1,3 +1,4 @@
+import type { FromFn } from './from';
 import SideEffect, { isSideEffect } from './sideEffect';
 
 type MaybeSideEffect<T> = T | SideEffect<any>;
@@ -17,6 +18,9 @@ type PipeOutput<Fns extends UnaryFn<any, any>[]> = Fns extends [UnaryFn<any, inf
 type Resolve<T> = T extends infer R ? R : never;
 type PipeSideEffect<Fns extends UnaryFn<any, any>[]> = (
   input: PipeInput<Fns> | SideEffect<any>
+) => Resolve<PipeOutput<Fns>>;
+type PipeSideEffectFrom<Fns extends [FromFn<any>, ...UnaryFn<any, any>[]]> = (
+  input?: PipeInput<Fns> | SideEffect<any>
 ) => Resolve<PipeOutput<Fns>>;
 
 function pipeSideEffect<R>(ab: ZeroFn<R>): () => MaybeSideEffect<R>;
@@ -85,6 +89,7 @@ function pipeSideEffect<B, C, D, E, F, G, H, I, J, R>(
   ij: UnaryFn<I, J>,
   jk: UnaryFn<J, R>
 ): () => MaybeSideEffect<R>;
+function pipeSideEffect<Fns extends [FromFn<any>, ...UnaryFn<any, any>[]]>(...funcs: Fns): PipeSideEffectFrom<Fns>;
 function pipeSideEffect<A, R>(ab: UnaryFn<A, R>): (a: A | SideEffect<any>) => MaybeSideEffect<R>;
 function pipeSideEffect<A, B, R>(
   ab: UnaryFn<A, B>,

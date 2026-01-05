@@ -1,3 +1,4 @@
+import type { FromFn } from '../composition/from';
 import SideEffect, { isSideEffect } from '../composition/sideEffect';
 
 /** pipeAsyncSideEffect - SideEffect를 허용하는 비동기 함수 합성 */
@@ -21,7 +22,13 @@ type Resolve<T> = T extends infer R ? R : never;
 type PipeAsyncSideEffect<Fns extends AsyncOrSync<any, any>[]> = (
   input: PipeInput<Fns> | SideEffect<any>
 ) => Promise<Resolve<PipeOutput<Fns>>>;
+type PipeAsyncSideEffectFrom<Fns extends [FromFn<any>, ...AsyncOrSync<any, any>[]]> = (
+  input?: PipeInput<Fns> | SideEffect<any>
+) => Promise<Resolve<PipeOutput<Fns>>>;
 
+function pipeAsyncSideEffect<Fns extends [FromFn<any>, ...AsyncOrSync<any, any>[]]>(
+  ...funcs: Fns
+): PipeAsyncSideEffectFrom<Fns>;
 function pipeAsyncSideEffect<A, R>(
   ab: AsyncOrSync<A, R>
 ): (a: A | SideEffect<any>) => Promise<MaybeSideEffect<Awaited<R>>>;

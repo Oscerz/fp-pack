@@ -130,6 +130,13 @@ export type PipeSideEffectFromTenValueIsStrict = Expect<
   Equal<typeof pipeSideEffectFromTenValue, PipeSideEffectFromTenValueExpected>
 >;
 
+export const pipeSideEffectFromTenValueNoInput = pipeSideEffectFromTen();
+
+type PipeSideEffectFromTenValueNoInputExpected = string | SideEffect<any>;
+export type PipeSideEffectFromTenValueNoInputIsStrict = Expect<
+  Equal<typeof pipeSideEffectFromTenValueNoInput, PipeSideEffectFromTenValueNoInputExpected>
+>;
+
 export const purePipeAsync = pipeAsync(
   (value: number) => value + 1,
   async (value) => value * 2,
@@ -185,6 +192,13 @@ export const pipeAsyncFromTenValue = pipeAsyncFromTen('input');
 type PipeAsyncFromTenValueExpected = Promise<string>;
 export type PipeAsyncFromTenValueIsStrict = Expect<
   Equal<typeof pipeAsyncFromTenValue, PipeAsyncFromTenValueExpected>
+>;
+
+export const pipeAsyncFromTenValueNoInput = pipeAsyncFromTen();
+
+type PipeAsyncFromTenValueNoInputExpected = Promise<string>;
+export type PipeAsyncFromTenValueNoInputIsStrict = Expect<
+  Equal<typeof pipeAsyncFromTenValueNoInput, PipeAsyncFromTenValueNoInputExpected>
 >;
 
 export const pipeAsyncWithSideEffectInput = pipeAsyncSideEffect(
@@ -250,6 +264,13 @@ export const pipeAsyncSideEffectFromTenValue = pipeAsyncSideEffectFromTen('input
 type PipeAsyncSideEffectFromTenValueExpected = Promise<string | SideEffect<any>>;
 export type PipeAsyncSideEffectFromTenValueIsStrict = Expect<
   Equal<typeof pipeAsyncSideEffectFromTenValue, PipeAsyncSideEffectFromTenValueExpected>
+>;
+
+export const pipeAsyncSideEffectFromTenValueNoInput = pipeAsyncSideEffectFromTen();
+
+type PipeAsyncSideEffectFromTenValueNoInputExpected = Promise<string | SideEffect<any>>;
+export type PipeAsyncSideEffectFromTenValueNoInputIsStrict = Expect<
+  Equal<typeof pipeAsyncSideEffectFromTenValueNoInput, PipeAsyncSideEffectFromTenValueNoInputExpected>
 >;
 
 export const strictPipeSideEffect = pipeSideEffectStrict(
@@ -342,6 +363,20 @@ export type PipeSideEffectStrictFromTenEffects = Expect<
 type StrictFromTenValue = ValueUnion<typeof strictPipeSideEffectFromTenResult>;
 type StrictFromTenValueExpected = number;
 export type PipeSideEffectStrictFromTenValue = Expect<Equal<StrictFromTenValue, StrictFromTenValueExpected>>;
+
+export const strictPipeSideEffectFromTenResultNoInput = strictPipeSideEffectFromTen();
+
+type StrictFromTenNoInputEffects = EffectUnion<typeof strictPipeSideEffectFromTenResultNoInput>;
+type StrictFromTenNoInputEffectsExpected = 'LOW' | 'MID' | 0;
+export type PipeSideEffectStrictFromTenNoInputEffects = Expect<
+  Equal<StrictFromTenNoInputEffects, StrictFromTenNoInputEffectsExpected>
+>;
+
+type StrictFromTenNoInputValue = ValueUnion<typeof strictPipeSideEffectFromTenResultNoInput>;
+type StrictFromTenNoInputValueExpected = number;
+export type PipeSideEffectStrictFromTenNoInputValue = Expect<
+  Equal<StrictFromTenNoInputValue, StrictFromTenNoInputValueExpected>
+>;
 
 export const strictPipeAsyncSideEffect = pipeAsyncSideEffectStrict(
   (value: number) => value + 1,
@@ -442,4 +477,19 @@ type StrictAsyncFromTenValue = ValueUnion<StrictAsyncFromTenResolved>;
 type StrictAsyncFromTenValueExpected = number;
 export type PipeAsyncSideEffectStrictFromTenValue = Expect<
   Equal<StrictAsyncFromTenValue, StrictAsyncFromTenValueExpected>
+>;
+
+export const strictPipeAsyncSideEffectFromTenResultNoInput = strictPipeAsyncSideEffectFromTen();
+
+type StrictAsyncFromTenNoInputResolved = Awaited<typeof strictPipeAsyncSideEffectFromTenResultNoInput>;
+type StrictAsyncFromTenNoInputEffects = EffectUnion<StrictAsyncFromTenNoInputResolved>;
+type StrictAsyncFromTenNoInputEffectsExpected = 'LOW' | 'MID' | 0;
+export type PipeAsyncSideEffectStrictFromTenNoInputEffects = Expect<
+  Equal<StrictAsyncFromTenNoInputEffects, StrictAsyncFromTenNoInputEffectsExpected>
+>;
+
+type StrictAsyncFromTenNoInputValue = ValueUnion<StrictAsyncFromTenNoInputResolved>;
+type StrictAsyncFromTenNoInputValueExpected = number;
+export type PipeAsyncSideEffectStrictFromTenNoInputValue = Expect<
+  Equal<StrictAsyncFromTenNoInputValue, StrictAsyncFromTenNoInputValueExpected>
 >;

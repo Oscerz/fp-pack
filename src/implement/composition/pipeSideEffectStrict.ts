@@ -1,3 +1,4 @@
+import type { FromFn } from './from';
 import SideEffect, { isSideEffect } from './sideEffect';
 
 type AnyFn = (...args: any[]) => any;
@@ -41,6 +42,12 @@ type PipeSideEffectStrictUnary<Fns extends [AnyFn, ...AnyFn[]]> = {
   (input: PipeInputStrict<Fns>): Resolve<MaybeSideEffect<PipeValueOutputStrict<Fns>, EffectsOf<Fns>>>;
   <EIn>(
     input: PipeInputStrict<Fns> | SideEffect<EIn>
+  ): Resolve<MaybeSideEffect<PipeValueOutputStrict<Fns>, EffectsOf<Fns> | EIn>>;
+};
+type PipeSideEffectStrictUnaryOptional<Fns extends [AnyFn, ...AnyFn[]]> = {
+  (input?: PipeInputStrict<Fns>): Resolve<MaybeSideEffect<PipeValueOutputStrict<Fns>, EffectsOf<Fns>>>;
+  <EIn>(
+    input?: PipeInputStrict<Fns> | SideEffect<EIn>
   ): Resolve<MaybeSideEffect<PipeValueOutputStrict<Fns>, EffectsOf<Fns> | EIn>>;
 };
 
@@ -177,6 +184,9 @@ function pipeSideEffectStrict<B, C, D, E, F, G, H, I, J, R>(
   UnaryFn<NonSideEffect<I>, J>,
   UnaryFn<NonSideEffect<J>, R>
 ]>;
+function pipeSideEffectStrict<Fns extends [FromFn<any>, ...AnyFn[]]>(
+  ...funcs: Fns
+): PipeSideEffectStrictUnaryOptional<Fns>;
 function pipeSideEffectStrict<A, R>(ab: UnaryFn<A, R>): PipeSideEffectStrict<[UnaryFn<A, R>]>;
 function pipeSideEffectStrict<A, B, R>(
   ab: UnaryFn<A, B>,

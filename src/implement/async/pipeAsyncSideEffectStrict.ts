@@ -1,3 +1,4 @@
+import type { FromFn } from '../composition/from';
 import SideEffect, { isSideEffect } from '../composition/sideEffect';
 
 type AnyFn = (...args: any[]) => any;
@@ -41,6 +42,12 @@ type PipeAsyncSideEffectStrictUnary<Fns extends [AnyFn, ...AnyFn[]]> = {
   (input: PipeInputStrict<Fns>): Promise<Resolve<MaybeSideEffect<PipeValueOutputStrict<Fns>, EffectsOf<Fns>>>>;
   <EIn>(
     input: PipeInputStrict<Fns> | SideEffect<EIn>
+  ): Promise<Resolve<MaybeSideEffect<PipeValueOutputStrict<Fns>, EffectsOf<Fns> | EIn>>>;
+};
+type PipeAsyncSideEffectStrictUnaryOptional<Fns extends [AnyFn, ...AnyFn[]]> = {
+  (input?: PipeInputStrict<Fns>): Promise<Resolve<MaybeSideEffect<PipeValueOutputStrict<Fns>, EffectsOf<Fns>>>>;
+  <EIn>(
+    input?: PipeInputStrict<Fns> | SideEffect<EIn>
   ): Promise<Resolve<MaybeSideEffect<PipeValueOutputStrict<Fns>, EffectsOf<Fns> | EIn>>>;
 };
 
@@ -177,6 +184,9 @@ function pipeAsyncSideEffectStrict<B, C, D, E, F, G, H, I, J, R>(
   AsyncOrSync<NonSideEffect<Awaited<I>>, J>,
   AsyncOrSync<NonSideEffect<Awaited<J>>, R>
 ]>;
+function pipeAsyncSideEffectStrict<Fns extends [FromFn<any>, ...AnyFn[]]>(
+  ...funcs: Fns
+): PipeAsyncSideEffectStrictUnaryOptional<Fns>;
 function pipeAsyncSideEffectStrict<A, R>(
   ab: AsyncOrSync<A, R>
 ): PipeAsyncSideEffectStrict<[AsyncOrSync<A, R>]>;

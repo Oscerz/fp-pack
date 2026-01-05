@@ -1,3 +1,5 @@
+import type { FromFn } from '../composition/from';
+
 /** pipeAsync - 비동기 함수 합성 */
 type AsyncOrSync<A, R> = (a: A) => R | Promise<R>;
 type PipeInput<Fns extends AsyncOrSync<any, any>[]> = Fns extends [AsyncOrSync<infer A, any>, ...AsyncOrSync<any, any>[]]
@@ -11,7 +13,11 @@ type PipeOutput<Fns extends AsyncOrSync<any, any>[]> = Fns extends [AsyncOrSync<
       : never
     : never;
 type PipeAsync<Fns extends AsyncOrSync<any, any>[]> = (input: PipeInput<Fns>) => Promise<PipeOutput<Fns>>;
+type PipeAsyncFrom<Fns extends [FromFn<any>, ...AsyncOrSync<any, any>[]]> = (
+  input?: PipeInput<Fns>
+) => Promise<PipeOutput<Fns>>;
 
+function pipeAsync<Fns extends [FromFn<any>, ...AsyncOrSync<any, any>[]]>(...funcs: Fns): PipeAsyncFrom<Fns>;
 function pipeAsync<A, R>(ab: AsyncOrSync<A, R>): (a: A) => Promise<Awaited<R>>;
 function pipeAsync<A, B, R>(ab: AsyncOrSync<A, B>, bc: AsyncOrSync<Awaited<B>, R>): (a: A) => Promise<Awaited<R>>;
 function pipeAsync<A, B, C, R>(
