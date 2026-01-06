@@ -151,12 +151,13 @@ const filteredUsers = filterUsers(users);
     </p>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-      해결책은 data-first 래핑, 명시적 제네릭, 또는 커리 함수의 타입 힌트/캐스팅입니다.
+      해결책은 <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">pipeHint</code>,
+      data-first 래핑, 또는 커리 함수의 명시적 타입 힌트/캐스팅입니다.
     </p>
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, zip, some } from 'fp-pack';
+      code={`import { pipe, pipeHint, zip, some } from 'fp-pack';
 
 // 방법 1: data-first 래핑
 const withWrapper = pipe(
@@ -167,6 +168,12 @@ const withWrapper = pipe(
 // 방법 2: 명시적 타입 힌트
 const withHint = pipe(
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
+  some(([a, b]) => a > b)
+);
+
+// 방법 3: pipeHint 헬퍼
+const withPipeHint = pipe(
+  pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );`}
     />

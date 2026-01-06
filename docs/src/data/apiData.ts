@@ -7,6 +7,7 @@ export interface ApiItem {
 export const apiData = [
   // Composition
   { title: 'pipe', path: '/composition/pipe', category: 'Composition' },
+  { title: 'pipeHint', path: '/composition/pipeHint', category: 'Composition' },
   { title: 'pipeSideEffect', path: '/composition/pipeSideEffect', category: 'Composition' },
   { title: 'pipeSideEffectStrict', path: '/composition/pipeSideEffectStrict', category: 'Composition' },
   { title: 'compose', path: '/composition/compose', category: 'Composition' },

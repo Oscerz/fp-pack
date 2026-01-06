@@ -151,12 +151,13 @@ const filteredUsers = filterUsers(users);
     </p>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-      Use one of these workarounds: data-first wrapper, explicit generic, or a typed alias/annotation for the curried function.
+      Use one of these workarounds: <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">pipeHint</code>,
+      a data-first wrapper, or an explicit type annotation for the curried function.
     </p>
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, zip, some } from 'fp-pack';
+      code={`import { pipe, pipeHint, zip, some } from 'fp-pack';
 
 // Option 1: data-first wrapper
 const withWrapper = pipe(
@@ -167,6 +168,12 @@ const withWrapper = pipe(
 // Option 2: explicit type annotation
 const withHint = pipe(
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
+  some(([a, b]) => a > b)
+);
+
+// Option 3: pipeHint helper
+const withPipeHint = pipe(
+  pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );`}
     />

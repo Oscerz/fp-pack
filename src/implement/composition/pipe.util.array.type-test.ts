@@ -1,5 +1,6 @@
 import SideEffect from './sideEffect';
 import pipe from './pipe';
+import pipeHint from './pipeHint';
 import pipeSideEffect from './pipeSideEffect';
 import pipeSideEffectStrict from './pipeSideEffectStrict';
 import pipeAsync from '../async/pipeAsync';
@@ -58,7 +59,7 @@ type PipeArrayFindActiveExpected = (input: User[]) => number | undefined;
 export type PipeArrayFindActiveIsStrict = Expect<Equal<typeof pipeArrayFindActive, PipeArrayFindActiveExpected>>;
 
 export const pipeArrayZipSome = pipe(
-  zip([10, 20, 30]) as (values: number[]) => Array<[number, number]>,
+  pipeHint<number[], Array<[number, number]>>(zip([10, 20, 30])),
   some((pair: [number, number]) => pair[0] > pair[1])
 );
 
@@ -85,7 +86,7 @@ type PipeSideEffectArrayExpected = (input: User[] | SideEffect<any>) => User | S
 export type PipeSideEffectArrayIsStrict = Expect<Equal<typeof pipeSideEffectArray, PipeSideEffectArrayExpected>>;
 
 export const pipeSideEffectStrictArray = pipeSideEffectStrict(
-  zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
+  pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   (pairs) => (every((pair: [number, number]) => pair[0] >= pair[1], pairs)
     ? pairs
     : SideEffect.of(() => 'NOT_ORDERED' as const)),

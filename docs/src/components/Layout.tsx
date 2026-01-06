@@ -12,6 +12,8 @@ import { AIAgentSkills } from '@/pages/AIAgentSkills';
 import { AIAgentSkills_ko } from '@/pages/AIAgentSkills_ko';
 import { Pipe } from '@/pages/Pipe';
 import { Pipe_ko } from '@/pages/Pipe_ko';
+import { PipeHint } from '@/pages/PipeHint';
+import { PipeHint_ko } from '@/pages/PipeHint_ko';
 import { PipeSideEffect } from '@/pages/PipeSideEffect';
 import { PipeSideEffect_ko } from '@/pages/PipeSideEffect_ko';
 import { PipeSideEffectStrict } from '@/pages/PipeSideEffectStrict';
@@ -317,6 +319,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/ai-agent-skills': AIAgentSkills_ko,
   '/composition/pipe': Pipe,
   '/ko/composition/pipe': Pipe_ko,
+  '/composition/pipeHint': PipeHint,
+  '/ko/composition/pipeHint': PipeHint_ko,
   '/composition/pipeSideEffect': PipeSideEffect,
   '/ko/composition/pipeSideEffect': PipeSideEffect_ko,
   '/composition/pipeSideEffectStrict': PipeSideEffectStrict,

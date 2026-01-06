@@ -22,6 +22,7 @@ export const Sidebar = mount(renew => {
         title: isKorean ? '조합' : 'Composition',
         items: [
           { title: 'pipe', path: '/composition/pipe' },
+          { title: 'pipeHint', path: '/composition/pipeHint' },
           { title: 'pipeSideEffect', path: '/composition/pipeSideEffect' },
           { title: 'pipeSideEffectStrict', path: '/composition/pipeSideEffectStrict' },
           { title: 'compose', path: '/composition/compose' },

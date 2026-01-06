@@ -475,7 +475,7 @@ const grade = (score: number) =>
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
       data-last 유틸이 마지막 데이터 입력에서만 타입이 결정되는 제네릭 함수를 반환하는 경우,
       <code class="text-sm">pipe</code>/<code class="text-sm">pipeAsync</code> 안에서는 TypeScript가 타입을 역추론하지 못합니다.
-      필요하면 data-first 래핑, 명시적 제네릭, 또는 타입 힌트를 사용하세요.
+      필요하면 <code class="text-sm">pipeHint</code>, data-first 래핑, 또는 타입 힌트를 사용하세요.
     </p>
 
     <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
@@ -491,7 +491,7 @@ const grade = (score: number) =>
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, zip, some } from 'fp-pack';
+      code={`import { pipe, pipeHint, zip, some } from 'fp-pack';
 
 // 방법 1: data-first 래핑
 const withWrapper = pipe(
@@ -502,6 +502,12 @@ const withWrapper = pipe(
 // 방법 2: 명시적 타입 힌트
 const withHint = pipe(
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
+  some(([a, b]) => a > b)
+);
+
+// 방법 3: pipeHint 헬퍼
+const withPipeHint = pipe(
+  pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );`}
     />

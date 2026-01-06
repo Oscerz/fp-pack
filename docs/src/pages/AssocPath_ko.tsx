@@ -31,7 +31,7 @@ assocPath(['a', -1], 42, { a: [1, 2] });
     <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 rounded">
       <p class="text-sm md:text-base text-yellow-900 dark:text-yellow-100">
         <strong class="font-semibold">참고:</strong> data-last 파이프라인에서는 TypeScript가 이 유틸의 최종 데이터 타입을 추론하지 못할 수 있습니다.
-        간단한 타입 힌트나 data-first 래핑을 사용하세요. 자세한 내용은{' '}
+        pipeHint, 간단한 타입 힌트, 또는 data-first 래핑을 사용하세요. 자세한 내용은{' '}
         <a
           href="/guide/type-usage"
           onClick={(e: Event) => {

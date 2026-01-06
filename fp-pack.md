@@ -72,10 +72,10 @@ const fetchUserData = async (userId: string) => {
 ## Data-last Generic Inference Caveats
 
 Some data-last helpers return a **generic function** whose type is determined only by the final data argument. Inside
-`pipe`/`pipeAsync`, TypeScript cannot infer that type, so you may need a small type hint or a data-first wrapper.
+`pipe`/`pipeAsync`, TypeScript cannot infer that type, so you may need `pipeHint`, a small type hint, or a data-first wrapper.
 
 ```typescript
-import { pipe, zip, some } from 'fp-pack';
+import { pipe, pipeHint, zip, some } from 'fp-pack';
 
 // Option 1: data-first wrapper
 const withWrapper = pipe(
@@ -86,6 +86,12 @@ const withWrapper = pipe(
 // Option 2: explicit type annotation
 const withHint = pipe(
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
+  some(([a, b]) => a > b)
+);
+
+// Option 3: pipeHint helper
+const withPipeHint = pipe(
+  pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );
 ```

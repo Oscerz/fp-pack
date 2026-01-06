@@ -476,7 +476,7 @@ const grade = (score: number) =>
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
       If a data-last helper returns a generic function whose type is decided only by the final data input, TypeScript
       cannot infer that type inside <code class="text-sm">pipe</code>/<code class="text-sm">pipeAsync</code>.
-      Use a data-first wrapper, an explicit generic, or a typed alias when needed.
+      Use <code class="text-sm">pipeHint</code>, a data-first wrapper, or an explicit type annotation when needed.
     </p>
 
     <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
@@ -492,7 +492,7 @@ const grade = (score: number) =>
 
     <CodeBlock
       language="typescript"
-      code={`import { pipe, zip, some } from 'fp-pack';
+      code={`import { pipe, pipeHint, zip, some } from 'fp-pack';
 
 // Option 1: data-first wrapper
 const withWrapper = pipe(
@@ -503,6 +503,12 @@ const withWrapper = pipe(
 // Option 2: explicit type annotation
 const withHint = pipe(
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
+  some(([a, b]) => a > b)
+);
+
+// Option 3: pipeHint helper
+const withPipeHint = pipe(
+  pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );`}
     />

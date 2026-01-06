@@ -14,7 +14,7 @@ export const Chunk = () => (
     <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 rounded">
       <p class="text-sm md:text-base text-yellow-900 dark:text-yellow-100">
         <strong class="font-semibold">Note:</strong> In data-last pipelines, TypeScript may not infer the final data type for this utility.
-        Use a small type hint or a data-first wrapper. See{' '}
+        Use pipeHint, a small type hint, or a data-first wrapper. See{' '}
         <a
           href="/guide/type-usage"
           onClick={(e: Event) => {
