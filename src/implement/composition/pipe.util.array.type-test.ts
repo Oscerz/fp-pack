@@ -79,7 +79,7 @@ const findActive = find((user: User) => user.active);
 export const pipeSideEffectArray = pipeSideEffect(
   sortByScore,
   findActive,
-  (user) => (user ? user : SideEffect.of(() => 'NOT_FOUND' as const))
+  (user: User | undefined) => (user ? user : SideEffect.of(() => 'NOT_FOUND' as const))
 );
 
 type PipeSideEffectArrayExpected = (input: User[] | SideEffect<any>) => User | SideEffect<any>;
@@ -87,10 +87,10 @@ export type PipeSideEffectArrayIsStrict = Expect<Equal<typeof pipeSideEffectArra
 
 export const pipeSideEffectStrictArray = pipeSideEffectStrict(
   pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
-  (pairs) => (every((pair: [number, number]) => pair[0] >= pair[1], pairs)
+  (pairs: Array<[number, number]>) => (every((pair: [number, number]) => pair[0] >= pair[1], pairs)
     ? pairs
     : SideEffect.of(() => 'NOT_ORDERED' as const)),
-  (pairs) => pairs.length
+  (pairs: Array<[number, number]>) => pairs.length
 );
 
 export const pipeSideEffectStrictArrayResult = pipeSideEffectStrictArray([3, 2, 1]);
@@ -128,8 +128,9 @@ export type PipeAsyncSideEffectArrayIsStrict = Expect<
 
 export const pipeAsyncSideEffectStrictArray = pipeAsyncSideEffectStrict(
   groupBy((user: User) => (user.active ? 'active' : 'inactive')),
-  async (groups) => (groups.active && groups.active.length > 0 ? groups : SideEffect.of(() => 'NO_ACTIVE' as const)),
-  (groups) => Object.keys(groups)
+  async (groups: Record<string, User[]>) =>
+    groups.active && groups.active.length > 0 ? groups : SideEffect.of(() => 'NO_ACTIVE' as const),
+  (groups: Record<string, User[]>) => Object.keys(groups)
 );
 
 export const pipeAsyncSideEffectStrictArrayResult = pipeAsyncSideEffectStrictArray([] as User[]);

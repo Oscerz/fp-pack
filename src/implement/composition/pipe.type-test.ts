@@ -18,8 +18,8 @@ export const sideEffectInput = SideEffect.of(() => 0);
 
 export const purePipe = pipe(
   (value: number) => value + 1,
-  (value) => value * 2,
-  (value) => `n:${value}`
+  (value: number) => value * 2,
+  (value: number) => `n:${value}`
 );
 
 type PurePipeExpected = (input: number) => string;
@@ -42,11 +42,11 @@ export type PipePureValueIsStrict = Expect<Equal<typeof purePipeValue, PurePipeV
 
 export const purePipeSix = pipe(
   (value: number) => value + 1,
-  (value) => value * 2,
-  (value) => `${value}`,
-  (value) => value.length,
-  (value) => value + 1,
-  (value) => `n:${value}`
+  (value: number) => value * 2,
+  (value: number) => `${value}`,
+  (value: string) => value.length,
+  (value: number) => value + 1,
+  (value: number) => `n:${value}`
 );
 
 type PurePipeSixExpected = (input: number) => string;
@@ -54,15 +54,15 @@ export type PipePureSixIsStrict = Expect<Equal<typeof purePipeSix, PurePipeSixEx
 
 export const purePipeTen = pipe(
   (value: number) => value + 1,
-  (value) => value * 2,
-  (value) => `v:${value}`,
-  (value) => value.toUpperCase(),
-  (value) => value.length,
-  (value) => value + 1,
-  (value) => `${value}`,
-  (value) => value.padStart(3, '0'),
-  (value) => value.length,
-  (value) => `n:${value}`
+  (value: number) => value * 2,
+  (value: number) => `v:${value}`,
+  (value: string) => value.toUpperCase(),
+  (value: string) => value.length,
+  (value: number) => value + 1,
+  (value: number) => `${value}`,
+  (value: string) => value.padStart(3, '0'),
+  (value: string) => value.length,
+  (value: number) => `n:${value}`
 );
 
 type PurePipeTenExpected = (input: number) => string;
@@ -70,15 +70,15 @@ export type PipePureTenIsStrict = Expect<Equal<typeof purePipeTen, PurePipeTenEx
 
 export const pipeFromTen = pipe(
   from(1),
-  (value) => value + 1,
-  (value) => value * 2,
-  (value) => `${value}`,
-  (value) => value.padStart(3, '0'),
-  (value) => value.length,
-  (value) => value + 1,
-  (value) => `${value}`,
-  (value) => value.padStart(4, '0'),
-  (value) => `n:${value}`
+  (value: number) => value + 1,
+  (value: number) => value * 2,
+  (value: number) => `${value}`,
+  (value: string) => value.padStart(3, '0'),
+  (value: string) => value.length,
+  (value: number) => value + 1,
+  (value: number) => `${value}`,
+  (value: string) => value.padStart(4, '0'),
+  (value: string) => `n:${value}`
 );
 
 export const pipeFromTenValue = pipeFromTen('input');
@@ -105,8 +105,8 @@ export type PipeFromNoInputValueIsStrict = Expect<Equal<typeof pipeFromNoInputVa
 
 export const pipeWithSideEffectInput = pipeSideEffect(
   (value: number) => value + 1,
-  (value) => value * 2,
-  (value) => `n:${value}`
+  (value: number) => value * 2,
+  (value: number) => `n:${value}`
 );
 
 export const pipeWithSideEffectValue = pipeWithSideEffectInput(sideEffectInput);
@@ -135,11 +135,11 @@ export type PipeSideEffectValueInputIsStrict = Expect<
 
 export const pipeSideEffectSix = pipeSideEffect(
   (value: number) => value + 1,
-  (value) => value * 2,
-  (value) => value + 3,
-  (value) => value - 1,
-  (value) => value * 2,
-  (value) => `n:${value}`
+  (value: number) => value * 2,
+  (value: number) => value + 3,
+  (value: number) => value - 1,
+  (value: number) => value * 2,
+  (value: number) => `n:${value}`
 );
 
 type PipeSideEffectSixExpected = (input: number | SideEffect<any>) => string | SideEffect<any>;
@@ -147,15 +147,15 @@ export type PipeSideEffectSixIsStrict = Expect<Equal<typeof pipeSideEffectSix, P
 
 export const pipeSideEffectTen = pipeSideEffect(
   (value: number) => value + 1,
-  (value) => value * 2,
-  (value) => `v:${value}`,
-  (value) => value.toUpperCase(),
-  (value) => value.length,
-  (value) => value + 1,
-  (value) => `${value}`,
-  (value) => value.padStart(3, '0'),
-  (value) => value.length,
-  (value) => `n:${value}`
+  (value: number) => value * 2,
+  (value: number) => `v:${value}`,
+  (value: string) => value.toUpperCase(),
+  (value: string) => value.length,
+  (value: number) => value + 1,
+  (value: number) => `${value}`,
+  (value: string) => value.padStart(3, '0'),
+  (value: string) => value.length,
+  (value: number) => `n:${value}`
 );
 
 type PipeSideEffectTenExpected = (input: number | SideEffect<any>) => string | SideEffect<any>;
@@ -163,15 +163,15 @@ export type PipeSideEffectTenIsStrict = Expect<Equal<typeof pipeSideEffectTen, P
 
 export const pipeSideEffectFromTen = pipeSideEffect(
   from(1),
-  (value) => value + 1,
-  (value) => value * 2,
-  (value) => `${value}`,
-  (value) => value.padStart(3, '0'),
-  (value) => value.length,
-  (value) => value + 1,
-  (value) => `${value}`,
-  (value) => value.padStart(4, '0'),
-  (value) => `n:${value}`
+  (value: number) => value + 1,
+  (value: number) => value * 2,
+  (value: number) => `${value}`,
+  (value: string) => value.padStart(3, '0'),
+  (value: string) => value.length,
+  (value: number) => value + 1,
+  (value: number) => `${value}`,
+  (value: string) => value.padStart(4, '0'),
+  (value: string) => `n:${value}`
 );
 
 export const pipeSideEffectFromTenValue = pipeSideEffectFromTen('input');
@@ -204,8 +204,8 @@ export type PipeSideEffectFromNoInputValueIsStrict = Expect<
 
 export const purePipeAsync = pipeAsync(
   (value: number) => value + 1,
-  async (value) => value * 2,
-  (value) => `n:${value}`
+  async (value: number) => value * 2,
+  (value: number) => `n:${value}`
 );
 
 type PurePipeAsyncExpected = (input: number) => Promise<string>;
@@ -230,11 +230,11 @@ export type PipeAsyncPureValueIsStrict = Expect<Equal<typeof purePipeAsyncValue,
 
 export const purePipeAsyncSix = pipeAsync(
   (value: number) => value + 1,
-  async (value) => value * 2,
-  (value) => `${value}`,
-  async (value) => value.length,
-  (value) => value + 3,
-  async (value) => `n:${value}`
+  async (value: number) => value * 2,
+  (value: number) => `${value}`,
+  async (value: string) => value.length,
+  (value: number) => value + 3,
+  async (value: number) => `n:${value}`
 );
 
 type PurePipeAsyncSixExpected = (input: number) => Promise<string>;
@@ -242,15 +242,15 @@ export type PipeAsyncPureSixIsStrict = Expect<Equal<typeof purePipeAsyncSix, Pur
 
 export const purePipeAsyncTen = pipeAsync(
   (value: number) => value + 1,
-  async (value) => value * 2,
-  (value) => `${value}`,
-  async (value) => value.length,
-  (value) => value + 3,
-  async (value) => value * 2,
-  (value) => `${value}`,
-  async (value) => value.length,
-  (value) => value + 1,
-  async (value) => `n:${value}`
+  async (value: number) => value * 2,
+  (value: number) => `${value}`,
+  async (value: string) => value.length,
+  (value: number) => value + 3,
+  async (value: number) => value * 2,
+  (value: number) => `${value}`,
+  async (value: string) => value.length,
+  (value: number) => value + 1,
+  async (value: number) => `n:${value}`
 );
 
 type PurePipeAsyncTenExpected = (input: number) => Promise<string>;
@@ -258,15 +258,15 @@ export type PipeAsyncPureTenIsStrict = Expect<Equal<typeof purePipeAsyncTen, Pur
 
 export const pipeAsyncFromTen = pipeAsync(
   from(1),
-  async (value) => value + 1,
-  (value) => value * 2,
-  async (value) => `${value}`,
-  (value) => value.padStart(3, '0'),
-  async (value) => value.length,
-  (value) => value + 1,
-  async (value) => `${value}`,
-  (value) => value.padStart(4, '0'),
-  async (value) => `n:${value}`
+  async (value: number) => value + 1,
+  (value: number) => value * 2,
+  async (value: number) => `${value}`,
+  (value: string) => value.padStart(3, '0'),
+  async (value: string) => value.length,
+  (value: number) => value + 1,
+  async (value: number) => `${value}`,
+  (value: string) => value.padStart(4, '0'),
+  async (value: string) => `n:${value}`
 );
 
 export const pipeAsyncFromTenValue = pipeAsyncFromTen('input');
@@ -297,8 +297,8 @@ export type PipeAsyncFromNoInputValueIsStrict = Expect<
 
 export const pipeAsyncWithSideEffectInput = pipeAsyncSideEffect(
   (value: number) => value + 1,
-  async (value) => value * 2,
-  (value) => `n:${value}`
+  async (value: number) => value * 2,
+  (value: number) => `n:${value}`
 );
 
 export const pipeAsyncWithSideEffectValue = pipeAsyncWithSideEffectInput(sideEffectInput);
@@ -331,11 +331,11 @@ export type PipeAsyncSideEffectValueInputIsStrict = Expect<
 
 export const pipeAsyncSideEffectSix = pipeAsyncSideEffect(
   (value: number) => value + 1,
-  async (value) => value * 2,
-  (value) => value + 3,
-  async (value) => value - 1,
-  (value) => value * 2,
-  async (value) => `n:${value}`
+  async (value: number) => value * 2,
+  (value: number) => value + 3,
+  async (value: number) => value - 1,
+  (value: number) => value * 2,
+  async (value: number) => `n:${value}`
 );
 
 type PipeAsyncSideEffectSixExpected = (input: number | SideEffect<any>) => Promise<string | SideEffect<any>>;
@@ -345,15 +345,15 @@ export type PipeAsyncSideEffectSixIsStrict = Expect<
 
 export const pipeAsyncSideEffectTen = pipeAsyncSideEffect(
   (value: number) => value + 1,
-  async (value) => value * 2,
-  (value) => `${value}`,
-  async (value) => value.length,
-  (value) => value + 3,
-  async (value) => value * 2,
-  (value) => `${value}`,
-  async (value) => value.length,
-  (value) => value + 1,
-  async (value) => `n:${value}`
+  async (value: number) => value * 2,
+  (value: number) => `${value}`,
+  async (value: string) => value.length,
+  (value: number) => value + 3,
+  async (value: number) => value * 2,
+  (value: number) => `${value}`,
+  async (value: string) => value.length,
+  (value: number) => value + 1,
+  async (value: number) => `n:${value}`
 );
 
 type PipeAsyncSideEffectTenExpected = (input: number | SideEffect<any>) => Promise<string | SideEffect<any>>;
@@ -363,15 +363,15 @@ export type PipeAsyncSideEffectTenIsStrict = Expect<
 
 export const pipeAsyncSideEffectFromTen = pipeAsyncSideEffect(
   from(1),
-  async (value) => value + 1,
-  (value) => value * 2,
-  async (value) => `${value}`,
-  (value) => value.padStart(3, '0'),
-  async (value) => value.length,
-  (value) => value + 1,
-  async (value) => `${value}`,
-  (value) => value.padStart(4, '0'),
-  async (value) => `n:${value}`
+  async (value: number) => value + 1,
+  (value: number) => value * 2,
+  async (value: number) => `${value}`,
+  (value: string) => value.padStart(3, '0'),
+  async (value: string) => value.length,
+  (value: number) => value + 1,
+  async (value: number) => `${value}`,
+  (value: string) => value.padStart(4, '0'),
+  async (value: string) => `n:${value}`
 );
 
 export const pipeAsyncSideEffectFromTenValue = pipeAsyncSideEffectFromTen('input');
@@ -404,8 +404,8 @@ export type PipeAsyncSideEffectFromNoInputValueIsStrict = Expect<
 
 export const strictPipeSideEffect = pipeSideEffectStrict(
   (value: number) => value + 1,
-  (value) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
-  (value) => (value > 2 ? value : SideEffect.of(() => 0 as const))
+  (value: number) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
+  (value: number) => (value > 2 ? value : SideEffect.of(() => 0 as const))
 );
 
 export const strictPipeSideEffectResult = strictPipeSideEffect(1);
@@ -464,11 +464,11 @@ export type PipeSideEffectStrictInputEffects = Expect<
 
 export const strictPipeSideEffectSix = pipeSideEffectStrict(
   (value: number) => value + 1,
-  (value) => (value > 2 ? value : SideEffect.of(() => 'LOW' as const)),
-  (value) => value + 1,
-  (value) => (value > 10 ? value : SideEffect.of(() => 'SMALL' as const)),
-  (value) => value * 2,
-  (value) => (value > 40 ? value : SideEffect.of(() => 0 as const))
+  (value: number) => (value > 2 ? value : SideEffect.of(() => 'LOW' as const)),
+  (value: number) => value + 1,
+  (value: number) => (value > 10 ? value : SideEffect.of(() => 'SMALL' as const)),
+  (value: number) => value * 2,
+  (value: number) => (value > 40 ? value : SideEffect.of(() => 0 as const))
 );
 
 export const strictPipeSideEffectSixResult = strictPipeSideEffectSix(1);
@@ -483,15 +483,15 @@ export type PipeSideEffectStrictSixValue = Expect<Equal<StrictSixValue, StrictSi
 
 export const strictPipeSideEffectTen = pipeSideEffectStrict(
   (value: number) => value + 1,
-  (value) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
-  (value) => value + 1,
-  (value) => (value > 3 ? value : SideEffect.of(() => 'MID' as const)),
-  (value) => value * 2,
-  (value) => value + 1,
-  (value) => (value > 10 ? value : SideEffect.of(() => 0 as const)),
-  (value) => value + 1,
-  (value) => value * 2,
-  (value) => value + 1
+  (value: number) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
+  (value: number) => value + 1,
+  (value: number) => (value > 3 ? value : SideEffect.of(() => 'MID' as const)),
+  (value: number) => value * 2,
+  (value: number) => value + 1,
+  (value: number) => (value > 10 ? value : SideEffect.of(() => 0 as const)),
+  (value: number) => value + 1,
+  (value: number) => value * 2,
+  (value: number) => value + 1
 );
 
 export const strictPipeSideEffectTenResult = strictPipeSideEffectTen(1);
@@ -506,15 +506,15 @@ export type PipeSideEffectStrictTenValue = Expect<Equal<StrictTenValue, StrictTe
 
 export const strictPipeSideEffectFromTen = pipeSideEffectStrict(
   from(1),
-  (value) => value + 1,
-  (value) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
-  (value) => value * 2,
-  (value) => (value > 4 ? value : SideEffect.of(() => 'MID' as const)),
-  (value) => value + 1,
-  (value) => value * 2,
-  (value) => (value > 20 ? value : SideEffect.of(() => 0 as const)),
-  (value) => value + 1,
-  (value) => value * 2
+  (value: number) => value + 1,
+  (value: number) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
+  (value: number) => value * 2,
+  (value: number) => (value > 4 ? value : SideEffect.of(() => 'MID' as const)),
+  (value: number) => value + 1,
+  (value: number) => value * 2,
+  (value: number) => (value > 20 ? value : SideEffect.of(() => 0 as const)),
+  (value: number) => value + 1,
+  (value: number) => value * 2
 );
 
 export const strictPipeSideEffectFromTenResult = strictPipeSideEffectFromTen('input');
@@ -572,8 +572,8 @@ export type PipeSideEffectStrictFromNoInputValueIsStrict = Expect<
 
 export const strictPipeAsyncSideEffect = pipeAsyncSideEffectStrict(
   (value: number) => value + 1,
-  async (value) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
-  (value) => (value > 2 ? value : SideEffect.of(() => 0 as const))
+  async (value: number) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
+  (value: number) => (value > 2 ? value : SideEffect.of(() => 0 as const))
 );
 
 export const strictPipeAsyncSideEffectResult = strictPipeAsyncSideEffect(1);
@@ -615,11 +615,11 @@ export type PipeAsyncSideEffectStrictZeroValueIsStrict = Expect<
 
 export const strictPipeAsyncSideEffectSix = pipeAsyncSideEffectStrict(
   (value: number) => value + 1,
-  async (value) => (value > 2 ? value : SideEffect.of(() => 'LOW' as const)),
-  (value) => value + 1,
-  async (value) => (value > 10 ? value : SideEffect.of(() => 'SMALL' as const)),
-  (value) => value * 2,
-  async (value) => (value > 40 ? value : SideEffect.of(() => 0 as const))
+  async (value: number) => (value > 2 ? value : SideEffect.of(() => 'LOW' as const)),
+  (value: number) => value + 1,
+  async (value: number) => (value > 10 ? value : SideEffect.of(() => 'SMALL' as const)),
+  (value: number) => value * 2,
+  async (value: number) => (value > 40 ? value : SideEffect.of(() => 0 as const))
 );
 
 export const strictPipeAsyncSideEffectSixResult = strictPipeAsyncSideEffectSix(1);
@@ -639,15 +639,15 @@ export type PipeAsyncSideEffectStrictSixValue = Expect<
 
 export const strictPipeAsyncSideEffectTen = pipeAsyncSideEffectStrict(
   (value: number) => value + 1,
-  async (value) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
-  (value) => value + 1,
-  async (value) => (value > 3 ? value : SideEffect.of(() => 'MID' as const)),
-  (value) => value * 2,
-  async (value) => value + 1,
-  (value) => (value > 10 ? value : SideEffect.of(() => 0 as const)),
-  async (value) => value + 1,
-  (value) => value * 2,
-  async (value) => value + 1
+  async (value: number) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
+  (value: number) => value + 1,
+  async (value: number) => (value > 3 ? value : SideEffect.of(() => 'MID' as const)),
+  (value: number) => value * 2,
+  async (value: number) => value + 1,
+  (value: number) => (value > 10 ? value : SideEffect.of(() => 0 as const)),
+  async (value: number) => value + 1,
+  (value: number) => value * 2,
+  async (value: number) => value + 1
 );
 
 export const strictPipeAsyncSideEffectTenResult = strictPipeAsyncSideEffectTen(1);
@@ -667,15 +667,15 @@ export type PipeAsyncSideEffectStrictTenValue = Expect<
 
 export const strictPipeAsyncSideEffectFromTen = pipeAsyncSideEffectStrict(
   from(1),
-  async (value) => value + 1,
-  (value) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
-  async (value) => value * 2,
-  (value) => (value > 4 ? value : SideEffect.of(() => 'MID' as const)),
-  async (value) => value + 1,
-  (value) => value * 2,
-  async (value) => (value > 20 ? value : SideEffect.of(() => 0 as const)),
-  (value) => value + 1,
-  async (value) => value * 2
+  async (value: number) => value + 1,
+  (value: number) => (value > 1 ? value : SideEffect.of(() => 'LOW' as const)),
+  async (value: number) => value * 2,
+  (value: number) => (value > 4 ? value : SideEffect.of(() => 'MID' as const)),
+  async (value: number) => value + 1,
+  (value: number) => value * 2,
+  async (value: number) => (value > 20 ? value : SideEffect.of(() => 0 as const)),
+  (value: number) => value + 1,
+  async (value: number) => value * 2
 );
 
 export const strictPipeAsyncSideEffectFromTenResult = strictPipeAsyncSideEffectFromTen('input');

@@ -23,7 +23,7 @@ const toLength = (value: string) => value.length;
 
 export const pipeDebounce = pipe(
   debounce(toUpper),
-  (fn) => fn
+  (fn: (value: string) => string) => fn
 );
 
 type PipeDebounceExpected = (input: number) => (value: string) => string;
@@ -31,7 +31,7 @@ export type PipeDebounceIsStrict = Expect<Equal<typeof pipeDebounce, PipeDebounc
 
 export const pipeThrottle = pipe(
   throttle(toLength),
-  (fn) => fn
+  (fn: (value: string) => number) => fn
 );
 
 type PipeThrottleExpected = (input: number) => (value: string) => number;
@@ -39,7 +39,7 @@ export type PipeThrottleIsStrict = Expect<Equal<typeof pipeThrottle, PipeThrottl
 
 export const pipeSideEffectDebounce = pipeSideEffect(
   debounce(toUpper),
-  (fn) => (fn.length > 0 ? fn : SideEffect.of(() => 'NO_FN' as const))
+  (fn: (value: string) => string) => (fn.length > 0 ? fn : SideEffect.of(() => 'NO_FN' as const))
 );
 
 type PipeSideEffectDebounceExpected = (input: number | SideEffect<any>) => ((value: string) => string) | SideEffect<any>;
@@ -49,7 +49,7 @@ export type PipeSideEffectDebounceIsStrict = Expect<
 
 export const pipeSideEffectStrictThrottle = pipeSideEffectStrict(
   throttle(toLength),
-  (fn) => (fn.length > 0 ? fn : SideEffect.of(() => 'NO_FN' as const))
+  (fn: (value: string) => number) => (fn.length > 0 ? fn : SideEffect.of(() => 'NO_FN' as const))
 );
 
 export const pipeSideEffectStrictThrottleResult = pipeSideEffectStrictThrottle(100);
@@ -72,7 +72,7 @@ export type PipeSideEffectStrictThrottleValueIsStrict = Expect<
 export const pipeAsyncRetry = pipeAsync(
   pipeHint<() => Promise<number>, Promise<number>>(retry(2)),
   async (value: number) => value + 1,
-  (value) => `${value}`
+  (value: number) => `${value}`
 );
 
 type PipeAsyncRetryExpected = (input: () => Promise<number>) => Promise<string>;

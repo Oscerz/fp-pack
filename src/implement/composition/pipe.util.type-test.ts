@@ -1,5 +1,6 @@
 import SideEffect from './sideEffect';
 import pipe from './pipe';
+import pipeHint from './pipeHint';
 import pipeSideEffect from './pipeSideEffect';
 import pipeSideEffectStrict from './pipeSideEffectStrict';
 import tap from './tap';
@@ -98,10 +99,10 @@ export type PipeObjectNullableControlIsStrict = Expect<
 export const pipeSideEffectTags = pipeSideEffect(
   getTags,
   getOrElse<Array<string | null>>([]),
-  mapMaybe((tag) => (tag ? tag.trim() : null)),
-  map((tag) => tag.toUpperCase()),
+  mapMaybe((tag: string | null) => (tag ? tag.trim() : null)),
+  map((tag: string) => tag.toUpperCase()),
   join('|'),
-  (value) => (isEmpty(value) ? SideEffect.of(() => 'EMPTY' as const) : value)
+  (value: string) => (isEmpty(value) ? SideEffect.of(() => 'EMPTY' as const) : value)
 );
 
 type PipeSideEffectTagsExpected = (input: TagOwner | SideEffect<any>) => string | SideEffect<any>;
@@ -111,9 +112,9 @@ export const pipeSideEffectStrictConfig = pipeSideEffectStrict(
   mergeConfig,
   getValue,
   getOrElse(0),
-  when(gt(0), (value) => value + 1),
-  (value) => (value > 0 ? value : SideEffect.of(() => 'NO_VALUE' as const)),
-  (value) => value + 1
+  when<number>(gt(0), (value: number) => value + 1),
+  (value: number) => (value > 0 ? value : SideEffect.of(() => 'NO_VALUE' as const)),
+  (value: number) => value + 1
 );
 
 export const pipeSideEffectStrictConfigValue = pipeSideEffectStrictConfig([{ value: 1 }]);
@@ -133,13 +134,13 @@ export type PipeSideEffectStrictConfigInputIsStrict = Expect<
 export const pipeAsyncUserLabel = pipeAsync(
   getName,
   getOrElse(''),
-  async (value) => value.trim(),
+  async (value: string) => value.trim(),
   ifElse(
     (value: string) => value.length > 0,
     toUpper,
     () => 'UNKNOWN'
   ),
-  log('label')
+  pipeHint<string, string>(log('label'))
 );
 
 type PipeAsyncUserLabelExpected = (input: User) => Promise<string>;
@@ -148,10 +149,10 @@ export type PipeAsyncUserLabelIsStrict = Expect<Equal<typeof pipeAsyncUserLabel,
 export const pipeAsyncSideEffectTags = pipeAsyncSideEffect(
   getTags,
   getOrElse<Array<string | null>>([]),
-  mapMaybe((tag) => (tag ? tag.trim() : null)),
-  async (tags) => tags.map((tag) => tag.toUpperCase()),
+  mapMaybe((tag: string | null) => (tag ? tag.trim() : null)),
+  async (tags: string[]) => tags.map((tag: string) => tag.toUpperCase()),
   join('|'),
-  (value) => (isEmpty(value) ? SideEffect.of(() => 'EMPTY' as const) : value)
+  (value: string) => (isEmpty(value) ? SideEffect.of(() => 'EMPTY' as const) : value)
 );
 
 type PipeAsyncSideEffectTagsExpected = (input: TagOwner | SideEffect<any>) => Promise<string | SideEffect<any>>;
@@ -163,9 +164,9 @@ export const pipeAsyncSideEffectStrictConfig = pipeAsyncSideEffectStrict(
   mergeConfig,
   getValue,
   getOrElse(0),
-  async (value) => value + 1,
-  (value) => (value > 0 ? value : SideEffect.of(() => 'NO_VALUE' as const)),
-  async (value) => value + 1
+  async (value: number) => value + 1,
+  (value: number) => (value > 0 ? value : SideEffect.of(() => 'NO_VALUE' as const)),
+  async (value: number) => value + 1
 );
 
 export const pipeAsyncSideEffectStrictConfigValue = pipeAsyncSideEffectStrictConfig([{ value: 1 }]);
@@ -199,7 +200,7 @@ export const pipeSideEffectStream = pipeSideEffect(
   streamMapNumber,
   streamFilterNumber,
   streamReduceNumber,
-  (value) => (value > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
+  (value: number) => (value > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
 );
 
 type PipeSideEffectStreamExpected = (input: number | SideEffect<any>) => number | SideEffect<any>;
@@ -210,7 +211,7 @@ export const pipeSideEffectStrictStream = pipeSideEffectStrict(
   streamMapNumber,
   streamFilterNumber,
   streamReduceNumber,
-  (value) => (value > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
+  (value: number) => (value > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
 );
 
 export const pipeSideEffectStrictStreamValue = pipeSideEffectStrictStream(3);
@@ -223,7 +224,7 @@ export type PipeSideEffectStrictStreamValueIsStrict = Expect<
 export const pipeAsyncStream = pipeAsync(
   (end: number) => streamRange(0, end),
   streamMapAsyncNumber,
-  streamToArray
+  pipeHint<IterableIterator<Promise<number>>, Promise<number[]>>(streamToArray)
 );
 
 type PipeAsyncStreamExpected = (input: number) => Promise<number[]>;
@@ -232,8 +233,8 @@ export type PipeAsyncStreamIsStrict = Expect<Equal<typeof pipeAsyncStream, PipeA
 export const pipeAsyncSideEffectStream = pipeAsyncSideEffect(
   (end: number) => streamRange(0, end),
   streamMapAsyncNumber,
-  streamToArray,
-  (value) => (value.length > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
+  pipeHint<IterableIterator<Promise<number>>, Promise<number[]>>(streamToArray),
+  (value: number[]) => (value.length > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
 );
 
 type PipeAsyncSideEffectStreamExpected = (input: number | SideEffect<any>) => Promise<number[] | SideEffect<any>>;
@@ -244,8 +245,8 @@ export type PipeAsyncSideEffectStreamIsStrict = Expect<
 export const pipeAsyncSideEffectStrictStream = pipeAsyncSideEffectStrict(
   (end: number) => streamRange(0, end),
   streamMapAsyncNumber,
-  streamToArray,
-  (value) => (value.length > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
+  pipeHint<IterableIterator<Promise<number>>, Promise<number[]>>(streamToArray),
+  (value: number[]) => (value.length > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
 );
 
 export const pipeAsyncSideEffectStrictStreamValue = pipeAsyncSideEffectStrictStream(3);

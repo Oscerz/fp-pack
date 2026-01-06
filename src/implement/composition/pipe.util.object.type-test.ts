@@ -109,7 +109,7 @@ const getNameMaybe = prop('name') as (user: MaybeUserWithoutMeta) => string | un
 
 export const pipeSideEffectObject = pipeSideEffect(
   addMetaMaybe,
-  (value) => (hasNameMaybe(value) ? value : SideEffect.of(() => 'NO_NAME' as const)),
+  (value: MaybeUserWithMeta) => (hasNameMaybe(value) ? value : SideEffect.of(() => 'NO_NAME' as const)),
   stripMeta,
   getNameMaybe
 );
@@ -130,8 +130,8 @@ const clearRole = dissocPath<Account>(['profile', 'role']);
 
 export const pipeSideEffectStrictObject = pipeSideEffectStrict(
   setRole,
-  (value) => (value.id ? value : SideEffect.of(() => 'NO_ID' as const)),
-  (value) => (readRole(value) ? value : SideEffect.of(() => 'NO_ROLE' as const)),
+  (value: Account) => (value.id ? value : SideEffect.of(() => 'NO_ID' as const)),
+  (value: Account) => (readRole(value) ? value : SideEffect.of(() => 'NO_ROLE' as const)),
   clearRole
 );
 
@@ -167,7 +167,7 @@ const pickConfig = pick(['id', 'flags'] as Array<'id' | 'flags'>) as (
   value: AsyncConfig
 ) => Pick<AsyncConfig, 'id' | 'flags'>;
 
-export const pipeAsyncObject = pipeAsync(addDefaults, bumpAsyncCount, async (value) => value, pickConfig);
+export const pipeAsyncObject = pipeAsync(addDefaults, bumpAsyncCount, async (value: AsyncConfig) => value, pickConfig);
 
 type PipeAsyncObjectExpected = (input: AsyncConfig) => Promise<Pick<AsyncConfig, 'id' | 'flags'>>;
 export type PipeAsyncObjectIsStrict = Expect<Equal<typeof pipeAsyncObject, PipeAsyncObjectExpected>>;
@@ -186,7 +186,8 @@ const getAmount = prop('amount') as (value: Payment & { meta: Meta }) => number 
 export const pipeAsyncSideEffectObject = pipeAsyncSideEffect(
   attachMeta,
   getAmount,
-  async (amount) => (amount && amount > 0 ? amount : SideEffect.of(() => 'INVALID_AMOUNT' as const))
+  async (amount: number | undefined) =>
+    amount && amount > 0 ? amount : SideEffect.of(() => 'INVALID_AMOUNT' as const)
 );
 
 type PipeAsyncSideEffectObjectExpected = (input: Payment | SideEffect<any>) => Promise<number | SideEffect<any>>;
@@ -206,8 +207,8 @@ const readValue = (value: Payload) => path<number>(['data', 'value'], value);
 
 export const pipeAsyncSideEffectStrictObject = pipeAsyncSideEffectStrict(
   setValue,
-  async (value) => (value.id ? value : SideEffect.of(() => 'NO_ID' as const)),
-  (value) => (readValue(value) ? value : SideEffect.of(() => 'NO_VALUE' as const))
+  async (value: Payload) => (value.id ? value : SideEffect.of(() => 'NO_ID' as const)),
+  (value: Payload) => (readValue(value) ? value : SideEffect.of(() => 'NO_VALUE' as const))
 );
 
 export const pipeAsyncSideEffectStrictObjectResult = pipeAsyncSideEffectStrictObject({});

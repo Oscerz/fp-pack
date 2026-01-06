@@ -57,7 +57,7 @@ export type PipeStringEqualsIsStrict = Expect<Equal<typeof pipeStringEquals, Pip
 
 export const pipeSideEffectString = pipeSideEffect(
   replace('a', 'b'),
-  (value) => (value.length > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
+  (value: string) => (value.length > 0 ? value : SideEffect.of(() => 'EMPTY' as const))
 );
 
 type PipeSideEffectStringExpected = (input: string | SideEffect<any>) => string | SideEffect<any>;
@@ -67,8 +67,9 @@ export type PipeSideEffectStringIsStrict = Expect<
 
 export const pipeSideEffectStrictString = pipeSideEffectStrict(
   match(/a/g),
-  (result) => (result && result.length > 0 ? result : SideEffect.of(() => 'NO_MATCH' as const)),
-  (result) => result.length
+  (result: RegExpMatchArray | null) =>
+    result && result.length > 0 ? result : SideEffect.of(() => 'NO_MATCH' as const),
+  (result: RegExpMatchArray) => result.length
 );
 
 export const pipeSideEffectStrictStringResult = pipeSideEffectStrictString('aa');
@@ -88,8 +89,8 @@ export type PipeSideEffectStrictStringValueIsStrict = Expect<Equal<PipeSideEffec
 
 export const pipeAsyncString = pipeAsync(
   replace(/\s+/g, ''),
-  async (value) => value.toUpperCase(),
-  (value) => value.length
+  async (value: string) => value.toUpperCase(),
+  (value: string) => value.length
 );
 
 type PipeAsyncStringExpected = (input: string) => Promise<number>;
@@ -97,9 +98,9 @@ export type PipeAsyncStringIsStrict = Expect<Equal<typeof pipeAsyncString, PipeA
 
 export const pipeAsyncSideEffectString = pipeAsyncSideEffect(
   split(','),
-  async (parts) => parts.join('-'),
+  async (parts: string[]) => parts.join('-'),
   equals('a-b'),
-  async (isMatch) => (isMatch ? Boolean(isMatch) : SideEffect.of(() => 'NO_MATCH' as const))
+  async (isMatch: boolean) => (isMatch ? Boolean(isMatch) : SideEffect.of(() => 'NO_MATCH' as const))
 );
 
 type PipeAsyncSideEffectStringExpected = (input: string | SideEffect<any>) => Promise<boolean | SideEffect<any>>;
@@ -109,8 +110,9 @@ export type PipeAsyncSideEffectStringIsStrict = Expect<
 
 export const pipeAsyncSideEffectStrictString = pipeAsyncSideEffectStrict(
   match(/a/g),
-  async (result) => (result && result.length > 0 ? result : SideEffect.of(() => 'NO_MATCH' as const)),
-  (result) => result.length
+  async (result: RegExpMatchArray | null) =>
+    result && result.length > 0 ? result : SideEffect.of(() => 'NO_MATCH' as const),
+  (result: RegExpMatchArray) => result.length
 );
 
 export const pipeAsyncSideEffectStrictStringResult = pipeAsyncSideEffectStrictString('aa');
