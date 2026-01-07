@@ -89,6 +89,41 @@ Copy-Item node_modules/fp-pack/dist/skills/fp-pack/SKILL.md $HOME/.codex/skills/
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      권장사항: 프로젝트에 CLAUDE.md 추가하기
+    </h2>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      더 안정적인 동작을 위해 프로젝트 루트에 <code class="text-sm">CLAUDE.md</code> 파일을 생성하세요. 이렇게 하면 AI 에이전트가 코드를 작성하기 전에 fp-pack skills 파일을 읽도록 보장할 수 있습니다.
+    </p>
+
+    <CodeBlock
+      language="markdown"
+      code={`# AI 에이전트를 위한 프로젝트 지침
+
+## ⚠️ 중요: fp-pack 필수 요구사항
+
+**코드를 작성하기 전에 반드시:**
+
+1. \`.claude/skills/fp-pack.md\` 파일을 **완전히** 읽어야 합니다
+2. 안티패턴 섹션을 **엄격하게** 따라야 합니다
+3. 실전 예제에 나온 패턴을 사용해야 합니다
+
+**위반 불가 규칙:**
+- 상수에는 \`from()\` 사용, \`() => value\` 사용 금지
+- SideEffect 처리에는 \`pipeSideEffect\` 사용, \`pipe\` 사용 금지
+- \`runPipeResult\`는 파이프라인 밖에서만 호출, 안에서 호출 금지
+- 불변 연산 사용, 변경(mutation) 금지
+
+**이것은 선택사항이 아닙니다 - 이 패턴을 위반하면 코드베이스가 망가집니다.**`}
+    />
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6 mt-6">
+      이 파일을 프로젝트 루트에 <code class="text-sm">CLAUDE.md</code>로 저장하세요. Claude Code는 모든 대화 시작 시 이 파일을 자동으로 읽습니다.
+    </p>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
       작동 방식
     </h2>
 

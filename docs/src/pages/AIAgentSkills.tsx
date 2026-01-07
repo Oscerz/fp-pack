@@ -89,6 +89,41 @@ Copy-Item node_modules/fp-pack/dist/skills/fp-pack/SKILL.md $HOME/.codex/skills/
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
+      Recommended: Add CLAUDE.md to Your Project
+    </h2>
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      For better reliability, create a <code class="text-sm">CLAUDE.md</code> file in your project root. This ensures AI agents read the fp-pack skills file before writing code.
+    </p>
+
+    <CodeBlock
+      language="markdown"
+      code={`# Project Instructions for AI Agents
+
+## ⚠️ CRITICAL: fp-pack Requirements
+
+**Before writing ANY code, you MUST:**
+
+1. Read \`.claude/skills/fp-pack.md\` **completely**
+2. Follow the anti-patterns section **strictly**
+3. Use the patterns shown in real-world examples
+
+**Non-negotiable rules:**
+- Use \`from()\` for constants, NOT \`() => value\`
+- Use \`pipeSideEffect\` for SideEffect handling, NOT \`pipe\`
+- Call \`runPipeResult\` OUTSIDE pipelines, NEVER inside
+- Use immutable operations, NO mutations
+
+**This is not optional - violating these patterns will break the codebase.**`}
+    />
+
+    <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6 mt-6">
+      Place this file as <code class="text-sm">CLAUDE.md</code> in your project root. Claude Code will automatically read this file at the start of every conversation.
+    </p>
+
+    <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
+
+    <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
       How It Works
     </h2>
 
