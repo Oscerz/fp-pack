@@ -199,7 +199,7 @@ For agents with system prompt support (OpenCode, custom agents), fp-pack provide
 
 Unlike skills files which are project-specific, this add-on is attached directly to your agent's system prompt, making it work across all your projects. It automatically activates only when fp-pack is installed.
 
-📖 **[View AI Agent Role Add-on Documentation](https://superlucky84.github.io/fp-pack/ai-agent-addon)**
+📖 **[View AI Agent Role Add-on Documentation](https://superlucky84.github.io/fp-pack/#/ai-agent-addon)**
 
 The add-on is located at `node_modules/fp-pack/dist/ai-addons/fp-pack-agent-addon.md` after installation.
 
