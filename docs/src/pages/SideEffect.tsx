@@ -24,6 +24,7 @@ export const SideEffect = () => (
       is a container that wraps an effect (function) for deferred execution. When a function in a pipeSideEffect/pipeAsyncSideEffect returns a SideEffect,
       the pipeline immediately stops and returns the SideEffect without executing it. The effect only runs when you explicitly
       call <code class="text-sm">runPipeResult()</code> or <code class="text-sm">sideEffect.effect()</code>.
+      Prefer value-first <code class="text-sm">pipeSideEffect(data, ...)</code> for inference when composing pipelines.
       This pattern enables clean error handling and early termination in functional pipelines without wrapper types everywhere.
     </p>
 
@@ -40,14 +41,15 @@ const validateAge = (age: number) =>
         return null;
       });
 
-const processAgePipeline = pipeSideEffect(
-  validateAge,
-  (age) => age * 2,      // Skipped if SideEffect returned
-  (age) => \`Age: \${age}\`
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
-runPipeResult(processAgePipeline(15)); // Logs "Age validation failed", returns null`}
+runPipeResult(
+  pipeSideEffect(
+    15,
+    validateAge,
+    (age) => age * 2,      // Skipped if SideEffect returned
+    (age) => \`Age: \${age}\`
+  )
+); // Logs "Age validation failed", returns null`}
     />
 
     <div class="bg-green-50 dark:bg-green-900/20 p-4 mb-6 rounded border border-green-200 dark:border-green-800 mt-6">

@@ -22,20 +22,20 @@ export const PipeAsyncSideEffectStrict_ko = () => (
         pipeAsyncSideEffectStrict
       </strong>{' '}
       는 <strong>pipeAsyncSideEffect</strong>의 엄격 버전입니다. SideEffect 결과 타입을 정확한 유니온으로 유지하면서
-      파이프라인을 단락(short-circuit)합니다.
+      파이프라인을 단락(short-circuit)합니다. 타입 추론을 위해
+      <code class="text-sm">pipeAsyncSideEffectStrict(data, ...)</code> 형태를 우선 사용하세요.
     </p>
 
     <CodeBlock
       language="typescript"
       code={`import { pipeAsyncSideEffectStrict, SideEffect } from 'fp-pack';
 
-const pipeline = pipeAsyncSideEffectStrict(
+// 결과 타입: Promise<number | SideEffect<'NEGATIVE' | 0>>
+const result = await pipeAsyncSideEffectStrict(
+  5,
   async (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
   (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
-);
-
-// 결과 타입: Promise<number | SideEffect<'NEGATIVE' | 0>>
-const result = await pipeline(5);`}
+);`}
     />
 
     <div class="bg-amber-50 dark:bg-amber-900/20 p-4 mb-6 rounded border border-amber-200 dark:border-amber-800 mt-6">
@@ -59,6 +59,11 @@ const result = await pipeline(5);`}
     <CodeBlock
       language="typescript"
       code={`function pipeAsyncSideEffectStrict<A, R>(
+  a: A,
+  ab: (a: A) => R | SideEffect | Promise<R | SideEffect>
+): Promise<R | SideEffect<UnionOfAllEffects>>;
+
+function pipeAsyncSideEffectStrict<A, R>(
   ab: (a: A) => R | SideEffect | Promise<R | SideEffect>
 ): (a: A | SideEffect) => Promise<R | SideEffect<UnionOfAllEffects>>;`}
     />

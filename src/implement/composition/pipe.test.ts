@@ -11,6 +11,13 @@ describe('pipe', () => {
     expect(fn(3)).toBe('8'); // (3 + 1) * 2 => 8
   });
 
+  it('supports data-first invocation', () => {
+    const addOne = (n: number) => n + 1;
+    const double = (n: number) => n * 2;
+
+    expect(pipe(3, addOne, double)).toBe(8);
+  });
+
   it('supports mixed types through the chain', () => {
     const trim = (s: string) => s.trim();
     const splitComma = (s: string) => s.split(',');

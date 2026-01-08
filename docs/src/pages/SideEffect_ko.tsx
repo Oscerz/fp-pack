@@ -24,6 +24,7 @@ export const SideEffect_ko = () => (
       는 지연 실행을 위해 effect(함수)를 감싸는 컨테이너입니다. pipeSideEffect/pipeAsyncSideEffect 내 함수가 SideEffect를 반환하면,
       파이프라인은 즉시 중단되고 실행하지 않은 채로 SideEffect를 반환합니다. effect는 명시적으로
       <code class="text-sm">runPipeResult()</code> 또는 <code class="text-sm">sideEffect.effect()</code>를 호출할 때만 실행됩니다.
+      타입 추론을 위해 <code class="text-sm">pipeSideEffect(data, ...)</code> 형태를 우선 사용하세요.
       이 패턴은 모든 곳에 래퍼 타입을 사용하지 않고도 함수형 파이프라인에서 깔끔한 에러 처리와 조기 종료를 가능하게 합니다.
     </p>
 
@@ -40,14 +41,15 @@ const validateAge = (age: number) =>
         return null;
       });
 
-const processAgePipeline = pipeSideEffect(
-  validateAge,
-  (age) => age * 2,      // SideEffect 반환 시 건너뜀
-  (age) => \`나이: \${age}\`
-);
-
 // runPipeResult는 파이프라인 밖에서 호출해야 합니다
-runPipeResult(processAgePipeline(15)); // "나이 검증 실패" 로그, null 반환`}
+runPipeResult(
+  pipeSideEffect(
+    15,
+    validateAge,
+    (age) => age * 2,      // SideEffect 반환 시 건너뜀
+    (age) => \`나이: \${age}\`
+  )
+); // "나이 검증 실패" 로그, null 반환`}
     />
 
     <div class="bg-green-50 dark:bg-green-900/20 p-4 mb-6 rounded border border-green-200 dark:border-green-800 mt-6">

@@ -11,6 +11,7 @@ type AsyncOrSync<A, R> = (a: A) => MaybeSideEffect<R> | Promise<MaybeSideEffect<
 type FirstAsyncOrSync<A, R> = AsyncOrSync<A, R> & { __from?: never };
 type ZeroFn<R> = () => MaybeSideEffect<R> | Promise<MaybeSideEffect<R>>;
 type AnyFn = (...args: any[]) => any;
+type NonFunction<T> = T extends AnyFn ? never : T;
 
 type FnInput<F> = F extends (a: infer A) => any ? A : never;
 type FnReturn<F> = F extends (...args: any[]) => infer R ? R : never;
@@ -58,6 +59,174 @@ type PipeAsyncSideEffect<Fns extends AsyncOrSync<any, any>[]> = (
 type PipeAsyncSideEffectFrom<Fns extends [FromFn<any>, ...AsyncOrSync<any, any>[]]> = (
   input?: PipeInput<Fns> | SideEffect<any>
 ) => Promise<PipeOutput<Fns>>;
+
+type PipeCheckWithInput<Input, Fns extends [AnyFn, ...AnyFn[]]> =
+  Fns extends [infer F, ...infer Rest]
+    ? F extends AsyncOrSync<any, any>
+      ? Rest extends AnyFn[]
+        ? PipeCheck<[ValidateFn<F, Input>, ...Rest]>
+        : PipeCheck<[ValidateFn<F, Input>]>
+      : PipeError<Input, unknown>
+    : PipeError<unknown, unknown>;
+
+function pipeAsyncSideEffect<A>(input: NonFunction<A> | SideEffect<any>): Promise<A | SideEffect<any>>;
+function pipeAsyncSideEffect<A, F1 extends AsyncOrSync<A, any>>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>
+): Promise<PipeResult<F1>>;
+function pipeAsyncSideEffect<A, F1 extends AsyncOrSync<A, any>, F2 extends AsyncOrSync<FnValue<F1>, any>>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>
+): Promise<PipeResult<F2>>;
+function pipeAsyncSideEffect<
+  A,
+  F1 extends AsyncOrSync<A, any>,
+  F2 extends AsyncOrSync<FnValue<F1>, any>,
+  F3 extends AsyncOrSync<FnValue<F2>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>
+): Promise<PipeResult<F3>>;
+function pipeAsyncSideEffect<
+  A,
+  F1 extends AsyncOrSync<A, any>,
+  F2 extends AsyncOrSync<FnValue<F1>, any>,
+  F3 extends AsyncOrSync<FnValue<F2>, any>,
+  F4 extends AsyncOrSync<FnValue<F3>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>
+): Promise<PipeResult<F4>>;
+function pipeAsyncSideEffect<
+  A,
+  F1 extends AsyncOrSync<A, any>,
+  F2 extends AsyncOrSync<FnValue<F1>, any>,
+  F3 extends AsyncOrSync<FnValue<F2>, any>,
+  F4 extends AsyncOrSync<FnValue<F3>, any>,
+  F5 extends AsyncOrSync<FnValue<F4>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>
+): Promise<PipeResult<F5>>;
+function pipeAsyncSideEffect<
+  A,
+  F1 extends AsyncOrSync<A, any>,
+  F2 extends AsyncOrSync<FnValue<F1>, any>,
+  F3 extends AsyncOrSync<FnValue<F2>, any>,
+  F4 extends AsyncOrSync<FnValue<F3>, any>,
+  F5 extends AsyncOrSync<FnValue<F4>, any>,
+  F6 extends AsyncOrSync<FnValue<F5>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>
+): Promise<PipeResult<F6>>;
+function pipeAsyncSideEffect<
+  A,
+  F1 extends AsyncOrSync<A, any>,
+  F2 extends AsyncOrSync<FnValue<F1>, any>,
+  F3 extends AsyncOrSync<FnValue<F2>, any>,
+  F4 extends AsyncOrSync<FnValue<F3>, any>,
+  F5 extends AsyncOrSync<FnValue<F4>, any>,
+  F6 extends AsyncOrSync<FnValue<F5>, any>,
+  F7 extends AsyncOrSync<FnValue<F6>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>,
+  gh: ValidateFn<F7, FnValue<F6>>
+): Promise<PipeResult<F7>>;
+function pipeAsyncSideEffect<
+  A,
+  F1 extends AsyncOrSync<A, any>,
+  F2 extends AsyncOrSync<FnValue<F1>, any>,
+  F3 extends AsyncOrSync<FnValue<F2>, any>,
+  F4 extends AsyncOrSync<FnValue<F3>, any>,
+  F5 extends AsyncOrSync<FnValue<F4>, any>,
+  F6 extends AsyncOrSync<FnValue<F5>, any>,
+  F7 extends AsyncOrSync<FnValue<F6>, any>,
+  F8 extends AsyncOrSync<FnValue<F7>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>,
+  gh: ValidateFn<F7, FnValue<F6>>,
+  hi: ValidateFn<F8, FnValue<F7>>
+): Promise<PipeResult<F8>>;
+function pipeAsyncSideEffect<
+  A,
+  F1 extends AsyncOrSync<A, any>,
+  F2 extends AsyncOrSync<FnValue<F1>, any>,
+  F3 extends AsyncOrSync<FnValue<F2>, any>,
+  F4 extends AsyncOrSync<FnValue<F3>, any>,
+  F5 extends AsyncOrSync<FnValue<F4>, any>,
+  F6 extends AsyncOrSync<FnValue<F5>, any>,
+  F7 extends AsyncOrSync<FnValue<F6>, any>,
+  F8 extends AsyncOrSync<FnValue<F7>, any>,
+  F9 extends AsyncOrSync<FnValue<F8>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>,
+  gh: ValidateFn<F7, FnValue<F6>>,
+  hi: ValidateFn<F8, FnValue<F7>>,
+  ij: ValidateFn<F9, FnValue<F8>>
+): Promise<PipeResult<F9>>;
+function pipeAsyncSideEffect<
+  A,
+  F1 extends AsyncOrSync<A, any>,
+  F2 extends AsyncOrSync<FnValue<F1>, any>,
+  F3 extends AsyncOrSync<FnValue<F2>, any>,
+  F4 extends AsyncOrSync<FnValue<F3>, any>,
+  F5 extends AsyncOrSync<FnValue<F4>, any>,
+  F6 extends AsyncOrSync<FnValue<F5>, any>,
+  F7 extends AsyncOrSync<FnValue<F6>, any>,
+  F8 extends AsyncOrSync<FnValue<F7>, any>,
+  F9 extends AsyncOrSync<FnValue<F8>, any>,
+  F10 extends AsyncOrSync<FnValue<F9>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>,
+  gh: ValidateFn<F7, FnValue<F6>>,
+  hi: ValidateFn<F8, FnValue<F7>>,
+  ij: ValidateFn<F9, FnValue<F8>>,
+  jk: ValidateFn<F10, FnValue<F9>>
+): Promise<PipeResult<F10>>;
+function pipeAsyncSideEffect<A, Fns extends [AsyncOrSync<any, any>, ...AsyncOrSync<any, any>[]]>(
+  input: NonFunction<A> | SideEffect<any>,
+  ...funcs: PipeCheckWithInput<A, Fns>
+): Promise<PipeOutput<Fns>>;
 
 function pipeAsyncSideEffect<R>(ab: ZeroFn<R>): () => Promise<PipeResult<ZeroFn<R>>>;
 function pipeAsyncSideEffect<B, F2 extends AsyncOrSync<FnValue<ZeroFn<B>>, any>>(
@@ -470,8 +639,8 @@ function pipeAsyncSideEffect<Fns extends [FirstAsyncOrSync<any, any>, ...AsyncOr
   ...funcs: PipeCheck<Fns>
 ): PipeAsyncSideEffect<Fns>;
 function pipeAsyncSideEffect(...funcs: Array<AsyncOrSync<any, any>>): (value: any) => Promise<any>;
-function pipeAsyncSideEffect(...funcs: Array<(arg: any) => any>) {
-  return async (value: any) => {
+function pipeAsyncSideEffect(...args: Array<any>) {
+  const run = async (value: any, funcs: Array<(arg: any) => any>) => {
     let acc = value;
     for (const fn of funcs) {
       if (isSideEffect(acc)) {
@@ -481,6 +650,17 @@ function pipeAsyncSideEffect(...funcs: Array<(arg: any) => any>) {
     }
     return acc;
   };
+
+  if (args.length === 0) {
+    return Promise.resolve(undefined);
+  }
+  const [input, ...rest] = args as [any, ...Array<(arg: any) => any>];
+  if (typeof input === 'function') {
+    const funcs = [input, ...rest];
+    return (value: any) => run(value, funcs);
+  }
+
+  return run(input, rest);
 }
 
 export default pipeAsyncSideEffect;

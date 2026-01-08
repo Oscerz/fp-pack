@@ -24,7 +24,8 @@ export const PipeSideEffect = () => (
       composes functions like <strong>pipe</strong>, but allows returning a{' '}
       <strong class="font-semibold">SideEffect</strong> to halt the pipeline early.
       It also accepts a SideEffect as input and simply returns it unchanged.
-      Use <strong>pipe</strong> for pure pipelines without early exit.
+      Prefer value-first <code class="text-sm">pipeSideEffect(data, ...)</code> for inference, and use function-first
+      when you need a reusable pipeline. Use <strong>pipe</strong> for pure pipelines without early exit.
     </p>
 
     <CodeBlock
@@ -38,14 +39,15 @@ const validateAge = (age: number) =>
         throw new Error('Must be 18 or older');
       });
 
-const processAgePipeline = pipeSideEffect(
-  validateAge,
-  (age: number) => age * 2,
-  (age: number) => \`Age: \${age}\`
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
-runPipeResult(processAgePipeline(15)); // Throws: Error: Must be 18 or older`}
+runPipeResult(
+  pipeSideEffect(
+    15,
+    validateAge,
+    (age: number) => age * 2,
+    (age: number) => \`Age: \${age}\`
+  )
+); // Throws: Error: Must be 18 or older`}
     />
 
     <div class="bg-green-50 dark:bg-green-900/20 p-4 mb-6 rounded border border-green-200 dark:border-green-800 mt-6">
@@ -69,6 +71,7 @@ runPipeResult(processAgePipeline(15)); // Throws: Error: Must be 18 or older`}
 import { pipe, map, filter } from 'fp-pack';
 
 const processData = pipe(
+  users,
   filter(isValid),
   map(transform)
 );
@@ -76,10 +79,13 @@ const processData = pipe(
 // ✅ GOOD: Only when SideEffect needed - use pipeSideEffect
 import { pipeSideEffect, SideEffect } from 'fp-pack';
 
-const processWithValidation = pipeSideEffect(
-  validateOrStop,  // Might return SideEffect
-  transform,
-  save
+const result = runPipeResult(
+  pipeSideEffect(
+    input,
+    validateOrStop,  // Might return SideEffect
+    transform,
+    save
+  )
 );`}
     />
 
@@ -92,8 +98,19 @@ const processWithValidation = pipeSideEffect(
     <CodeBlock
       language="typescript"
       code={`function pipeSideEffect<A, R>(
+  a: A,
+  ab: (a: A) => R | SideEffect
+): R | SideEffect;
+
+function pipeSideEffect<A, R>(
   ab: (a: A) => R | SideEffect
 ): (a: A | SideEffect) => R | SideEffect;
+
+function pipeSideEffect<A, B, R>(
+  a: A,
+  ab: (a: A) => B | SideEffect,
+  bc: (b: B) => R | SideEffect
+): R | SideEffect;
 
 function pipeSideEffect<A, B, R>(
   ab: (a: A) => B | SideEffect,
@@ -121,13 +138,12 @@ function pipeSideEffect(...funcs: Array<(input: any) => any>): (input: any) => a
       language="typescript"
       code={`import { pipeSideEffectStrict, SideEffect } from 'fp-pack';
 
-const pipeline = pipeSideEffectStrict(
+// Result type: number | SideEffect<'NEGATIVE' | 0>
+const result = pipeSideEffectStrict(
+  5,
   (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
   (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
-);
-
-// Result type: number | SideEffect<'NEGATIVE' | 0>
-const result = pipeline(5);`}
+);`}
     />
 
     <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
@@ -182,21 +198,29 @@ const validateAge = (age: number) => {
   return age;
 };
 
-const processAgePipeline = pipeSideEffect(
-  validateAge,
-  (age: number) => age * 2,  // This won't execute if SideEffect is returned
-  (age: number) => \`Age: \${age}\`
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
 try {
-  runPipeResult(processAgePipeline(-5));  // Throws: Error: Age cannot be negative
+  runPipeResult(
+    pipeSideEffect(
+      -5,
+      validateAge,
+      (age: number) => age * 2,  // This won't execute if SideEffect is returned
+      (age: number) => \`Age: \${age}\`
+    )
+  );  // Throws: Error: Age cannot be negative
 } catch (error) {
   console.error(error.message);
 }
 
 // Normal execution continues
-const result = runPipeResult(processAgePipeline(10));
+const result = runPipeResult(
+  pipeSideEffect(
+    10,
+    validateAge,
+    (age: number) => age * 2,
+    (age: number) => \`Age: \${age}\`
+  )
+);
 console.log(result);  // "Age: 20"`}
     />
 
@@ -224,24 +248,34 @@ const checkPermission = (user: User) => {
   return user;
 };
 
-const deleteUserPipeline = pipeSideEffect(
-  checkPermission,
-  (user: User) => {
-    console.log(\`Deleting user: \${user.name}\`);
-    return { success: true, deletedId: user.id };
-  }
-);
-
 const adminUser = { id: 1, name: 'Alice', role: 'admin' as const };
 const normalUser = { id: 2, name: 'Bob', role: 'user' as const };
 
 // Admin can proceed - runPipeResult called OUTSIDE
-const result1 = runPipeResult(deleteUserPipeline(adminUser));
+const result1 = runPipeResult(
+  pipeSideEffect(
+    adminUser,
+    checkPermission,
+    (user: User) => {
+      console.log(\`Deleting user: \${user.name}\`);
+      return { success: true, deletedId: user.id };
+    }
+  )
+);
 // Logs: "Deleting user: Alice"
 console.log(result1);  // { success: true, deletedId: 1 }
 
 // Normal user gets error immediately
-const result2 = runPipeResult(deleteUserPipeline(normalUser));
+const result2 = runPipeResult(
+  pipeSideEffect(
+    normalUser,
+    checkPermission,
+    (user: User) => {
+      console.log(\`Deleting user: \${user.name}\`);
+      return { success: true, deletedId: user.id };
+    }
+  )
+);
 console.log(result2);  // { error: 'Unauthorized', message: 'Admin access required' }`}
     />
 
@@ -263,18 +297,26 @@ const divide = (a: number, b: number) => {
   return a / b;
 };
 
-const calculatePipeline = pipeSideEffect(
-  (input: { a: number; b: number }) => divide(input.a, input.b),
-  (result: number) => result * 100,
-  (result: number) => Math.round(result)
-);
-
 // Normal calculation - runPipeResult called OUTSIDE
-const result1 = runPipeResult(calculatePipeline({ a: 10, b: 2 }));
+const result1 = runPipeResult(
+  pipeSideEffect(
+    { a: 10, b: 2 },
+    (input: { a: number; b: number }) => divide(input.a, input.b),
+    (result: number) => result * 100,
+    (result: number) => Math.round(result)
+  )
+);
 console.log(result1);  // 500
 
 // Division by zero executes SideEffect and logs
-const result2 = runPipeResult(calculatePipeline({ a: 10, b: 0 }));
+const result2 = runPipeResult(
+  pipeSideEffect(
+    { a: 10, b: 0 },
+    (input: { a: number; b: number }) => divide(input.a, input.b),
+    (result: number) => result * 100,
+    (result: number) => Math.round(result)
+  )
+);
 // Logs: "Division by zero!"
 console.log(result2);  // NaN`}
     />
@@ -324,14 +366,18 @@ const validateUserPipeline = pipeSideEffect(
 );
 // Result type: User | SideEffect
 
+const userId = 1;
+
 // ❌ WRONG - pipe cannot handle SideEffect
 const wrongPipeline = pipe(
+  userId,
   validateUserPipeline,  // Returns User | SideEffect
   (user) => user.email   // Type error! SideEffect has no 'email' property
 );
 
 // ✅ CORRECT - Keep using pipeSideEffect
 const correctPipeline = pipeSideEffect(
+  userId,
   validateUserPipeline,  // User | SideEffect - handled correctly
   (user) => user.email,  // Automatically skipped if SideEffect
   sendEmail

@@ -29,7 +29,8 @@ export const Pipe = () => (
       <br />
       <br />
       This is the most natural way to read transformations: start with data, then apply
-      transformations in order.
+      transformations in order. Prefer value-first <code class="text-xs">pipe(value, ...)</code> for immediate
+      execution and stronger inference; use functions-first only when you need a reusable pipeline.
     </p>
 
     <CodeBlock
@@ -40,13 +41,14 @@ const double = (n: number) => n * 2;
 const addTen = (n: number) => n + 10;
 const toString = (n: number) => String(n);
 
-const transform = pipe(
+const result = pipe(
+  5,
   double,    // 1. First, double the number
   addTen,    // 2. Then, add 10
   toString   // 3. Finally, convert to string
 );
 
-transform(5);  // "20"
+result;  // "20"
 // Flow: 5 → double → 10 → addTen → 20 → toString → "20"`}
     />
 
@@ -58,15 +60,18 @@ transform(5);  // "20"
 
     <CodeBlock
       language="typescript"
-      code={`function pipe<A, R>(ab: (a: A) => R): (a: A) => R;
+      code={`function pipe<A>(input: A): A;
+function pipe<A, R>(input: A, ab: (a: A) => R): R;
+function pipe<A, B, R>(
+  input: A,
+  ab: (a: A) => B,
+  bc: (b: B) => R
+): R;
+
+function pipe<A, R>(ab: (a: A) => R): (a: A) => R;
 function pipe<A, B, R>(
   ab: (a: A) => B,
   bc: (b: B) => R
-): (a: A) => R;
-function pipe<A, B, C, R>(
-  ab: (a: A) => B,
-  bc: (b: B) => C,
-  cd: (c: C) => R
 ): (a: A) => R;
 
 function pipe(...funcs: Array<(input: any) => any>): (input: any) => any;`}
@@ -91,14 +96,15 @@ function pipe(...funcs: Array<(input: any) => any>): (input: any) => any;`}
       language="typescript"
       code={`import { pipe } from 'fp-pack';
 
-const processName = pipe(
+const result = pipe(
+  '  John Doe  ',
   (name: string) => name.trim(),
   (name: string) => name.toLowerCase(),
   (name: string) => name.split(' '),
   (parts: string[]) => parts.join('-')
 );
 
-processName('  John Doe  ');  // "john-doe"`}
+result;  // "john-doe"`}
     />
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
@@ -111,13 +117,14 @@ processName('  John Doe  ');  // "john-doe"`}
 
 const numbers = [1, 2, 3, 4, 5];
 
-const processNumbers = pipe(
+const result = pipe(
+  numbers,
   (nums: number[]) => nums.filter(n => n > 2),
   (nums: number[]) => nums.map(n => n * 2),
   (nums: number[]) => nums.reduce((sum, n) => sum + n, 0)
 );
 
-processNumbers(numbers);  // 24
+result;  // 24
 // Flow: [1,2,3,4,5] → filter → [3,4,5] → map → [6,8,10] → reduce → 24`}
     />
 
@@ -142,13 +149,6 @@ interface User {
   active: boolean;
 }
 
-const getActiveAdultNames = pipe(
-  (users: User[]) => users.filter(u => u.active),
-  (users: User[]) => users.filter(u => u.age >= 18),
-  (users: User[]) => users.map(u => u.name),
-  (names: string[]) => names.sort()
-);
-
 const users: User[] = [
   { id: 1, name: 'Alice', age: 25, active: true },
   { id: 2, name: 'Bob', age: 17, active: true },
@@ -156,7 +156,15 @@ const users: User[] = [
   { id: 4, name: 'Diana', age: 22, active: true },
 ];
 
-getActiveAdultNames(users);  // ["Alice", "Diana"]`}
+const result = pipe(
+  users,
+  (users: User[]) => users.filter(u => u.active),
+  (users: User[]) => users.filter(u => u.age >= 18),
+  (users: User[]) => users.map(u => u.name),
+  (names: string[]) => names.sort()
+);
+
+result;  // ["Alice", "Diana"]`}
     />
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
@@ -167,14 +175,15 @@ getActiveAdultNames(users);  // ["Alice", "Diana"]`}
       language="typescript"
       code={`import { pipe } from 'fp-pack';
 
-const calculateFinalPrice = pipe(
+const result = pipe(
+  100,
   (price: number) => price * 0.9,        // 10% discount
   (price: number) => price * 1.1,        // Add 10% tax
   (price: number) => Math.round(price * 100) / 100,  // Round to 2 decimals
   (price: number) => \`$\${price.toFixed(2)}\`  // Format as currency
 );
 
-calculateFinalPrice(100);  // "$99.00"`}
+result;  // "$99.00"`}
     />
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
@@ -185,7 +194,8 @@ calculateFinalPrice(100);  // "$99.00"`}
       language="typescript"
       code={`import { pipe } from 'fp-pack';
 
-const createSlug = pipe(
+const result = pipe(
+  'Hello World! This is a Test.',
   (title: string) => title.toLowerCase(),
   (str: string) => str.replace(/[^a-z0-9\\s-]/g, ''),
   (str: string) => str.trim(),
@@ -193,8 +203,17 @@ const createSlug = pipe(
   (str: string) => str.replace(/-+/g, '-')
 );
 
-createSlug('Hello World! This is a Test.');  // "hello-world-this-is-a-test"
-createSlug('  Multiple   Spaces  ');         // "multiple-spaces"`}
+const result2 = pipe(
+  '  Multiple   Spaces  ',
+  (title: string) => title.toLowerCase(),
+  (str: string) => str.replace(/[^a-z0-9\\s-]/g, ''),
+  (str: string) => str.trim(),
+  (str: string) => str.replace(/\\s+/g, '-'),
+  (str: string) => str.replace(/-+/g, '-')
+);
+
+result;  // "hello-world-this-is-a-test"
+result2; // "multiple-spaces"`}
     />
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
@@ -215,7 +234,8 @@ interface ValidatedUser {
   age: number;
 }
 
-const validateAndTransform = pipe(
+const result = pipe(
+  { email: '  TEST@EXAMPLE.COM  ', age: '25' },
   (input: RawInput) => {
     if (!input.email || !input.age) {
       throw new Error('Missing required fields');
@@ -234,7 +254,7 @@ const validateAndTransform = pipe(
   }
 );
 
-validateAndTransform({ email: '  TEST@EXAMPLE.COM  ', age: '25' });
+result;
 // { email: 'test@example.com', age: 25 }`}
     />
 
@@ -258,13 +278,14 @@ const add = curry((a: number, b: number) => a + b);
 const divide = curry((a: number, b: number) => a / b);
 
 // Compose them in a pipeline
-const calculate = pipe(
+const result = pipe(
+  5,
   multiply(2),      // Double it
   add(10),          // Add 10
   divide(4)         // Divide by 4
 );
 
-calculate(5);  // 5
+result;  // 5
 // Flow: 5 → *2 → 10 → +10 → 20 → /4 → 5`}
     />
 
@@ -286,10 +307,11 @@ calculate(5);  // 5
         <CodeBlock
           language="typescript"
           code={`pipe(
+  5,
   double,
   addTen,
   toString
-)(5)
+);
 // 5 → 10 → 20 → "20"`}
         />
       </div>

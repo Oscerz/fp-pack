@@ -38,12 +38,6 @@ const validateAge = (age: number) =>
         return null;
       });
 
-const processAgePipeline = pipeSideEffect(
-  validateAge,
-  (age) => age * 2,
-  (age) => \`나이: \${age}\`
-);
-
 // ❌ 잘못됨 - 파이프라인 안에서 runPipeResult 호출하지 마세요
 const wrongPipeline = pipeSideEffect(
   validateAge,
@@ -51,7 +45,14 @@ const wrongPipeline = pipeSideEffect(
 );
 
 // ✅ 올바름 - 파이프라인 밖에서 runPipeResult 호출
-const result = runPipeResult(processAgePipeline(15));
+const result = runPipeResult(
+  pipeSideEffect(
+    15,
+    validateAge,
+    (age) => age * 2,
+    (age) => \`나이: \${age}\`
+  )
+);
 // "나이 검증 실패" 로그, null 반환`}
     />
 

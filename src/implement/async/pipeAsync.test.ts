@@ -11,6 +11,16 @@ describe('pipeAsync', () => {
     await expect(fn(2)).resolves.toBe(6);
   });
 
+  it('supports data-first invocation', async () => {
+    await expect(
+      pipeAsync(
+        2,
+        async (n: number) => n + 1,
+        (n) => n * 2
+      )
+    ).resolves.toBe(6);
+  });
+
   it('allows sync functions in the chain', async () => {
     const fn = pipeAsync(
       (n: number) => n + 1,

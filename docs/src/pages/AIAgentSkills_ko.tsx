@@ -34,6 +34,7 @@ export const AIAgentSkills_ko = () => (
     </p>
 
     <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300 mb-6">
+      <li>타입 추론을 위해 <code class="text-sm">pipe(data, ...)</code>/<code class="text-sm">pipeAsync(data, ...)</code> 형태를 우선 사용</li>
       <li>순수 변환에는 기본적으로 <code class="text-sm">pipe</code>/<code class="text-sm">pipeAsync</code> 사용</li>
       <li>SideEffect가 필요할 때 <code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code> 사용</li>
       <li>엄격한 effect 유니온이 필요할 때 strict 변형(<code class="text-sm">pipeSideEffectStrict</code>/<code class="text-sm">pipeAsyncSideEffectStrict</code>) 사용</li>
@@ -109,7 +110,7 @@ Copy-Item node_modules/fp-pack/dist/skills/fp-pack/SKILL.md $HOME/.codex/skills/
 3. 실전 예제에 나온 패턴을 사용해야 합니다
 
 **위반 불가 규칙:**
-- 상수에는 \`from()\` 사용, \`() => value\` 사용 금지
+- 타입 추론을 위해 \`pipe(data, ...)\` 우선 사용; 인자 없는 파이프는 \`from(value)\` 사용 (\`() => value\` 금지)
 - SideEffect 처리에는 \`pipeSideEffect\` 사용, \`pipe\` 사용 금지
 - \`runPipeResult\`는 파이프라인 밖에서만 호출, 안에서 호출 금지
 - 불변 연산 사용, 변경(mutation) 금지

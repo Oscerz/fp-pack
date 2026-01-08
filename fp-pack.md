@@ -18,9 +18,11 @@ If `fp-pack` is **not** installed, use the project's existing conventions. Do **
 ## Core Rules (Keep In Memory)
 
 - Use `pipe`/`pipeAsync` for 2+ steps; for a single step, call the function directly.
+- Prefer value-first: `pipe(value, ...)` / `pipeAsync(value, ...)` runs immediately and improves inference (the input anchors types). Use functions-first only when you need a reusable pipeline.
+- If the first arg is a function, it's treated as composition; wrap function values with `from()`.
 - Keep pipeline functions **unary**; prefer data-last, curried helpers.
 - `map`/`filter` are for arrays/iterables, not single values.
-- Use `from()` only for constants or 0-arg pipelines (data-first style).
+- Use `from()` only for constants or 0-arg pipelines (including function values you need to pass as data). Otherwise pass data as the first argument.
 - Use `pipeSideEffect*` only when you need early exit; otherwise use `pipe`/`pipeAsync`.
 - Never call `runPipeResult`/`matchSideEffect` inside pipelines; call at boundaries.
 - Prefer `isSideEffect` for precise narrowing; `runPipeResult` for unwrapping (use generics if widened).
@@ -38,14 +40,17 @@ Keep pipelines short and readable.
 
 ## Common Mistakes & Fixes (Top Issues)
 
-### Constants in pipelines must use `from()`
+### Don't wrap data in zero-arg functions
 
 ```ts
 // ❌ BAD
 pipe(() => [1, 2, 3], filter((n: number) => n % 2 === 0));
 
-// ✅ GOOD
-pipe(from([1, 2, 3]), filter((n: number) => n % 2 === 0));
+// ✅ GOOD (value-first)
+pipe([1, 2, 3], filter((n: number) => n % 2 === 0));
+
+// ✅ GOOD (no-input pipeline)
+pipe(from([1, 2, 3]), filter((n: number) => n % 2 === 0))();
 ```
 
 ### `ifElse`/`cond` need total branches
@@ -104,7 +109,8 @@ If the error persists, reduce the pipeline to the smallest failing step and add 
 ```ts
 import { pipe, filter, map, take, sortBy } from 'fp-pack';
 
-const getTopActiveUsers = pipe(
+const result = pipe(
+  users,
   filter((user: User) => user.active),
   sortBy((user) => -user.activityScore),
   map((user) => user.name),
@@ -117,27 +123,28 @@ const getTopActiveUsers = pipe(
 ```ts
 import { pipeAsyncSideEffect, SideEffect, runPipeResult } from 'fp-pack';
 
-const fetchUserData = pipeAsyncSideEffect(
-  async (userId: string) => {
-    const res = await fetch(`/api/users/${userId}`);
-    return res.ok ? res : SideEffect.of(() => `HTTP ${res.status}`);
-  },
-  async (res) => res.json()
+const result = runPipeResult(
+  await pipeAsyncSideEffect(
+    'user-123',
+    async (userId: string) => {
+      const res = await fetch(`/api/users/${userId}`);
+      return res.ok ? res : SideEffect.of(() => `HTTP ${res.status}`);
+    },
+    async (res) => res.json()
+  )
 );
-
-const result = runPipeResult(await fetchUserData('user-123'));
 ```
 
-### Example 3: Data-first with from()
+### Example 3: Value-first pipeline
 
 ```ts
-import { pipe, from, filter, map } from 'fp-pack';
+import { pipe, filter, map } from 'fp-pack';
 
 const result = pipe(
-  from([1, 2, 3, 4, 5]),
+  [1, 2, 3, 4, 5],
   filter((n: number) => n % 2 === 0),
   map((n) => n * 2)
-)();
+);
 ```
 
 ---
@@ -149,7 +156,8 @@ const result = pipe(
 ```ts
 import { pipe, filter, map, take } from 'fp-pack';
 
-const processUsers = pipe(
+const result = pipe(
+  users,
   filter((u: User) => u.active),
   map((u) => u.name),
   take(10)
@@ -161,7 +169,8 @@ const processUsers = pipe(
 ```ts
 import { pipeAsync } from 'fp-pack';
 
-const fetchUser = pipeAsync(
+const user = await pipeAsync(
+  userId,
   async (id: string) => fetch(`/api/users/${id}`),
   async (res) => res.json(),
   (data) => data.user
@@ -172,7 +181,7 @@ const fetchUser = pipeAsync(
 
 ## Currying & Data-Last
 
-Most multi-arg helpers are **data-last** and **curried**:
+Most multi-arg helpers are **data-last** and **curried**. Pair them with value-first `pipe(value, ...)` to anchor types:
 - Good: `map(fn)`, `filter(pred)`, `replace(from, to)`, `assoc('k', v)`, `path(['a','b'])`
 - Single-arg helpers are already unary—just use them directly
 
@@ -180,12 +189,20 @@ Most multi-arg helpers are **data-last** and **curried**:
 
 ## TypeScript: Data-last Generic Inference
 
-Some data-last helpers return a **generic function** whose type is only determined by the final data argument. Inside `pipe`, TypeScript sometimes can't infer that type.
+Some data-last helpers return a **generic function** whose type is only determined by the final data argument. Prefer value-first `pipe(value, ...)` so the input anchors generics; use hints when needed.
 
 ### Quick fix (pipeHint or wrapper)
 
 ```ts
 import { pipe, pipeHint, zip, some } from 'fp-pack';
+
+// Prefer value-first to anchor generics
+const values: number[] = [1, 2, 3];
+const withValueFirst = pipe(
+  values,
+  zip([1, 2, 3]),
+  some(([a, b]) => a > b)
+);
 
 const withPipeHint = pipe(
   pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
@@ -225,9 +242,11 @@ Most code should use `pipe` / `pipeAsync`. Use SideEffect-aware pipes only when 
 import { pipeSideEffectStrict, SideEffect, isSideEffect, runPipeResult } from 'fp-pack';
 
 const validate = (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEG' as const));
-const pipeline = pipeSideEffectStrict(validate, (n) => n + 1);
-
-const result = pipeline(-1); // number | SideEffect<'NEG'>
+const result = pipeSideEffectStrict(
+  -1,
+  validate,
+  (n) => n + 1
+); // number | SideEffect<'NEG'>
 
 if (isSideEffect(result)) {
   const err = runPipeResult(result); // 'NEG'
@@ -258,14 +277,13 @@ If any input is async, the output is async. Use `toAsync` to normalize inputs wh
 import { pipe } from 'fp-pack';
 import { range, filter, map, take, toArray } from 'fp-pack/stream';
 
-const first100SquaresOfEvens = pipe(
+const result = pipe(
+  range(Infinity),
   filter((n: number) => n % 2 === 0),
   map((n) => n * n),
   take(100),
   toArray
 );
-
-const result = first100SquaresOfEvens(range(Infinity));
 ```
 
 ---
@@ -329,7 +347,17 @@ export const handler = (data) => {
 };
 ```
 
-### Data-first with from()
+### Value-first execution
+
+```ts
+const result = pipe(
+  [1, 2, 3, 4, 5],
+  filter((n: number) => n % 2 === 0),
+  map((n) => n * 10)
+); // [20, 40]
+```
+
+### from() for constants / 0-arg pipelines
 
 ```ts
 const result = pipe(
@@ -397,4 +425,4 @@ If TypeScript inference is stuck or you need to verify a function signature:
 
 ## Summary
 
-Default to `pipe` / `pipeAsync`, keep helpers data-last and unary, switch to `stream/*` when laziness matters, and reserve SideEffect-aware pipelines for true early-exit flows. Use `isSideEffect` for precise narrowing and call `runPipeResult` only at the boundary.
+Default to value-first `pipe` / `pipeAsync` for inference, keep helpers data-last and unary, switch to `stream/*` when laziness matters, and reserve SideEffect-aware pipelines for true early-exit flows. Use functions-first only for reusable pipelines. Use `isSideEffect` for precise narrowing and call `runPipeResult` only at the boundary.

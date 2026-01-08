@@ -120,8 +120,8 @@ There's no framework and no heavy abstractions—just well-chosen helpers that m
   // [4, 8, 12, 16, 20]
   ```
 
-- **Data-first with `from`**
-  Use `from` to inject constant values in pipelines and enable data-first patterns. Particularly useful with `ifElse` and `cond` for constant branches.
+- **Hybrid data-first / data-last**
+  `pipe`/`pipeAsync` accept either functions-first (returns a reusable function) or value-first (executes immediately). Value-first improves inference because the first value anchors generics. If the first argument is a function, it is treated as composition; wrap function values with `from` when you need to pass them as data. Use `from` to inject constants (e.g., in `ifElse`/`cond`) or to start a pipeline without input.
 
   ```typescript
   import { pipe, ifElse, from, filter, map } from 'fp-pack';
@@ -135,7 +135,7 @@ There's no framework and no heavy abstractions—just well-chosen helpers that m
 
   const result = getStatusLabel(75); // 'pass'
 
-  // Data-first pattern: inject data into pipeline
+  // Start a pipeline without input
   const processWithData = pipe(
     from([1, 2, 3, 4, 5]),
     filter((n: number) => n % 2 === 0),
@@ -213,7 +213,7 @@ The add-on is located at `node_modules/fp-pack/dist/ai-addons/fp-pack-agent-addo
 
 ### Basic Pipe Composition
 
-`pipe` is a pure function composition tool - it takes functions and returns a new function that applies data to those composed functions.
+`pipe` composes functions left-to-right. Use functions-first to create a reusable pipeline, or value-first to execute immediately (value-first often improves type inference because the input anchors generics).
 
 ```typescript
 import { pipe, map, filter, take } from 'fp-pack';
@@ -228,12 +228,23 @@ const processUsers = pipe(
 const result = processUsers(users);
 ```
 
-**Data-first with `from` (optional)**: While `pipe` is designed for composing functions, you can optionally use `from` to inject data directly into pipelines for convenience:
+**Data-first invocation (recommended for inference)**: Pass the input as the first argument to execute immediately.
+
+```typescript
+import { pipe, filter, map } from 'fp-pack';
+
+const result = pipe(
+  [1, 2, 3, 4, 5],
+  filter((n: number) => n % 2 === 0),
+  map(n => n * 2)
+); // [4, 8]
+```
+
+**Constant values with `from` (optional)**: Use `from` to inject constants into pipelines or to start a pipeline with no input.
 
 ```typescript
 import { pipe, from, filter, map } from 'fp-pack';
 
-// Optional: data-first pattern with from
 const processData = pipe(
   from([1, 2, 3, 4, 5]),
   filter((n: number) => n % 2 === 0),

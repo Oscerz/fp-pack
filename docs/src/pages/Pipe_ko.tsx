@@ -28,6 +28,8 @@ export const Pipe_ko = () => (
       <br />
       <br />
       변환을 읽는 가장 자연스러운 방법입니다: 데이터로 시작한 다음 변환을 순서대로 적용합니다.
+      타입 추론을 위해 value-first <code class="text-xs">pipe(value, ...)</code>를 우선 사용하고,
+      재사용이 필요할 때만 함수-우선 형태를 사용하세요.
     </p>
 
     <CodeBlock
@@ -38,13 +40,14 @@ const double = (n: number) => n * 2;
 const addTen = (n: number) => n + 10;
 const toString = (n: number) => String(n);
 
-const transform = pipe(
+const result = pipe(
+  5,
   double,    // 1. 먼저 숫자를 2배로
   addTen,    // 2. 그 다음 10을 더하고
   toString   // 3. 마지막으로 문자열로 변환
 );
 
-transform(5);  // "20"
+result;  // "20"
 // 흐름: 5 → double → 10 → addTen → 20 → toString → "20"`}
     />
 
@@ -62,14 +65,15 @@ transform(5);  // "20"
       language="typescript"
       code={`import { pipe } from 'fp-pack';
 
-const processName = pipe(
+const result = pipe(
+  '  John Doe  ',
   (name: string) => name.trim(),
   (name: string) => name.toLowerCase(),
   (name: string) => name.split(' '),
   (parts: string[]) => parts.join('-')
 );
 
-processName('  John Doe  ');  // "john-doe"`}
+result;  // "john-doe"`}
     />
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
@@ -82,13 +86,14 @@ processName('  John Doe  ');  // "john-doe"`}
 
 const numbers = [1, 2, 3, 4, 5];
 
-const processNumbers = pipe(
+const result = pipe(
+  numbers,
   (nums: number[]) => nums.filter(n => n > 2),
   (nums: number[]) => nums.map(n => n * 2),
   (nums: number[]) => nums.reduce((sum, n) => sum + n, 0)
 );
 
-processNumbers(numbers);  // 24
+result;  // 24
 // 흐름: [1,2,3,4,5] → filter → [3,4,5] → map → [6,8,10] → reduce → 24`}
     />
 
@@ -113,13 +118,6 @@ interface User {
   active: boolean;
 }
 
-const getActiveAdultNames = pipe(
-  (users: User[]) => users.filter(u => u.active),
-  (users: User[]) => users.filter(u => u.age >= 18),
-  (users: User[]) => users.map(u => u.name),
-  (names: string[]) => names.sort()
-);
-
 const users: User[] = [
   { id: 1, name: 'Alice', age: 25, active: true },
   { id: 2, name: 'Bob', age: 17, active: true },
@@ -127,7 +125,15 @@ const users: User[] = [
   { id: 4, name: 'Diana', age: 22, active: true },
 ];
 
-getActiveAdultNames(users);  // ["Alice", "Diana"]`}
+const result = pipe(
+  users,
+  (users: User[]) => users.filter(u => u.active),
+  (users: User[]) => users.filter(u => u.age >= 18),
+  (users: User[]) => users.map(u => u.name),
+  (names: string[]) => names.sort()
+);
+
+result;  // ["Alice", "Diana"]`}
     />
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-4 mt-6">
@@ -138,14 +144,15 @@ getActiveAdultNames(users);  // ["Alice", "Diana"]`}
       language="typescript"
       code={`import { pipe } from 'fp-pack';
 
-const calculateFinalPrice = pipe(
+const result = pipe(
+  100,
   (price: number) => price * 0.9,        // 10% 할인
   (price: number) => price * 1.1,        // 10% 세금 추가
   (price: number) => Math.round(price * 100) / 100,  // 소수점 2자리로
   (price: number) => \`₩\${price.toFixed(2)}\`  // 통화 형식으로
 );
 
-calculateFinalPrice(100);  // "₩99.00"`}
+result;  // "₩99.00"`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -168,13 +175,14 @@ const add = curry((a: number, b: number) => a + b);
 const divide = curry((a: number, b: number) => a / b);
 
 // 파이프라인에서 조합
-const calculate = pipe(
+const result = pipe(
+  5,
   multiply(2),      // 2배로
   add(10),          // 10 더하기
   divide(4)         // 4로 나누기
 );
 
-calculate(5);  // 5
+result;  // 5
 // 흐름: 5 → *2 → 10 → +10 → 20 → /4 → 5`}
     />
 
@@ -196,10 +204,11 @@ calculate(5);  // 5
         <CodeBlock
           language="typescript"
           code={`pipe(
+  5,
   double,
   addTen,
   toString
-)(5)
+);
 // 5 → 10 → 20 → "20"`}
         />
       </div>

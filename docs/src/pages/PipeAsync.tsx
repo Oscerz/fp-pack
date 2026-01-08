@@ -8,7 +8,7 @@ export const PipeAsync = () => (
     </h1>
 
     <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
-      Compose async (or mixed) functions left-to-right, returning a function
+      Compose async (or mixed) functions left-to-right with value-first or functions-first calls
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -21,20 +21,20 @@ export const PipeAsync = () => (
       <strong class="font-semibold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded">
         pipeAsync
       </strong>{' '}
-      takes async/sync functions and returns a new function. Calling it runs each step in order, awaiting promises as
-      needed. Signature: <code>pipeAsync(fn1, fn2, ...)(value)</code>.
+      takes async/sync functions and runs each step in order, awaiting promises as needed. Prefer value-first for
+      immediate execution and stronger inference: <code>pipeAsync(value, fn1, fn2, ...)</code>. Use functions-first
+      only when you need a reusable pipeline.
     </p>
 
     <CodeBlock
       language="typescript"
       code={`import { pipeAsync } from 'fp-pack';
 
-const fn = pipeAsync(
+const result = await pipeAsync(
+  2,
   async (n: number) => n + 1,
   async (n) => n * 2
-);
-
-const result = await fn(2); // 6`}
+); // 6`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -54,9 +54,7 @@ const result = await fn(2); // 6`}
 const fetchUser = async (id: string) => ({ id, name: 'Ada' });
 const getName = (u: { name: string }) => u.name;
 
-const getUserName = pipeAsync(fetchUser, getName);
-
-await getUserName('42'); // 'Ada'`}
+const result = await pipeAsync('42', fetchUser, getName); // 'Ada'`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

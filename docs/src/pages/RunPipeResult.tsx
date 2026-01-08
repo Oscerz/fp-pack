@@ -38,12 +38,6 @@ const validateAge = (age: number) =>
         return null;
       });
 
-const processAgePipeline = pipeSideEffect(
-  validateAge,
-  (age) => age * 2,
-  (age) => \`Age: \${age}\`
-);
-
 // ❌ WRONG - Never call runPipeResult INSIDE a pipeline
 const wrongPipeline = pipeSideEffect(
   validateAge,
@@ -51,7 +45,14 @@ const wrongPipeline = pipeSideEffect(
 );
 
 // ✅ CORRECT - Call runPipeResult OUTSIDE the pipeline
-const result = runPipeResult(processAgePipeline(15));
+const result = runPipeResult(
+  pipeSideEffect(
+    15,
+    validateAge,
+    (age) => age * 2,
+    (age) => \`Age: \${age}\`
+  )
+);
 // Logs "Age validation failed", returns null`}
     />
 
