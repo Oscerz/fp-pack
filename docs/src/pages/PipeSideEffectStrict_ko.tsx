@@ -22,20 +22,20 @@ export const PipeSideEffectStrict_ko = () => (
         pipeSideEffectStrict
       </strong>{' '}
       는 <strong>pipeSideEffect</strong>의 엄격 버전입니다. 파이프라인에서 발생 가능한 SideEffect 결과 타입을
-      정확하게 유니온으로 유지하여 더 정밀한 타입 내로잉이 가능합니다.
+      정확하게 유니온으로 유지하여 더 정밀한 타입 내로잉이 가능합니다. 타입 추론을 위해
+      <code class="text-sm">pipeSideEffectStrict(data, ...)</code> 형태를 우선 사용하세요.
     </p>
 
     <CodeBlock
       language="typescript"
       code={`import { pipeSideEffectStrict, SideEffect } from 'fp-pack';
 
-const pipeline = pipeSideEffectStrict(
+// 결과 타입: number | SideEffect<'NEGATIVE' | 0>
+const result = pipeSideEffectStrict(
+  5,
   (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
   (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
-);
-
-// 결과 타입: number | SideEffect<'NEGATIVE' | 0>
-const result = pipeline(5);`}
+);`}
     />
 
     <div class="bg-amber-50 dark:bg-amber-900/20 p-4 mb-6 rounded border border-amber-200 dark:border-amber-800 mt-6">
@@ -59,6 +59,11 @@ const result = pipeline(5);`}
     <CodeBlock
       language="typescript"
       code={`function pipeSideEffectStrict<A, R>(
+  a: A,
+  ab: (a: A) => R | SideEffect
+): R | SideEffect<UnionOfAllEffects>;
+
+function pipeSideEffectStrict<A, R>(
   ab: (a: A) => R | SideEffect
 ): (a: A | SideEffect) => R | SideEffect<UnionOfAllEffects>;`}
     />

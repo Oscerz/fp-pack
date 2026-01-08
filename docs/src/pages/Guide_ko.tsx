@@ -101,11 +101,13 @@ export const Guide_ko = () => (
       code={`import { pipe, map, filter, take } from 'fp-pack';
 
 // 좋음: 선언적 파이프 조합
-const processUsers = pipe(
-  filter((user: User) => user.age >= 18),
-  map(user => user.name.toUpperCase()),
-  take(10)
-);
+const processUsers = (users: User[]) =>
+  pipe(
+    users,
+    filter((user: User) => user.age >= 18),
+    map(user => user.name.toUpperCase()),
+    take(10)
+  );
 
 // 나쁨: 명령형 접근
 const processUsers = (users: User[]) => {
@@ -127,6 +129,36 @@ const processUsers = (users: User[]) => {
     </div>
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      value-first vs function-first 실행 방식
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <code class="text-sm">pipe</code>는 첫 번째 인자에 따라 동작이 달라집니다. 첫 번째 인자가 값이면 즉시 실행되고,
+      첫 번째 인자가 함수면 재사용 가능한 파이프 함수를 반환합니다. 인자 없는 파이프가 필요할 때는
+      <code class="text-sm">from(value)</code>를 사용하세요. 이 규칙은 <code class="text-sm">pipeAsync</code>와
+      SideEffect 변형에도 동일하게 적용됩니다.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, from } from 'fp-pack';
+
+const add1 = (n: number) => n + 1;
+const double = (n: number) => n * 2;
+
+// value-first: 즉시 실행
+const result = pipe(5, add1, double); // 12
+
+// function-first: 파이프 함수 반환
+const compute = pipe(add1, double);
+compute(5); // 12
+
+// zero-arg 파이프: from() 사용
+const zeroArg = pipe(from(5), add1, double);
+zeroArg(); // 12`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
       pipeAsync - 비동기 함수 조합
     </h3>
 
@@ -139,11 +171,13 @@ const processUsers = (users: User[]) => {
       code={`import { pipeAsync } from 'fp-pack';
 
 // 좋음: 비동기 파이프 조합
-const fetchUserData = pipeAsync(
-  async (userId: string) => fetch(\`/api/users/\${userId}\`),
-  async (response) => response.json(),
-  (data) => data.user
-);
+const fetchUserData = (userId: string) =>
+  pipeAsync(
+    userId,
+    async (id: string) => fetch(\`/api/users/\${id}\`),
+    async (response) => response.json(),
+    (data) => data.user
+  );
 
 // 나쁨: 수동 비동기 처리
 const fetchUserData = async (userId: string) => {
@@ -192,11 +226,13 @@ const fetchUserData = async (userId: string) => {
       code={`// 대부분의 경우: 일반 에러 처리와 함께 pipe만 사용
 import { pipe, map, filter } from 'fp-pack';
 
-const processData = pipe(
-  validateInput,
-  transformData,
-  saveData
-);
+const processData = (input) =>
+  pipe(
+    input,
+    validateInput,
+    transformData,
+    saveData
+  );
 
 try {
   const result = processData(input);
@@ -207,23 +243,24 @@ try {
 // 특수 사례: 부수 효과와 함께 조기 종료가 필요한 경우 pipeSideEffect 사용
 import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-pack';
 
-const processDataPipeline = pipeSideEffect(
-  validateInput,
-  (data) => {
-    if (!data.isValid) {
-      return SideEffect.of(() => {
-        showToast('Invalid data');  // 부수 효과
-        logError('validation_failed');  // 부수 효과
-        return null;
-      });
-    }
-    return data;
-  },
-  transformData
-);
-
 // runPipeResult는 파이프라인 외부에서 호출해야 함
-const finalValue = runPipeResult(processDataPipeline(input));`}
+const finalValue = runPipeResult(
+  pipeSideEffect(
+    input,
+    validateInput,
+    (data) => {
+      if (!data.isValid) {
+        return SideEffect.of(() => {
+          showToast('Invalid data');  // 부수 효과
+          logError('validation_failed');  // 부수 효과
+          return null;
+        });
+      }
+      return data;
+    },
+    transformData
+  )
+);`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -462,13 +499,20 @@ const getStatusLabel = ifElse(
   from('fail')
 );
 
-// from을 사용한 data-first 패턴: 파이프라인에 데이터 주입
+// 값이 있을 때는 value-first가 가장 간단함
+const result = pipe(
+  [1, 2, 3, 4, 5],
+  filter((n: number) => n % 2 === 0),
+  map(n => n * 2)
+);
+
+// from을 사용한 zero-arg 파이프
 const processData = pipe(
   from([1, 2, 3, 4, 5]),
   filter((n: number) => n % 2 === 0),
   map(n => n * 2)
 );
-const result = processData(); // [4, 8]
+const result2 = processData(); // [4, 8]
 
 // cond는 R | undefined이므로 보정
 const grade = (score: number) =>
@@ -485,7 +529,7 @@ const grade = (score: number) =>
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
       data-last 유틸이 마지막 데이터 입력에서만 타입이 결정되는 제네릭 함수를 반환하는 경우,
       <code class="text-sm">pipe</code>/<code class="text-sm">pipeAsync</code> 안에서는 TypeScript가 타입을 역추론하지 못합니다.
-      필요하면 <code class="text-sm">pipeHint</code>, data-first 래핑, 또는 타입 힌트를 사용하세요.
+      필요하면 값 먼저 전달, <code class="text-sm">pipeHint</code>, 또는 타입 힌트를 사용하세요.
     </p>
 
     <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
@@ -503,20 +547,25 @@ const grade = (score: number) =>
       language="typescript"
       code={`import { pipe, pipeHint, zip, some } from 'fp-pack';
 
-// 방법 1: data-first 래핑
+const values = [4, 5, 6];
+
+// 방법 1: 값 먼저 전달 (value-first)
 const withWrapper = pipe(
+  values,
   (values: number[]) => zip([1, 2, 3], values),
   some(([a, b]) => a > b)
 );
 
 // 방법 2: 명시적 타입 힌트
 const withHint = pipe(
+  values,
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
   some(([a, b]) => a > b)
 );
 
 // 방법 3: pipeHint 헬퍼
 const withPipeHint = pipe(
+  values,
   pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );`}
@@ -527,7 +576,7 @@ const withPipeHint = pipe(
     </h3>
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-      파이프라인 시작에 <code class="text-sm">() =&gt; value</code>를 사용하면 <code class="text-sm">pipe</code>가 unary 함수를 기대하기 때문에 타입 추론이 깨집니다. 대신 <code class="text-sm">from(value)</code>를 사용하세요.
+      파이프라인 시작에 <code class="text-sm">() =&gt; value</code>를 사용하면 <code class="text-sm">pipe</code>가 unary 함수를 기대하기 때문에 타입 추론이 깨집니다. 값이 이미 있다면 <code class="text-sm">pipe(data, ...)</code>를 사용하고, 인자 없는 파이프가 필요할 때만 <code class="text-sm">from(value)</code>를 사용하세요.
     </p>
 
     <CodeBlock
@@ -540,14 +589,21 @@ const broken = pipe(
   filter((n: number) => n % 2 === 0)  // 에러! (input) => output을 기대
 );
 
-// ✅ 올바름: from()이 올바른 unary 함수 생성
-const works = pipe(
-  from([1, 2, 3, 4, 5]),    // 타입: <I>(_: I) => number[]
-  filter((n: number) => n % 2 === 0),  // 완벽하게 작동
+// ✅ 올바름: value-first
+const valueFirst = pipe(
+  [1, 2, 3, 4, 5],
+  filter((n: number) => n % 2 === 0),
   map(n => n * 2)
 );
 
-works(); // [4, 8] - 타입 에러 없음, 깔끔한 추론`}
+// ✅ 올바름: from()으로 zero-arg 파이프 구성
+const zeroArg = pipe(
+  from([1, 2, 3, 4, 5]),
+  filter((n: number) => n % 2 === 0),
+  map(n => n * 2)
+);
+
+zeroArg(); // [4, 8] - 타입 에러 없음, 깔끔한 추론`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">

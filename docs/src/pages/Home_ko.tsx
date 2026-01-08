@@ -100,18 +100,20 @@ export const Home_ko = () => (
           표준 파이프 연산
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
-          <code class="text-xs md:text-sm">pipe</code>는 순수한 함수 합성 도구입니다. 편의에 따라 <code class="text-xs md:text-sm">from</code>으로 data-first 패턴을 선택적으로 사용할 수 있습니다.
+          <code class="text-xs md:text-sm">pipe</code>는 순수한 함수 합성 도구입니다. 타입 추론을 위해
+          <code class="text-xs md:text-sm">pipe(data, ...)</code> 형태를 우선 사용하고, 인자 없는 파이프가 필요하면 <code class="text-xs md:text-sm">from</code>을 사용하세요.
         </p>
         <CodeBlock
           language="typescript"
           code={`// 표준: 함수 합성
 const result = pipe(
+  users,
   filter(user => user.active),
   map(user => user.name),
   take(10)
-)(users);
+);
 
-// 선택사항: from으로 data-first
+// 선택사항: from으로 인자 없는 파이프
 const process = pipe(
   from([1, 2, 3, 4, 5]),
   filter(n => n % 2 === 0)
@@ -129,12 +131,17 @@ process(); // [2, 4]`}
         </p>
         <CodeBlock
           language="typescript"
-          code={`const process = pipeSideEffect(
-  validate,
-  (data) => data.ok
-    ? data
-    : SideEffect.of(() => throw Error()),
-  transform
+          code={`const result = runPipeResult(
+  pipeSideEffect(
+    data,
+    validate,
+    (data) => data.ok
+      ? data
+      : SideEffect.of(() => {
+          throw new Error('Invalid');
+        }),
+    transform
+  )
 );`}
         />
       </div>
@@ -148,7 +155,8 @@ process(); // [2, 4]`}
         </p>
         <CodeBlock
           language="typescript"
-          code={`const fetchUser = pipeAsync(
+          code={`const user = await pipeAsync(
+  userId,
   async (id) => fetch(\`/api/\${id}\`),
   (res) => res.json(),
   (data) => data.user
@@ -168,10 +176,11 @@ process(); // [2, 4]`}
           code={`import * as Stream from 'fp-pack/stream';
 
 const first100 = pipe(
+  Stream.range(1, 1000000),
   Stream.filter(n => n % 2 === 0),
   Stream.take(100),
   Stream.toArray
-)(Stream.range(1, 1000000));`}
+);`}
         />
       </div>
     </div>
@@ -206,14 +215,15 @@ const first100 = pipe(
         return null;  // 조기 종료
       });
 
-const agePipeline = pipeSideEffect(
-  validateAge,
-  (age) => \`나이: \${age}\`,  // 검증 실패 시 실행되지 않음
-  (msg) => console.log(msg)
-);
-
 // runPipeResult는 파이프라인 밖에서 호출해야 합니다
-const result = runPipeResult(agePipeline(15));
+const result = runPipeResult(
+  pipeSideEffect(
+    15,
+    validateAge,
+    (age) => \`나이: \${age}\`,  // 검증 실패 시 실행되지 않음
+    (msg) => console.log(msg)
+  )
+);
 // 파이프라인이 SideEffect에서 중단, alert 실행, null 반환`}
         />
       </div>
@@ -234,14 +244,15 @@ const result = runPipeResult(agePipeline(15));
     : SideEffect.of(() => null);  // 우아한 종료
 };
 
-const emailPipeline = pipeSideEffect(
-  findUser,
-  (user) => user.email,  // 사용자를 찾지 못하면 건너뜀
-  (email) => email.toLowerCase()
-);
-
 // runPipeResult는 파이프라인 밖에서 호출해야 합니다
-const email = runPipeResult(emailPipeline('unknown-id'));
+const email = runPipeResult(
+  pipeSideEffect(
+    'unknown-id',
+    findUser,
+    (user) => user.email,  // 사용자를 찾지 못하면 건너뜀
+    (email) => email.toLowerCase()
+  )
+);
 // 에러 없이 null 반환 - 깔끔한 옵셔널 흐름`}
         />
       </div>
@@ -255,22 +266,23 @@ const email = runPipeResult(emailPipeline('unknown-id'));
         </p>
         <CodeBlock
           language="typescript"
-          code={`const paymentPipeline = pipeSideEffect(
-  validateCard,
-  (card) => card.balance >= 100
-    ? card
-    : SideEffect.of(() => {
-        showToast('잔액이 부족합니다');
-        logEvent('payment_failed', { reason: 'insufficient_funds' });
-        return null;
-      }),
-  chargeCard,
-  sendReceipt,
-  (receipt) => ({ success: true, receipt })
+          code={`// runPipeResult는 파이프라인 밖에서 호출해야 합니다
+const result = runPipeResult(
+  pipeSideEffect(
+    userCard,
+    validateCard,
+    (card) => card.balance >= 100
+      ? card
+      : SideEffect.of(() => {
+          showToast('잔액이 부족합니다');
+          logEvent('payment_failed', { reason: 'insufficient_funds' });
+          return null;
+        }),
+    chargeCard,
+    sendReceipt,
+    (receipt) => ({ success: true, receipt })
+  )
 );
-
-// runPipeResult는 파이프라인 밖에서 호출해야 합니다
-const result = runPipeResult(paymentPipeline(userCard));
 // 잔액 부족 시: 토스트 표시, 이벤트 로깅, null 반환
 // 그 외: 결제 완료 및 성공 객체 반환`}
         />

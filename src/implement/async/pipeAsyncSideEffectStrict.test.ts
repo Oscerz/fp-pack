@@ -14,6 +14,16 @@ describe('pipeAsyncSideEffectStrict', () => {
     expect(result).toBe(effect);
   });
 
+  it('supports data-first invocation', async () => {
+    await expect(
+      pipeAsyncSideEffectStrict(
+        2,
+        async (n: number) => n + 1,
+        (n) => n * 2
+      )
+    ).resolves.toBe(6);
+  });
+
   it('returns SideEffect inputs without executing the pipeline', async () => {
     const effect = new SideEffect(() => 'effect');
     const fn = pipeAsyncSideEffectStrict(async (n: number) => n + 1);

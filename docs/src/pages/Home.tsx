@@ -100,18 +100,20 @@ export const Home = () => (
           Standard Pipe Operations
         </h3>
         <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3">
-          <code class="text-xs md:text-sm">pipe</code> is a pure function composition tool. Optionally, use <code class="text-xs md:text-sm">from</code> for data-first patterns when convenient.
+          <code class="text-xs md:text-sm">pipe</code> is a pure function composition tool. Prefer value-first
+          <code class="text-xs md:text-sm">pipe(data, ...)</code> for inference, and use <code class="text-xs md:text-sm">from</code> when you need a zero-argument pipeline.
         </p>
         <CodeBlock
           language="typescript"
           code={`// Standard: function composition
 const result = pipe(
+  users,
   filter(user => user.active),
   map(user => user.name),
   take(10)
-)(users);
+);
 
-// Optional: data-first with from
+// Optional: zero-arg pipeline with from
 const process = pipe(
   from([1, 2, 3, 4, 5]),
   filter(n => n % 2 === 0)
@@ -129,12 +131,17 @@ process(); // [2, 4]`}
         </p>
         <CodeBlock
           language="typescript"
-          code={`const process = pipeSideEffect(
-  validate,
-  (data) => data.ok
-    ? data
-    : SideEffect.of(() => throw Error()),
-  transform
+          code={`const result = runPipeResult(
+  pipeSideEffect(
+    data,
+    validate,
+    (data) => data.ok
+      ? data
+      : SideEffect.of(() => {
+          throw new Error('Invalid');
+        }),
+    transform
+  )
 );`}
         />
       </div>
@@ -148,7 +155,8 @@ process(); // [2, 4]`}
         </p>
         <CodeBlock
           language="typescript"
-          code={`const fetchUser = pipeAsync(
+          code={`const user = await pipeAsync(
+  userId,
   async (id) => fetch(\`/api/\${id}\`),
   (res) => res.json(),
   (data) => data.user
@@ -168,10 +176,11 @@ process(); // [2, 4]`}
           code={`import * as Stream from 'fp-pack/stream';
 
 const first100 = pipe(
+  Stream.range(1, 1000000),
   Stream.filter(n => n % 2 === 0),
   Stream.take(100),
   Stream.toArray
-)(Stream.range(1, 1000000));`}
+);`}
         />
       </div>
     </div>
@@ -206,14 +215,15 @@ const first100 = pipe(
         return null;  // Early termination
       });
 
-const agePipeline = pipeSideEffect(
-  validateAge,
-  (age) => \`Age: \${age}\`,  // Never runs if validation fails
-  (msg) => console.log(msg)
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
-const result = runPipeResult(agePipeline(15));
+const result = runPipeResult(
+  pipeSideEffect(
+    15,
+    validateAge,
+    (age) => \`Age: \${age}\`,  // Never runs if validation fails
+    (msg) => console.log(msg)
+  )
+);
 // Pipeline stops at SideEffect, alert executes, returns null`}
         />
       </div>
@@ -234,14 +244,15 @@ const result = runPipeResult(agePipeline(15));
     : SideEffect.of(() => null);  // Graceful termination
 };
 
-const emailPipeline = pipeSideEffect(
-  findUser,
-  (user) => user.email,  // Skipped if user not found
-  (email) => email.toLowerCase()
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
-const email = runPipeResult(emailPipeline('unknown-id'));
+const email = runPipeResult(
+  pipeSideEffect(
+    'unknown-id',
+    findUser,
+    (user) => user.email,  // Skipped if user not found
+    (email) => email.toLowerCase()
+  )
+);
 // Returns null without errors - clean optional flow`}
         />
       </div>
@@ -255,22 +266,23 @@ const email = runPipeResult(emailPipeline('unknown-id'));
         </p>
         <CodeBlock
           language="typescript"
-          code={`const paymentPipeline = pipeSideEffect(
-  validateCard,
-  (card) => card.balance >= 100
-    ? card
-    : SideEffect.of(() => {
-        showToast('Insufficient balance');
-        logEvent('payment_failed', { reason: 'insufficient_funds' });
-        return null;
-      }),
-  chargeCard,
-  sendReceipt,
-  (receipt) => ({ success: true, receipt })
+          code={`// runPipeResult must be called OUTSIDE the pipeline
+const result = runPipeResult(
+  pipeSideEffect(
+    userCard,
+    validateCard,
+    (card) => card.balance >= 100
+      ? card
+      : SideEffect.of(() => {
+          showToast('Insufficient balance');
+          logEvent('payment_failed', { reason: 'insufficient_funds' });
+          return null;
+        }),
+    chargeCard,
+    sendReceipt,
+    (receipt) => ({ success: true, receipt })
+  )
 );
-
-// runPipeResult must be called OUTSIDE the pipeline
-const result = runPipeResult(paymentPipeline(userCard));
 // If balance insufficient: shows toast, logs event, returns null
 // Otherwise: completes payment and returns success object`}
         />

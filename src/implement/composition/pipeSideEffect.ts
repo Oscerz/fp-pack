@@ -9,6 +9,7 @@ type NonSideEffect<T> = Exclude<T, SideEffect<any>>;
 type UnaryFn<A, R> = (a: A) => MaybeSideEffect<R>;
 type ZeroFn<R> = () => MaybeSideEffect<R>;
 type AnyFn = (...args: any[]) => any;
+type NonFunction<T> = T extends AnyFn ? never : T;
 
 type FnInput<F> = F extends (a: infer A) => any ? A : never;
 type FnReturn<F> = F extends (...args: any[]) => infer R ? R : never;
@@ -52,6 +53,174 @@ type PipeSideEffect<Fns extends UnaryFn<any, any>[]> = (input: PipeInput<Fns> | 
 type PipeSideEffectFrom<Fns extends [FromFn<any>, ...UnaryFn<any, any>[]]> = (
   input?: PipeInput<Fns> | SideEffect<any>
 ) => PipeOutput<Fns>;
+
+type PipeCheckWithInput<Input, Fns extends [AnyFn, ...AnyFn[]]> =
+  Fns extends [infer F, ...infer Rest]
+    ? F extends UnaryFn<any, any>
+      ? Rest extends AnyFn[]
+        ? PipeCheck<[ValidateFn<F, Input>, ...Rest]>
+        : PipeCheck<[ValidateFn<F, Input>]>
+      : PipeError<Input, unknown>
+    : PipeError<unknown, unknown>;
+
+function pipeSideEffect<A>(input: NonFunction<A> | SideEffect<any>): A | SideEffect<any>;
+function pipeSideEffect<A, F1 extends UnaryFn<A, any>>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>
+): PipeResult<F1>;
+function pipeSideEffect<A, F1 extends UnaryFn<A, any>, F2 extends UnaryFn<FnValue<F1>, any>>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>
+): PipeResult<F2>;
+function pipeSideEffect<
+  A,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<FnValue<F1>, any>,
+  F3 extends UnaryFn<FnValue<F2>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>
+): PipeResult<F3>;
+function pipeSideEffect<
+  A,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<FnValue<F1>, any>,
+  F3 extends UnaryFn<FnValue<F2>, any>,
+  F4 extends UnaryFn<FnValue<F3>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>
+): PipeResult<F4>;
+function pipeSideEffect<
+  A,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<FnValue<F1>, any>,
+  F3 extends UnaryFn<FnValue<F2>, any>,
+  F4 extends UnaryFn<FnValue<F3>, any>,
+  F5 extends UnaryFn<FnValue<F4>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>
+): PipeResult<F5>;
+function pipeSideEffect<
+  A,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<FnValue<F1>, any>,
+  F3 extends UnaryFn<FnValue<F2>, any>,
+  F4 extends UnaryFn<FnValue<F3>, any>,
+  F5 extends UnaryFn<FnValue<F4>, any>,
+  F6 extends UnaryFn<FnValue<F5>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>
+): PipeResult<F6>;
+function pipeSideEffect<
+  A,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<FnValue<F1>, any>,
+  F3 extends UnaryFn<FnValue<F2>, any>,
+  F4 extends UnaryFn<FnValue<F3>, any>,
+  F5 extends UnaryFn<FnValue<F4>, any>,
+  F6 extends UnaryFn<FnValue<F5>, any>,
+  F7 extends UnaryFn<FnValue<F6>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>,
+  gh: ValidateFn<F7, FnValue<F6>>
+): PipeResult<F7>;
+function pipeSideEffect<
+  A,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<FnValue<F1>, any>,
+  F3 extends UnaryFn<FnValue<F2>, any>,
+  F4 extends UnaryFn<FnValue<F3>, any>,
+  F5 extends UnaryFn<FnValue<F4>, any>,
+  F6 extends UnaryFn<FnValue<F5>, any>,
+  F7 extends UnaryFn<FnValue<F6>, any>,
+  F8 extends UnaryFn<FnValue<F7>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>,
+  gh: ValidateFn<F7, FnValue<F6>>,
+  hi: ValidateFn<F8, FnValue<F7>>
+): PipeResult<F8>;
+function pipeSideEffect<
+  A,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<FnValue<F1>, any>,
+  F3 extends UnaryFn<FnValue<F2>, any>,
+  F4 extends UnaryFn<FnValue<F3>, any>,
+  F5 extends UnaryFn<FnValue<F4>, any>,
+  F6 extends UnaryFn<FnValue<F5>, any>,
+  F7 extends UnaryFn<FnValue<F6>, any>,
+  F8 extends UnaryFn<FnValue<F7>, any>,
+  F9 extends UnaryFn<FnValue<F8>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>,
+  gh: ValidateFn<F7, FnValue<F6>>,
+  hi: ValidateFn<F8, FnValue<F7>>,
+  ij: ValidateFn<F9, FnValue<F8>>
+): PipeResult<F9>;
+function pipeSideEffect<
+  A,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<FnValue<F1>, any>,
+  F3 extends UnaryFn<FnValue<F2>, any>,
+  F4 extends UnaryFn<FnValue<F3>, any>,
+  F5 extends UnaryFn<FnValue<F4>, any>,
+  F6 extends UnaryFn<FnValue<F5>, any>,
+  F7 extends UnaryFn<FnValue<F6>, any>,
+  F8 extends UnaryFn<FnValue<F7>, any>,
+  F9 extends UnaryFn<FnValue<F8>, any>,
+  F10 extends UnaryFn<FnValue<F9>, any>
+>(
+  input: NonFunction<A> | SideEffect<any>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, FnValue<F1>>,
+  cd: ValidateFn<F3, FnValue<F2>>,
+  de: ValidateFn<F4, FnValue<F3>>,
+  ef: ValidateFn<F5, FnValue<F4>>,
+  fg: ValidateFn<F6, FnValue<F5>>,
+  gh: ValidateFn<F7, FnValue<F6>>,
+  hi: ValidateFn<F8, FnValue<F7>>,
+  ij: ValidateFn<F9, FnValue<F8>>,
+  jk: ValidateFn<F10, FnValue<F9>>
+): PipeResult<F10>;
+function pipeSideEffect<A, Fns extends [UnaryFn<any, any>, ...UnaryFn<any, any>[]]>(
+  input: NonFunction<A> | SideEffect<any>,
+  ...funcs: PipeCheckWithInput<A, Fns>
+): PipeOutput<Fns>;
 
 function pipeSideEffect<R>(ab: ZeroFn<R>): () => PipeResult<ZeroFn<R>>;
 function pipeSideEffect<B, F2 extends UnaryFn<B, any>>(ab: ZeroFn<B>, bc: ValidateFn<F2, B>): () => PipeResult<F2>;
@@ -452,9 +621,9 @@ function pipeSideEffect<
 
 function pipeSideEffect<Fns extends [FromFn<any>, ...UnaryFn<any, any>[]]>(...funcs: PipeCheck<Fns>): PipeSideEffectFrom<Fns>;
 function pipeSideEffect<Fns extends [UnaryFn<any, any>, ...UnaryFn<any, any>[]]>(...funcs: PipeCheck<Fns>): PipeSideEffect<Fns>;
-function pipeSideEffect(...funcs: Array<UnaryFn<any, any>>): (input: any) => any;
-function pipeSideEffect(...funcs: Array<(input: any) => any>) {
-  return (init: any) => {
+function pipeSideEffect(...args: Array<UnaryFn<any, any>>): (input: any) => any;
+function pipeSideEffect(...args: Array<any>) {
+  const run = (init: any, funcs: Array<(input: any) => any>) => {
     let acc = init;
     for (const fn of funcs) {
       if (isSideEffect(acc)) {
@@ -464,6 +633,17 @@ function pipeSideEffect(...funcs: Array<(input: any) => any>) {
     }
     return acc;
   };
+
+  if (args.length === 0) {
+    return undefined;
+  }
+  const [input, ...rest] = args as [any, ...Array<(input: any) => any>];
+  if (typeof input === 'function') {
+    const funcs = [input, ...rest];
+    return (init: any) => run(init, funcs);
+  }
+
+  return run(input, rest);
 }
 
 export default pipeSideEffect;

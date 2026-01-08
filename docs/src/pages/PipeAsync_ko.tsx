@@ -8,7 +8,7 @@ export const PipeAsync_ko = () => (
     </h1>
 
     <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
-      비동기/동기 함수를 좌→우로 합성해 새로운 함수를 반환합니다
+      비동기/동기 함수를 좌→우로 합성하며 value-first 또는 함수-우선 호출을 지원합니다
     </p>
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -21,20 +21,19 @@ export const PipeAsync_ko = () => (
       <strong class="font-semibold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded">
         pipeAsync
       </strong>{' '}
-      는 비동기/동기 함수를 받아 새로운 함수를 만듭니다. 호출하면 각 스텝을 순서대로 실행하며 필요한 곳에서 await합니다.
-      시그니처: <code>pipeAsync(fn1, fn2, ...)(value)</code>.
+      는 비동기/동기 함수를 받아 순서대로 실행하며 필요한 곳에서 await합니다. 타입 추론을 위해 value-first를 권장합니다.
+      시그니처: <code>pipeAsync(value, fn1, fn2, ...)</code>. 재사용이 필요할 때만 함수-우선을 사용하세요.
     </p>
 
     <CodeBlock
       language="typescript"
       code={`import { pipeAsync } from 'fp-pack';
 
-const fn = pipeAsync(
+const result = await pipeAsync(
+  2,
   async (n: number) => n + 1,
   async (n) => n * 2
-);
-
-const result = await fn(2); // 6`}
+); // 6`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
@@ -54,9 +53,7 @@ const result = await fn(2); // 6`}
 const fetchUser = async (id: string) => ({ id, name: 'Ada' });
 const getName = (u: { name: string }) => u.name;
 
-const getUserName = pipeAsync(fetchUser, getName);
-
-await getUserName('42'); // 'Ada'`}
+const result = await pipeAsync('42', fetchUser, getName); // 'Ada'`}
     />
 
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />

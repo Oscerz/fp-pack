@@ -24,6 +24,7 @@ export const PipeAsyncSideEffect_ko = () => (
       는 <strong>pipeAsync</strong>처럼 비동기/동기 함수를 합성하지만,{' '}
       <strong class="font-semibold">SideEffect</strong>를 만나면 즉시 중단하고 반환합니다.
       입력으로 SideEffect를 받으면 실행 없이 그대로 돌려줍니다.
+      타입 추론을 위해 <code class="text-sm">pipeAsyncSideEffect(data, ...)</code> 형태를 우선 사용하세요.
       순수 비동기 파이프라인은 <strong>pipeAsync</strong>를 사용하세요.
     </p>
 
@@ -38,10 +39,10 @@ const checkVerified = (user: { id: string; verified: boolean }) =>
     ? user
     : SideEffect.of(() => ({ error: '이메일 미인증', userId: user.id }));
 
-const userPipeline = pipeAsyncSideEffect(fetchUser, checkVerified);
-
 // runPipeResult는 파이프라인 밖에서 호출해야 합니다
-const result = await runPipeResult(userPipeline('123'));
+const result = runPipeResult(
+  await pipeAsyncSideEffect('123', fetchUser, checkVerified)
+);
 // { error: '이메일 미인증', userId: '123' }`}
     />
 
@@ -65,7 +66,10 @@ const result = await runPipeResult(userPipeline('123'));
       code={`// ✅ 좋음: 99%의 경우 - pipeAsync 사용 (순수 비동기 변환)
 import { pipeAsync } from 'fp-pack';
 
-const fetchAndProcess = pipeAsync(
+const userId = '123';
+
+const profile = await pipeAsync(
+  userId,
   async (id: string) => fetchUser(id),
   (user) => user.profile
 );
@@ -73,9 +77,12 @@ const fetchAndProcess = pipeAsync(
 // ✅ 좋음: SideEffect가 필요할 때만 - pipeAsyncSideEffect 사용
 import { pipeAsyncSideEffect, SideEffect } from 'fp-pack';
 
-const fetchAndValidate = pipeAsyncSideEffect(
-  async (id: string) => fetchUser(id),
-  (user) => user.verified ? user : SideEffect.of(() => '미인증')
+const result = runPipeResult(
+  await pipeAsyncSideEffect(
+    userId,
+    async (id: string) => fetchUser(id),
+    (user) => user.verified ? user : SideEffect.of(() => '미인증')
+  )
 );`}
     />
 
@@ -88,8 +95,19 @@ const fetchAndValidate = pipeAsyncSideEffect(
     <CodeBlock
       language="typescript"
       code={`function pipeAsyncSideEffect<A, R>(
+  a: A,
+  ab: (a: A) => R | SideEffect | Promise<R | SideEffect>
+): Promise<R | SideEffect>;
+
+function pipeAsyncSideEffect<A, R>(
   ab: (a: A) => R | SideEffect | Promise<R | SideEffect>
 ): (a: A | SideEffect) => Promise<R | SideEffect>;
+
+function pipeAsyncSideEffect<A, B, R>(
+  a: A,
+  ab: (a: A) => B | SideEffect | Promise<B | SideEffect>,
+  bc: (b: B) => R | SideEffect | Promise<R | SideEffect>
+): Promise<R | SideEffect>;
 
 function pipeAsyncSideEffect<A, B, R>(
   ab: (a: A) => B | SideEffect | Promise<B | SideEffect>,
@@ -116,13 +134,12 @@ function pipeAsyncSideEffect(...funcs: Array<(input: any) => any>): (input: any)
       language="typescript"
       code={`import { pipeAsyncSideEffectStrict, SideEffect } from 'fp-pack';
 
-const pipeline = pipeAsyncSideEffectStrict(
+// 결과 타입: Promise<number | SideEffect<'NEGATIVE' | 0>>
+const result = await pipeAsyncSideEffectStrict(
+  5,
   async (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
   (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
-);
-
-// 결과 타입: Promise<number | SideEffect<'NEGATIVE' | 0>>
-const result = pipeline(5);`}
+);`}
     />
 
     <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
@@ -197,14 +214,15 @@ const sendNotification = async (user: User) => {
   return { sent: true, userId: user.id };
 };
 
-const notifyUserPipeline = pipeAsyncSideEffect(
-  fetchUser,
-  checkVerified,
-  sendNotification  // 사용자가 인증되지 않은 경우 실행되지 않음
-);
-
 // runPipeResult는 파이프라인 밖에서 호출해야 합니다
-const result = await runPipeResult(notifyUserPipeline('123'));
+const result = runPipeResult(
+  await pipeAsyncSideEffect(
+    '123',
+    fetchUser,
+    checkVerified,
+    sendNotification  // 사용자가 인증되지 않은 경우 실행되지 않음
+  )
+);
 console.log(result);  // { error: '이메일 미인증', userId: '123' }`}
     />
 
@@ -242,15 +260,16 @@ const processData = async (data: any) => {
   return { processed: true, ...data };
 };
 
-const dataPipeline = pipeAsyncSideEffect(
-  fetchData,
-  validateData,
-  processData
-);
-
 // runPipeResult는 파이프라인 밖에서 호출해야 합니다
 try {
-  const result = await runPipeResult(dataPipeline('https://api.example.com/data'));
+  const result = runPipeResult(
+    await pipeAsyncSideEffect(
+      'https://api.example.com/data',
+      fetchData,
+      validateData,
+      processData
+    )
+  );
   console.log('성공:', result);
 } catch (err) {
   console.error('에러 포착:', err.message);
@@ -299,18 +318,19 @@ const processPayment = async (req: PaymentRequest) => {
   return { success: true, transactionId: 'tx_123', ...req };
 };
 
-const paymentPipeline = pipeAsyncSideEffect(
-  validatePayment,
-  checkBalance,
-  processPayment
-);
-
 // runPipeResult는 파이프라인 밖에서 호출해야 합니다
-const result = await runPipeResult(paymentPipeline({
-  amount: 150,
-  currency: 'KRW',
-  userId: 'user_1'
-}));
+const result = runPipeResult(
+  await pipeAsyncSideEffect(
+    {
+      amount: 150,
+      currency: 'KRW',
+      userId: 'user_1'
+    },
+    validatePayment,
+    checkBalance,
+    processPayment
+  )
+);
 
 console.log(result);
 // { error: '잔액 부족', balance: 100, required: 150 }`}
@@ -362,14 +382,18 @@ const validateUserPipeline = pipeAsyncSideEffect(
 );
 // 결과 타입: Promise<User | SideEffect>
 
+const userId = '123';
+
 // ❌ 잘못된 방법 - pipeAsync는 SideEffect를 처리 못함
 const wrongPipeline = pipeAsync(
+  userId,
   validateUserPipeline,  // Promise<User | SideEffect> 반환
   (user) => user.email   // 타입 에러! SideEffect에는 'email' 프로퍼티가 없음
 );
 
 // ✅ 올바른 방법 - pipeAsyncSideEffect 계속 사용
 const correctPipeline = pipeAsyncSideEffect(
+  userId,
   validateUserPipeline,  // Promise<User | SideEffect> - 올바르게 처리됨
   (user) => user.email,  // SideEffect면 자동으로 건너뜀
   sendEmail

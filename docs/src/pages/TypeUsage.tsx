@@ -151,28 +151,34 @@ const filteredUsers = filterUsers(users);
     </p>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-      Use one of these workarounds: <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">pipeHint</code>,
-      a data-first wrapper, or an explicit type annotation for the curried function.
+      Use one of these workarounds: value-first input to anchor types,{' '}
+      <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">pipeHint</code>, or an explicit type annotation
+      for the curried function.
     </p>
 
     <CodeBlock
       language="typescript"
       code={`import { pipe, pipeHint, zip, some } from 'fp-pack';
 
-// Option 1: data-first wrapper
+const values = [4, 5, 6];
+
+// Option 1: value-first input
 const withWrapper = pipe(
+  values,
   (values: number[]) => zip([1, 2, 3], values),
   some(([a, b]) => a > b)
 );
 
 // Option 2: explicit type annotation
 const withHint = pipe(
+  values,
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
   some(([a, b]) => a > b)
 );
 
 // Option 3: pipeHint helper
 const withPipeHint = pipe(
+  values,
   pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );`}
@@ -196,7 +202,7 @@ const withPipeHint = pipe(
     </h2>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-      The <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">FromFn</code> type represents functions created with the <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">from</code> utility. When used as the first function in a pipeline, it allows the pipeline to be called without an initial input value, enabling cleaner data-first patterns.
+      The <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">FromFn</code> type represents functions created with the <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">from</code> utility. When used as the first function in a pipeline, it allows the pipeline to be called without an initial input value. If you already have data, prefer <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">pipe(data, ...)</code>.
     </p>
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-3">

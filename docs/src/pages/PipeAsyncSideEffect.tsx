@@ -23,7 +23,8 @@ export const PipeAsyncSideEffect = () => (
       </strong>{' '}
       composes async/sync functions like <strong>pipeAsync</strong>, while allowing a{' '}
       <strong class="font-semibold">SideEffect</strong> to halt the pipeline. It accepts a SideEffect as input and
-      returns it unchanged. Use <strong>pipeAsync</strong> for pure async pipelines.
+      returns it unchanged. Prefer value-first <code class="text-sm">pipeAsyncSideEffect(data, ...)</code> for inference,
+      and use function-first for reuse. Use <strong>pipeAsync</strong> for pure async pipelines.
     </p>
 
     <CodeBlock
@@ -37,10 +38,10 @@ const checkVerified = (user: { id: string; verified: boolean }) =>
     ? user
     : SideEffect.of(() => ({ error: 'Email not verified', userId: user.id }));
 
-const userPipeline = pipeAsyncSideEffect(fetchUser, checkVerified);
-
 // runPipeResult must be called OUTSIDE the pipeline
-const result = await runPipeResult(userPipeline('123'));
+const result = runPipeResult(
+  await pipeAsyncSideEffect('123', fetchUser, checkVerified)
+);
 // { error: 'Email not verified', userId: '123' }`}
     />
 
@@ -64,7 +65,10 @@ const result = await runPipeResult(userPipeline('123'));
       code={`// ✅ GOOD: 99% of cases - use pipeAsync (pure async transformations)
 import { pipeAsync } from 'fp-pack';
 
-const fetchAndProcess = pipeAsync(
+const userId = '123';
+
+const profile = await pipeAsync(
+  userId,
   async (id: string) => fetchUser(id),
   (user) => user.profile
 );
@@ -72,9 +76,12 @@ const fetchAndProcess = pipeAsync(
 // ✅ GOOD: Only when SideEffect needed - use pipeAsyncSideEffect
 import { pipeAsyncSideEffect, SideEffect } from 'fp-pack';
 
-const fetchAndValidate = pipeAsyncSideEffect(
-  async (id: string) => fetchUser(id),
-  (user) => user.verified ? user : SideEffect.of(() => 'Not verified')
+const result = runPipeResult(
+  await pipeAsyncSideEffect(
+    userId,
+    async (id: string) => fetchUser(id),
+    (user) => user.verified ? user : SideEffect.of(() => 'Not verified')
+  )
 );`}
     />
 
@@ -87,8 +94,19 @@ const fetchAndValidate = pipeAsyncSideEffect(
     <CodeBlock
       language="typescript"
       code={`function pipeAsyncSideEffect<A, R>(
+  a: A,
+  ab: (a: A) => R | SideEffect | Promise<R | SideEffect>
+): Promise<R | SideEffect>;
+
+function pipeAsyncSideEffect<A, R>(
   ab: (a: A) => R | SideEffect | Promise<R | SideEffect>
 ): (a: A | SideEffect) => Promise<R | SideEffect>;
+
+function pipeAsyncSideEffect<A, B, R>(
+  a: A,
+  ab: (a: A) => B | SideEffect | Promise<B | SideEffect>,
+  bc: (b: B) => R | SideEffect | Promise<R | SideEffect>
+): Promise<R | SideEffect>;
 
 function pipeAsyncSideEffect<A, B, R>(
   ab: (a: A) => B | SideEffect | Promise<B | SideEffect>,
@@ -116,13 +134,12 @@ function pipeAsyncSideEffect(...funcs: Array<(input: any) => any>): (input: any)
       language="typescript"
       code={`import { pipeAsyncSideEffectStrict, SideEffect } from 'fp-pack';
 
-const pipeline = pipeAsyncSideEffectStrict(
+// Result type: Promise<number | SideEffect<'NEGATIVE' | 0>>
+const result = await pipeAsyncSideEffectStrict(
+  5,
   async (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
   (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
-);
-
-// Result type: Promise<number | SideEffect<'NEGATIVE' | 0>>
-const result = pipeline(5);`}
+);`}
     />
 
     <div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 mb-6 rounded-r mt-6">
@@ -197,14 +214,15 @@ const sendNotification = async (user: User) => {
   return { sent: true, userId: user.id };
 };
 
-const notifyUserPipeline = pipeAsyncSideEffect(
-  fetchUser,
-  checkVerified,
-  sendNotification  // This won't execute if user is not verified
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
-const result = await runPipeResult(notifyUserPipeline('123'));
+const result = runPipeResult(
+  await pipeAsyncSideEffect(
+    '123',
+    fetchUser,
+    checkVerified,
+    sendNotification  // This won't execute if user is not verified
+  )
+);
 console.log(result);  // { error: 'Email not verified', userId: '123' }`}
     />
 
@@ -242,15 +260,16 @@ const processData = async (data: any) => {
   return { processed: true, ...data };
 };
 
-const dataPipeline = pipeAsyncSideEffect(
-  fetchData,
-  validateData,
-  processData
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
 try {
-  const result = await runPipeResult(dataPipeline('https://api.example.com/data'));
+  const result = runPipeResult(
+    await pipeAsyncSideEffect(
+      'https://api.example.com/data',
+      fetchData,
+      validateData,
+      processData
+    )
+  );
   console.log('Success:', result);
 } catch (err) {
   console.error('Caught error:', err.message);
@@ -299,18 +318,19 @@ const processPayment = async (req: PaymentRequest) => {
   return { success: true, transactionId: 'tx_123', ...req };
 };
 
-const paymentPipeline = pipeAsyncSideEffect(
-  validatePayment,
-  checkBalance,
-  processPayment
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
-const result = await runPipeResult(paymentPipeline({
-  amount: 150,
-  currency: 'USD',
-  userId: 'user_1'
-}));
+const result = runPipeResult(
+  await pipeAsyncSideEffect(
+    {
+      amount: 150,
+      currency: 'USD',
+      userId: 'user_1'
+    },
+    validatePayment,
+    checkBalance,
+    processPayment
+  )
+);
 
 console.log(result);
 // { error: 'Insufficient funds', balance: 100, required: 150 }`}
@@ -361,14 +381,18 @@ const validateUserPipeline = pipeAsyncSideEffect(
 );
 // Result type: Promise<User | SideEffect>
 
+const userId = '123';
+
 // ❌ WRONG - pipeAsync cannot handle SideEffect
 const wrongPipeline = pipeAsync(
+  userId,
   validateUserPipeline,  // Returns Promise<User | SideEffect>
   (user) => user.email   // Type error! SideEffect has no 'email' property
 );
 
 // ✅ CORRECT - Keep using pipeAsyncSideEffect
 const correctPipeline = pipeAsyncSideEffect(
+  userId,
   validateUserPipeline,  // Promise<User | SideEffect> - handled correctly
   (user) => user.email,  // Automatically skipped if SideEffect
   sendEmail

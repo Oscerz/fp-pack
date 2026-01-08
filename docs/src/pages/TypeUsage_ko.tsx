@@ -151,28 +151,33 @@ const filteredUsers = filterUsers(users);
     </p>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-      해결책은 <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">pipeHint</code>,
-      data-first 래핑, 또는 커리 함수의 명시적 타입 힌트/캐스팅입니다.
+      해결책은 데이터 값을 먼저 넘겨 타입을 고정하는 방법, <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">pipeHint</code>,
+      또는 커리 함수의 명시적 타입 힌트/캐스팅입니다.
     </p>
 
     <CodeBlock
       language="typescript"
       code={`import { pipe, pipeHint, zip, some } from 'fp-pack';
 
-// 방법 1: data-first 래핑
+const values = [4, 5, 6];
+
+// 방법 1: 값 먼저 전달 (value-first)
 const withWrapper = pipe(
+  values,
   (values: number[]) => zip([1, 2, 3], values),
   some(([a, b]) => a > b)
 );
 
 // 방법 2: 명시적 타입 힌트
 const withHint = pipe(
+  values,
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
   some(([a, b]) => a > b)
 );
 
 // 방법 3: pipeHint 헬퍼
 const withPipeHint = pipe(
+  values,
   pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );`}
@@ -196,7 +201,7 @@ const withPipeHint = pipe(
     </h2>
 
     <p class="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-      <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">FromFn</code> 타입은 <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">from</code> 유틸리티로 생성된 함수를 나타냅니다. 파이프라인의 첫 번째 함수로 사용될 때 초기 입력 값 없이 파이프라인을 호출할 수 있어 더 깔끔한 데이터 우선 패턴을 가능하게 합니다.
+      <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">FromFn</code> 타입은 <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">from</code> 유틸리티로 생성된 함수를 나타냅니다. 파이프라인의 첫 번째 함수로 사용될 때 초기 입력 값 없이 파이프라인을 호출할 수 있습니다. 이미 값이 있다면 <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">pipe(data, ...)</code>를 우선 사용하세요.
     </p>
 
     <h3 class="text-xl md:text-2xl font-medium text-gray-900 dark:text-white mb-3">

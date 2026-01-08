@@ -34,6 +34,7 @@ export const AIAgentSkills = () => (
     </p>
 
     <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 dark:text-gray-300 mb-6">
+      <li>Prefer value-first <code class="text-sm">pipe(data, ...)</code>/<code class="text-sm">pipeAsync(data, ...)</code> for inference</li>
       <li>Default to using <code class="text-sm">pipe</code>/<code class="text-sm">pipeAsync</code> for pure transformations</li>
       <li>Use <code class="text-sm">pipeSideEffect</code>/<code class="text-sm">pipeAsyncSideEffect</code> when SideEffect is involved</li>
       <li>Use strict variants (<code class="text-sm">pipeSideEffectStrict</code>/<code class="text-sm">pipeAsyncSideEffectStrict</code>) when you need strict effect unions</li>
@@ -109,7 +110,7 @@ Copy-Item node_modules/fp-pack/dist/skills/fp-pack/SKILL.md $HOME/.codex/skills/
 3. Use the patterns shown in real-world examples
 
 **Non-negotiable rules:**
-- Use \`from()\` for constants, NOT \`() => value\`
+- Prefer \`pipe(data, ...)\` for inference; use \`from(value)\` for zero-arg pipelines (avoid \`() => value\`)
 - Use \`pipeSideEffect\` for SideEffect handling, NOT \`pipe\`
 - Call \`runPipeResult\` OUTSIDE pipelines, NEVER inside
 - Use immutable operations, NO mutations

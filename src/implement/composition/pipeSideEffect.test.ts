@@ -14,6 +14,13 @@ describe('pipeSideEffect', () => {
     expect(result).toBe(effect);
   });
 
+  it('supports data-first invocation', () => {
+    const addOne = (n: number) => n + 1;
+    const double = (n: number) => n * 2;
+
+    expect(pipeSideEffect(2, addOne, double)).toBe(6);
+  });
+
   it('returns SideEffect inputs without executing the pipeline', () => {
     const effect = new SideEffect(() => 'effect');
     const fn = pipeSideEffect((n: number) => n + 1);

@@ -22,20 +22,20 @@ export const PipeSideEffectStrict = () => (
         pipeSideEffectStrict
       </strong>{' '}
       is the strict counterpart of <strong>pipeSideEffect</strong>. It keeps a precise union of all SideEffect result
-      types across the pipeline so TypeScript can narrow errors more accurately.
+      types across the pipeline so TypeScript can narrow errors more accurately. Prefer value-first
+      <code class="text-sm">pipeSideEffectStrict(data, ...)</code> for inference, and use function-first for reuse.
     </p>
 
     <CodeBlock
       language="typescript"
       code={`import { pipeSideEffectStrict, SideEffect } from 'fp-pack';
 
-const pipeline = pipeSideEffectStrict(
+// Result type: number | SideEffect<'NEGATIVE' | 0>
+const result = pipeSideEffectStrict(
+  5,
   (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
   (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
-);
-
-// Result type: number | SideEffect<'NEGATIVE' | 0>
-const result = pipeline(5);`}
+);`}
     />
 
     <div class="bg-amber-50 dark:bg-amber-900/20 p-4 mb-6 rounded border border-amber-200 dark:border-amber-800 mt-6">
@@ -58,6 +58,11 @@ const result = pipeline(5);`}
     <CodeBlock
       language="typescript"
       code={`function pipeSideEffectStrict<A, R>(
+  a: A,
+  ab: (a: A) => R | SideEffect
+): R | SideEffect<UnionOfAllEffects>;
+
+function pipeSideEffectStrict<A, R>(
   ab: (a: A) => R | SideEffect
 ): (a: A | SideEffect) => R | SideEffect<UnionOfAllEffects>;`}
     />

@@ -37,11 +37,13 @@ fp-pack is a TypeScript functional programming library focused on:
 import { pipe, map, filter, take } from 'fp-pack';
 
 // GOOD: Declarative pipe composition
-const processUsers = pipe(
-  filter((user: User) => user.age >= 18),
-  map(user => user.name.toUpperCase()),
-  take(10)
-);
+const processUsers = (users: User[]) =>
+  pipe(
+    users,
+    filter((user: User) => user.age >= 18),
+    map(user => user.name.toUpperCase()),
+    take(10)
+  );
 
 // BAD: Imperative approach
 const processUsers = (users: User[]) => {
@@ -58,6 +60,30 @@ const processUsers = (users: User[]) => {
 
 > For SideEffect-based early exits, use `pipeSideEffect` (or `pipeSideEffectStrict` when you want strict unions).
 
+### Value-first vs Function-first Execution
+
+`pipe` supports two entry styles (same rule applies to `pipeAsync` and SideEffect variants):
+- **Value-first (data-first)**: first argument is a value → executes immediately and returns the final value.
+- **Function-first (data-last)**: first argument is a function → returns a reusable pipeline function.
+
+```typescript
+import { pipe, from } from 'fp-pack';
+
+const add1 = (n: number) => n + 1;
+const double = (n: number) => n * 2;
+
+// Value-first: runs immediately
+const result = pipe(5, add1, double); // 12
+
+// Function-first: returns a pipeline function
+const compute = pipe(add1, double);
+compute(5); // 12
+
+// Zero-arg pipeline: use from()
+const zeroArg = pipe(from(5), add1, double);
+zeroArg(); // 12
+```
+
 ### pipeAsync - Asynchronous Function Composition
 
 **Use `pipeAsync` for any async operations** including API calls, database queries, or async transformations.
@@ -66,11 +92,13 @@ const processUsers = (users: User[]) => {
 import { pipeAsync } from 'fp-pack';
 
 // GOOD: Async pipe composition
-const fetchUserData = pipeAsync(
-  async (userId: string) => fetch(`/api/users/${userId}`),
-  async (response) => response.json(),
-  (data) => data.user
-);
+const fetchUserData = (userId: string) =>
+  pipeAsync(
+    userId,
+    async (id: string) => fetch(`/api/users/${id}`),
+    async (response) => response.json(),
+    (data) => data.user
+  );
 
 // BAD: Manual async handling
 const fetchUserData = async (userId: string) => {
@@ -85,25 +113,30 @@ const fetchUserData = async (userId: string) => {
 ## Data-last Generic Inference Caveats
 
 Some data-last helpers return a **generic function** whose type is determined only by the final data argument. Inside
-`pipe`/`pipeAsync`, TypeScript cannot infer that type, so you may need `pipeHint`, a small type hint, or a data-first wrapper.
+`pipe`/`pipeAsync`, TypeScript cannot infer that type, so you may need value-first input, `pipeHint`, or an explicit type hint.
 
 ```typescript
 import { pipe, pipeHint, zip, some } from 'fp-pack';
 
-// Option 1: data-first wrapper
+const values = [4, 5, 6];
+
+// Option 1: value-first input
 const withWrapper = pipe(
+  values,
   (values: number[]) => zip([1, 2, 3], values),
   some(([a, b]) => a > b)
 );
 
 // Option 2: explicit type annotation
 const withHint = pipe(
+  values,
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
   some(([a, b]) => a > b)
 );
 
 // Option 3: pipeHint helper
 const withPipeHint = pipe(
+  values,
   pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );
@@ -131,11 +164,13 @@ If you want precise SideEffect unions across branches, use `pipeSideEffectStrict
 // MOST CASES: Just use pipe with regular error handling
 import { pipe, map, filter } from 'fp-pack';
 
-const processData = pipe(
-  validateInput,
-  transformData,
-  saveData
-);
+const processData = (input) =>
+  pipe(
+    input,
+    validateInput,
+    transformData,
+    saveData
+  );
 
 try {
   const result = processData(input);
@@ -146,23 +181,24 @@ try {
 // SPECIAL CASES: Use pipeSideEffect when you need early termination with side effects
 import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-pack';
 
-const processDataPipeline = pipeSideEffect(
-  validateInput,
-  (data) => {
-    if (!data.isValid) {
-      return SideEffect.of(() => {
-        showToast('Invalid data');  // Side effect
-        logError('validation_failed');  // Side effect
-        return null;
-      });
-    }
-    return data;
-  },
-  transformData
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
-const finalValue = runPipeResult(processDataPipeline(input));
+const finalValue = runPipeResult(
+  pipeSideEffect(
+    input,
+    validateInput,
+    (data) => {
+      if (!data.isValid) {
+        return SideEffect.of(() => {
+          showToast('Invalid data');  // Side effect
+          logError('validation_failed');  // Side effect
+          return null;
+        });
+      }
+      return data;
+    },
+    transformData
+  )
+);
 ```
 
 **Key SideEffect functions:**
@@ -572,7 +608,7 @@ const gradeToLetter = cond([
 
 - `prop` returns `T[K] | undefined`. Use `propOr` (or guard) before array operations.
 - `ifElse` expects **functions** for both branches. If you already have a value, wrap it: `() => value` or use `from(value)` for cleaner constant branches.
-- Use `from(value)` when you need a unary function that ignores input (handy for `ifElse`/`cond` branches and data-first patterns). Pipelines that start with `from(...)` can be called without an initial input value.
+- Use `from(value)` when you need a unary function that ignores input (handy for `ifElse`/`cond` branches). Pipelines that start with `from(...)` can be called without an initial input value.
 - `cond` returns `R | undefined`. Add a default branch and coalesce when you need a strict result.
 - In `pipeSideEffect`, keep step return types aligned to avoid wide unions.
 
@@ -601,13 +637,20 @@ const statusLabel = ifElse(
   from('fail')
 );
 
-// Data-first pattern with from: inject data into pipeline
+// Value-first when data is available
+const result = pipe(
+  [1, 2, 3, 4, 5],
+  filter((n: number) => n % 2 === 0),
+  map(n => n * 2)
+);
+
+// Zero-arg pipeline with from()
 const processData = pipe(
   from([1, 2, 3, 4, 5]),
   filter((n: number) => n % 2 === 0),
   map(n => n * 2)
 );
-const result = processData(); // [4, 8]
+const result2 = processData(); // [4, 8]
 
 // cond still returns R | undefined, so coalesce if needed
 const grade = (score: number) =>

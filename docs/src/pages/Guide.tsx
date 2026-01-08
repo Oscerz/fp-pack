@@ -101,11 +101,13 @@ export const Guide = () => (
       code={`import { pipe, map, filter, take } from 'fp-pack';
 
 // GOOD: Declarative pipe composition
-const processUsers = pipe(
-  filter((user: User) => user.age >= 18),
-  map(user => user.name.toUpperCase()),
-  take(10)
-);
+const processUsers = (users: User[]) =>
+  pipe(
+    users,
+    filter((user: User) => user.age >= 18),
+    map(user => user.name.toUpperCase()),
+    take(10)
+  );
 
 // BAD: Imperative approach
 const processUsers = (users: User[]) => {
@@ -127,6 +129,36 @@ const processUsers = (users: User[]) => {
     </div>
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
+      Value-first vs Function-first Execution
+    </h3>
+
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      <code class="text-sm">pipe</code> behaves differently based on the first argument. If the first argument is a
+      value, it runs immediately. If the first argument is a function, it returns a reusable pipeline.
+      Use <code class="text-sm">from(value)</code> when you want a zero-argument pipeline. The same rule applies to
+      <code class="text-sm">pipeAsync</code> and the SideEffect-aware variants.
+    </p>
+
+    <CodeBlock
+      language="typescript"
+      code={`import { pipe, from } from 'fp-pack';
+
+const add1 = (n: number) => n + 1;
+const double = (n: number) => n * 2;
+
+// Value-first: executes immediately
+const result = pipe(5, add1, double); // 12
+
+// Function-first: returns a pipeline function
+const compute = pipe(add1, double);
+compute(5); // 12
+
+// Zero-arg pipeline: use from()
+const zeroArg = pipe(from(5), add1, double);
+zeroArg(); // 12`}
+    />
+
+    <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
       pipeAsync - Asynchronous Function Composition
     </h3>
 
@@ -139,11 +171,13 @@ const processUsers = (users: User[]) => {
       code={`import { pipeAsync } from 'fp-pack';
 
 // GOOD: Async pipe composition
-const fetchUserData = pipeAsync(
-  async (userId: string) => fetch(\`/api/users/\${userId}\`),
-  async (response) => response.json(),
-  (data) => data.user
-);
+const fetchUserData = (userId: string) =>
+  pipeAsync(
+    userId,
+    async (id: string) => fetch(\`/api/users/\${id}\`),
+    async (response) => response.json(),
+    (data) => data.user
+  );
 
 // BAD: Manual async handling
 const fetchUserData = async (userId: string) => {
@@ -192,11 +226,13 @@ const fetchUserData = async (userId: string) => {
       code={`// MOST CASES: Just use pipe with regular error handling
 import { pipe, map, filter } from 'fp-pack';
 
-const processData = pipe(
-  validateInput,
-  transformData,
-  saveData
-);
+const processData = (input) =>
+  pipe(
+    input,
+    validateInput,
+    transformData,
+    saveData
+  );
 
 try {
   const result = processData(input);
@@ -207,23 +243,24 @@ try {
 // SPECIAL CASES: Use pipeSideEffect when you need early termination with side effects
 import { pipeSideEffect, SideEffect, runPipeResult } from 'fp-pack';
 
-const processDataPipeline = pipeSideEffect(
-  validateInput,
-  (data) => {
-    if (!data.isValid) {
-      return SideEffect.of(() => {
-        showToast('Invalid data');  // Side effect
-        logError('validation_failed');  // Side effect
-        return null;
-      });
-    }
-    return data;
-  },
-  transformData
-);
-
 // runPipeResult must be called OUTSIDE the pipeline
-const finalValue = runPipeResult(processDataPipeline(input));`}
+const finalValue = runPipeResult(
+  pipeSideEffect(
+    input,
+    validateInput,
+    (data) => {
+      if (!data.isValid) {
+        return SideEffect.of(() => {
+          showToast('Invalid data');  // Side effect
+          logError('validation_failed');  // Side effect
+          return null;
+        });
+      }
+      return data;
+    },
+    transformData
+  )
+);`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">
@@ -486,7 +523,7 @@ const grade = (score: number) =>
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
       If a data-last helper returns a generic function whose type is decided only by the final data input, TypeScript
       cannot infer that type inside <code class="text-sm">pipe</code>/<code class="text-sm">pipeAsync</code>.
-      Use <code class="text-sm">pipeHint</code>, a data-first wrapper, or an explicit type annotation when needed.
+      Use value-first input, <code class="text-sm">pipeHint</code>, or an explicit type annotation when needed.
     </p>
 
     <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-6 space-y-2">
@@ -504,20 +541,25 @@ const grade = (score: number) =>
       language="typescript"
       code={`import { pipe, pipeHint, zip, some } from 'fp-pack';
 
-// Option 1: data-first wrapper
+const values = [4, 5, 6];
+
+// Option 1: value-first input
 const withWrapper = pipe(
+  values,
   (values: number[]) => zip([1, 2, 3], values),
   some(([a, b]) => a > b)
 );
 
 // Option 2: explicit type annotation
 const withHint = pipe(
+  values,
   zip([1, 2, 3]) as (values: number[]) => Array<[number, number]>,
   some(([a, b]) => a > b)
 );
 
 // Option 3: pipeHint helper
 const withPipeHint = pipe(
+  values,
   pipeHint<number[], Array<[number, number]>>(zip([1, 2, 3])),
   some(([a, b]) => a > b)
 );`}
@@ -528,7 +570,7 @@ const withPipeHint = pipe(
     </h3>
 
     <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-      Using <code class="text-sm">() =&gt; value</code> to start a pipeline breaks type inference because <code class="text-sm">pipe</code> expects unary functions. Use <code class="text-sm">from(value)</code> instead for proper typing.
+      Using <code class="text-sm">() =&gt; value</code> to start a pipeline breaks type inference because <code class="text-sm">pipe</code> expects unary functions. Prefer <code class="text-sm">pipe(data, ...)</code> when you already have data, and use <code class="text-sm">from(value)</code> only for zero-arg pipelines.
     </p>
 
     <CodeBlock
@@ -541,14 +583,21 @@ const broken = pipe(
   filter((n: number) => n % 2 === 0)  // Error! Expects (input) => output
 );
 
-// ✅ CORRECT: from() creates proper unary function
-const works = pipe(
-  from([1, 2, 3, 4, 5]),    // Type: <I>(_: I) => number[]
-  filter((n: number) => n % 2 === 0),  // Works perfectly
+// ✅ CORRECT: value-first
+const valueFirst = pipe(
+  [1, 2, 3, 4, 5],
+  filter((n: number) => n % 2 === 0),
   map(n => n * 2)
 );
 
-works(); // [4, 8] - No type errors, clean inference`}
+// ✅ CORRECT: from() for zero-arg pipelines
+const zeroArg = pipe(
+  from([1, 2, 3, 4, 5]),
+  filter((n: number) => n % 2 === 0),
+  map(n => n * 2)
+);
+
+zeroArg(); // [4, 8] - No type errors, clean inference`}
     />
 
     <h3 class="text-2xl font-medium text-gray-900 dark:text-white mb-3 mt-8">

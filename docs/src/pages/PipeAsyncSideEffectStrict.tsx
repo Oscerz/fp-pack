@@ -22,20 +22,20 @@ export const PipeAsyncSideEffectStrict = () => (
         pipeAsyncSideEffectStrict
       </strong>{' '}
       is the async strict variant of <strong>pipeAsyncSideEffect</strong>. It preserves a precise union of SideEffect
-      result types while still short-circuiting the pipeline.
+      result types while still short-circuiting the pipeline. Prefer value-first
+      <code class="text-sm">pipeAsyncSideEffectStrict(data, ...)</code> for inference.
     </p>
 
     <CodeBlock
       language="typescript"
       code={`import { pipeAsyncSideEffectStrict, SideEffect } from 'fp-pack';
 
-const pipeline = pipeAsyncSideEffectStrict(
+// Result type: Promise<number | SideEffect<'NEGATIVE' | 0>>
+const result = await pipeAsyncSideEffectStrict(
+  5,
   async (n: number) => (n > 0 ? n : SideEffect.of(() => 'NEGATIVE' as const)),
   (n) => (n > 10 ? n : SideEffect.of(() => 0 as const))
-);
-
-// Result type: Promise<number | SideEffect<'NEGATIVE' | 0>>
-const result = await pipeline(5);`}
+);`}
     />
 
     <div class="bg-amber-50 dark:bg-amber-900/20 p-4 mb-6 rounded border border-amber-200 dark:border-amber-800 mt-6">
@@ -58,6 +58,11 @@ const result = await pipeline(5);`}
     <CodeBlock
       language="typescript"
       code={`function pipeAsyncSideEffectStrict<A, R>(
+  a: A,
+  ab: (a: A) => R | SideEffect | Promise<R | SideEffect>
+): Promise<R | SideEffect<UnionOfAllEffects>>;
+
+function pipeAsyncSideEffectStrict<A, R>(
   ab: (a: A) => R | SideEffect | Promise<R | SideEffect>
 ): (a: A | SideEffect) => Promise<R | SideEffect<UnionOfAllEffects>>;`}
     />
