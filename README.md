@@ -802,9 +802,10 @@ pnpm dev
 fp-pack draws inspiration from excellent functional programming libraries in the JavaScript ecosystem:
 
 - **[Ramda](https://ramdajs.com/)** - A practical functional library that pioneered many of the patterns we use today
+- **[Remeda](https://remedajs.com/)** - Strongly influential TypeScript-first utility patterns and ergonomics
+- **[lodash/fp](https://lodash.com/docs/4.17.15#fp)** - Data-last, auto-curried utility style for functional composition
+- **[Rambda](https://github.com/selfrefactor/rambda)** - Lightweight Ramda-inspired functional utilities
 - **[FxJS](https://github.com/marpple/FxJS)** and **[FxTS](https://github.com/marpple/FxTS)** - Inspired by their exceptional combination of lazy evaluation and functional tooling patterns
-
-We're deeply grateful for their influence. Our implementation explores different approaches using generator functions, the SideEffect pattern, and pipe-first composition.
 
 ## License
 
