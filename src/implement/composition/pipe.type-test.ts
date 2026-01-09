@@ -6,6 +6,9 @@ import pipeSideEffectStrict from './pipeSideEffectStrict';
 import pipeAsync from '../async/pipeAsync';
 import pipeAsyncSideEffect from '../async/pipeAsyncSideEffect';
 import pipeAsyncSideEffectStrict from '../async/pipeAsyncSideEffectStrict';
+import tap from './tap';
+import assoc from '../object/assoc';
+import map from '../array/map';
 
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2)
   ? true
@@ -761,3 +764,71 @@ pipeAsync((value: number) => value + 1)();
 pipeAsyncSideEffect((value: number) => value + 1)();
 // @ts-expect-error input required for direct pipeAsyncSideEffectStrict call
 pipeAsyncSideEffectStrict((value: number) => value + 1)();
+
+type AppState = {
+  todos: number[];
+  filter: string;
+  nextId: number;
+  editingId: number | null;
+};
+
+const appState: AppState = {
+  todos: [1, 2, 3],
+  filter: 'all',
+  nextId: 4,
+  editingId: null,
+};
+
+export const pipeValueFirstTap = pipe(
+  appState,
+  tap((state) => state.todos.length)
+);
+
+type PipeValueFirstTapExpected = AppState;
+export type PipeValueFirstTapIsStrict = Expect<Equal<typeof pipeValueFirstTap, PipeValueFirstTapExpected>>;
+
+export const pipeValueFirstAssoc = pipe(
+  appState,
+  assoc('editingId', null)
+);
+
+type PipeValueFirstAssocExpected = Omit<AppState, 'editingId'> & { editingId: null };
+export type PipeValueFirstAssocIsStrict = Expect<Equal<typeof pipeValueFirstAssoc, PipeValueFirstAssocExpected>>;
+
+export const pipeValueFirstMap = pipe(
+  ['a', 'b'],
+  map((value: string) => value.toUpperCase()),
+  tap((values) => values.length)
+);
+
+type PipeValueFirstMapExpected = string[];
+export type PipeValueFirstMapIsStrict = Expect<Equal<typeof pipeValueFirstMap, PipeValueFirstMapExpected>>;
+
+export const pipeSideEffectValueFirstTap = pipeSideEffect(
+  appState,
+  tap((state) => state.todos.length)
+);
+
+type PipeSideEffectValueFirstTapExpected = AppState | SideEffect<any>;
+export type PipeSideEffectValueFirstTapIsStrict = Expect<
+  Equal<typeof pipeSideEffectValueFirstTap, PipeSideEffectValueFirstTapExpected>
+>;
+
+export const pipeAsyncValueFirst = pipeAsync(
+  1,
+  (value: number) => value + 1,
+  async (value: number) => value * 2
+);
+
+type PipeAsyncValueFirstExpected = Promise<number>;
+export type PipeAsyncValueFirstIsStrict = Expect<Equal<typeof pipeAsyncValueFirst, PipeAsyncValueFirstExpected>>;
+
+export const pipeAsyncSideEffectValueFirstTap = pipeAsyncSideEffect(
+  appState,
+  tap((state) => state.todos.length)
+);
+
+type PipeAsyncSideEffectValueFirstTapExpected = Promise<AppState | SideEffect<any>>;
+export type PipeAsyncSideEffectValueFirstTapIsStrict = Expect<
+  Equal<typeof pipeAsyncSideEffectValueFirstTap, PipeAsyncSideEffectValueFirstTapExpected>
+>;

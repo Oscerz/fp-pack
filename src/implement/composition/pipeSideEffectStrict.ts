@@ -14,9 +14,12 @@ type ZeroFn<R> = () => R;
 type FnInput<F> = F extends (a: infer A) => any ? A : never;
 type FnReturn<F> = F extends (...args: any[]) => infer R ? R : never;
 type FnValue<F> = NonSideEffect<FnReturn<F>>;
+type Apply<F, A> = F extends (a: A) => infer R ? R : never;
+type ApplyValue<F, A> = NonSideEffect<Apply<F, A>>;
 
 type ValidateFn<Fn extends UnaryFn<any, any>, Expected> =
-  NoInfer<Expected> extends FnInput<Fn> ? Fn : Fn & PipeError<Expected, FnInput<Fn>>;
+  (Fn extends (a: NoInfer<Expected>) => any ? Fn : Fn & PipeError<Expected, FnInput<Fn>>) &
+    ((a: NoInfer<Expected>) => any);
 type PipeCheckResult<Fns extends [AnyFn, ...AnyFn[]]> =
   Fns extends [infer F, infer G, ...infer Rest]
     ? F extends AnyFn
@@ -38,6 +41,8 @@ type EffectsOf<Fns extends AnyFn[]> = EffectOfFn<Fns[number]>;
 
 type StrictResult<FLast, Fns extends AnyFn[]> = MaybeSideEffect<FnValue<FLast>, EffectsOf<Fns>>;
 type StrictResultWithInput<FLast, Fns extends AnyFn[], EIn> = MaybeSideEffect<FnValue<FLast>, EffectsOf<Fns> | EIn>;
+type StrictResultValue<AOut, Fns extends AnyFn[]> = MaybeSideEffect<AOut, EffectsOf<Fns>>;
+type StrictResultValueWithInput<AOut, Fns extends AnyFn[], EIn> = MaybeSideEffect<AOut, EffectsOf<Fns> | EIn>;
 type StrictUnaryReturn<A, FLast, Fns extends AnyFn[]> = {
   (input: A): StrictResult<FLast, Fns>;
   <EIn>(input: A | SideEffect<EIn>): MaybeSideEffect<FnValue<FLast>, EffectsOf<Fns> | EIn>;
@@ -74,320 +79,336 @@ type PipeCheckWithInput<Input, Fns extends [AnyFn, ...AnyFn[]]> =
 
 function pipeSideEffectStrict<A>(input: NonFunction<A>): A;
 function pipeSideEffectStrict<A, EIn>(input: NonFunction<A> | SideEffect<EIn>): A | SideEffect<EIn>;
-function pipeSideEffectStrict<A, F1 extends UnaryFn<A, any>>(
+function pipeSideEffectStrict<
+  A,
+  F1 extends UnaryFn<A, any>
+>(
   input: NonFunction<A>,
   ab: ValidateFn<F1, A>
-): StrictResult<F1, [F1]>;
-function pipeSideEffectStrict<A, EIn, F1 extends UnaryFn<A, any>>(
+): StrictResultValue<ApplyValue<F1, A>, [F1]>;
+function pipeSideEffectStrict<
+  A,
+  EIn,
+  F1 extends UnaryFn<A, any>
+>(
   input: NonFunction<A> | SideEffect<EIn>,
   ab: ValidateFn<F1, A>
-): StrictResultWithInput<F1, [F1], EIn>;
-function pipeSideEffectStrict<A, F1 extends UnaryFn<A, any>, F2 extends UnaryFn<FnValue<F1>, any>>(
-  input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>
-): StrictResult<F2, [F1, F2]>;
-function pipeSideEffectStrict<A, EIn, F1 extends UnaryFn<A, any>, F2 extends UnaryFn<FnValue<F1>, any>>(
-  input: NonFunction<A> | SideEffect<EIn>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>
-): StrictResultWithInput<F2, [F1, F2], EIn>;
+): StrictResultValueWithInput<ApplyValue<F1, A>, [F1], EIn>;
 function pipeSideEffectStrict<
   A,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>
 >(
   input: NonFunction<A>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>
-): StrictResult<F3, [F1, F2, F3]>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>
+): StrictResultValue<ApplyValue<F2, ApplyValue<F1, A>>, [F1, F2]>;
 function pipeSideEffectStrict<
   A,
   EIn,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>
 >(
   input: NonFunction<A> | SideEffect<EIn>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>
-): StrictResultWithInput<F3, [F1, F2, F3], EIn>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>
+): StrictResultValueWithInput<ApplyValue<F2, ApplyValue<F1, A>>, [F1, F2], EIn>;
 function pipeSideEffectStrict<
   A,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>
 >(
   input: NonFunction<A>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>
-): StrictResult<F4, [F1, F2, F3, F4]>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>
+): StrictResultValue<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, [F1, F2, F3]>;
 function pipeSideEffectStrict<
   A,
   EIn,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>
 >(
   input: NonFunction<A> | SideEffect<EIn>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>
-): StrictResultWithInput<F4, [F1, F2, F3, F4], EIn>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>
+): StrictResultValueWithInput<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, [F1, F2, F3], EIn>;
 function pipeSideEffectStrict<
   A,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>
 >(
   input: NonFunction<A>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>
-): StrictResult<F5, [F1, F2, F3, F4, F5]>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>
+): StrictResultValue<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, [F1, F2, F3, F4]>;
 function pipeSideEffectStrict<
   A,
   EIn,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>
 >(
   input: NonFunction<A> | SideEffect<EIn>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>
-): StrictResultWithInput<F5, [F1, F2, F3, F4, F5], EIn>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>
+): StrictResultValueWithInput<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, [F1, F2, F3, F4], EIn>;
 function pipeSideEffectStrict<
   A,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>
 >(
   input: NonFunction<A>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>
-): StrictResult<F6, [F1, F2, F3, F4, F5, F6]>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>
+): StrictResultValue<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, [F1, F2, F3, F4, F5]>;
 function pipeSideEffectStrict<
   A,
   EIn,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>
 >(
   input: NonFunction<A> | SideEffect<EIn>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>
-): StrictResultWithInput<F6, [F1, F2, F3, F4, F5, F6], EIn>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>
+): StrictResultValueWithInput<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, [F1, F2, F3, F4, F5], EIn>;
 function pipeSideEffectStrict<
   A,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>,
-  F7 extends UnaryFn<FnValue<F6>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>
 >(
   input: NonFunction<A>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>
-): StrictResult<F7, [F1, F2, F3, F4, F5, F6, F7]>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>
+): StrictResultValue<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, [F1, F2, F3, F4, F5, F6]>;
 function pipeSideEffectStrict<
   A,
   EIn,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>,
-  F7 extends UnaryFn<FnValue<F6>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>
 >(
   input: NonFunction<A> | SideEffect<EIn>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>
-): StrictResultWithInput<F7, [F1, F2, F3, F4, F5, F6, F7], EIn>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>
+): StrictResultValueWithInput<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, [F1, F2, F3, F4, F5, F6], EIn>;
 function pipeSideEffectStrict<
   A,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>,
-  F7 extends UnaryFn<FnValue<F6>, any>,
-  F8 extends UnaryFn<FnValue<F7>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>,
+  F7 extends UnaryFn<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, any>
 >(
   input: NonFunction<A>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>,
-  hi: ValidateFn<F8, FnValue<F7>>
-): StrictResult<F8, [F1, F2, F3, F4, F5, F6, F7, F8]>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>,
+  gh: ValidateFn<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>
+): StrictResultValue<ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>, [F1, F2, F3, F4, F5, F6, F7]>;
 function pipeSideEffectStrict<
   A,
   EIn,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>,
-  F7 extends UnaryFn<FnValue<F6>, any>,
-  F8 extends UnaryFn<FnValue<F7>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>,
+  F7 extends UnaryFn<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, any>
 >(
   input: NonFunction<A> | SideEffect<EIn>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>,
-  hi: ValidateFn<F8, FnValue<F7>>
-): StrictResultWithInput<F8, [F1, F2, F3, F4, F5, F6, F7, F8], EIn>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>,
+  gh: ValidateFn<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>
+): StrictResultValueWithInput<ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>, [F1, F2, F3, F4, F5, F6, F7], EIn>;
 function pipeSideEffectStrict<
   A,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>,
-  F7 extends UnaryFn<FnValue<F6>, any>,
-  F8 extends UnaryFn<FnValue<F7>, any>,
-  F9 extends UnaryFn<FnValue<F8>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>,
+  F7 extends UnaryFn<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, any>,
+  F8 extends UnaryFn<ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>, any>
 >(
   input: NonFunction<A>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>,
-  hi: ValidateFn<F8, FnValue<F7>>,
-  ij: ValidateFn<F9, FnValue<F8>>
-): StrictResult<F9, [F1, F2, F3, F4, F5, F6, F7, F8, F9]>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>,
+  gh: ValidateFn<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>,
+  hi: ValidateFn<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>
+): StrictResultValue<ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>, [F1, F2, F3, F4, F5, F6, F7, F8]>;
 function pipeSideEffectStrict<
   A,
   EIn,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>,
-  F7 extends UnaryFn<FnValue<F6>, any>,
-  F8 extends UnaryFn<FnValue<F7>, any>,
-  F9 extends UnaryFn<FnValue<F8>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>,
+  F7 extends UnaryFn<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, any>,
+  F8 extends UnaryFn<ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>, any>
 >(
   input: NonFunction<A> | SideEffect<EIn>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>,
-  hi: ValidateFn<F8, FnValue<F7>>,
-  ij: ValidateFn<F9, FnValue<F8>>
-): StrictResultWithInput<F9, [F1, F2, F3, F4, F5, F6, F7, F8, F9], EIn>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>,
+  gh: ValidateFn<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>,
+  hi: ValidateFn<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>
+): StrictResultValueWithInput<ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>, [F1, F2, F3, F4, F5, F6, F7, F8], EIn>;
 function pipeSideEffectStrict<
   A,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>,
-  F7 extends UnaryFn<FnValue<F6>, any>,
-  F8 extends UnaryFn<FnValue<F7>, any>,
-  F9 extends UnaryFn<FnValue<F8>, any>,
-  F10 extends UnaryFn<FnValue<F9>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>,
+  F7 extends UnaryFn<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, any>,
+  F8 extends UnaryFn<ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>, any>,
+  F9 extends UnaryFn<ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>, any>
 >(
   input: NonFunction<A>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>,
-  hi: ValidateFn<F8, FnValue<F7>>,
-  ij: ValidateFn<F9, FnValue<F8>>,
-  jk: ValidateFn<F10, FnValue<F9>>
-): StrictResult<F10, [F1, F2, F3, F4, F5, F6, F7, F8, F9, F10]>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>,
+  gh: ValidateFn<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>,
+  hi: ValidateFn<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>,
+  ij: ValidateFn<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>
+): StrictResultValue<ApplyValue<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>, [F1, F2, F3, F4, F5, F6, F7, F8, F9]>;
 function pipeSideEffectStrict<
   A,
   EIn,
   F1 extends UnaryFn<A, any>,
-  F2 extends UnaryFn<FnValue<F1>, any>,
-  F3 extends UnaryFn<FnValue<F2>, any>,
-  F4 extends UnaryFn<FnValue<F3>, any>,
-  F5 extends UnaryFn<FnValue<F4>, any>,
-  F6 extends UnaryFn<FnValue<F5>, any>,
-  F7 extends UnaryFn<FnValue<F6>, any>,
-  F8 extends UnaryFn<FnValue<F7>, any>,
-  F9 extends UnaryFn<FnValue<F8>, any>,
-  F10 extends UnaryFn<FnValue<F9>, any>
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>,
+  F7 extends UnaryFn<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, any>,
+  F8 extends UnaryFn<ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>, any>,
+  F9 extends UnaryFn<ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>, any>
 >(
   input: NonFunction<A> | SideEffect<EIn>,
   ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>,
-  hi: ValidateFn<F8, FnValue<F7>>,
-  ij: ValidateFn<F9, FnValue<F8>>,
-  jk: ValidateFn<F10, FnValue<F9>>
-): StrictResultWithInput<F10, [F1, F2, F3, F4, F5, F6, F7, F8, F9, F10], EIn>;
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>,
+  gh: ValidateFn<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>,
+  hi: ValidateFn<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>,
+  ij: ValidateFn<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>
+): StrictResultValueWithInput<ApplyValue<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>, [F1, F2, F3, F4, F5, F6, F7, F8, F9], EIn>;
+function pipeSideEffectStrict<
+  A,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>,
+  F7 extends UnaryFn<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, any>,
+  F8 extends UnaryFn<ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>, any>,
+  F9 extends UnaryFn<ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>, any>,
+  F10 extends UnaryFn<ApplyValue<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>, any>
+>(
+  input: NonFunction<A>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>,
+  gh: ValidateFn<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>,
+  hi: ValidateFn<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>,
+  ij: ValidateFn<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>,
+  jk: ValidateFn<F10, ApplyValue<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>>
+): StrictResultValue<ApplyValue<F10, ApplyValue<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>>, [F1, F2, F3, F4, F5, F6, F7, F8, F9, F10]>;
+function pipeSideEffectStrict<
+  A,
+  EIn,
+  F1 extends UnaryFn<A, any>,
+  F2 extends UnaryFn<ApplyValue<F1, A>, any>,
+  F3 extends UnaryFn<ApplyValue<F2, ApplyValue<F1, A>>, any>,
+  F4 extends UnaryFn<ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>, any>,
+  F5 extends UnaryFn<ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>, any>,
+  F6 extends UnaryFn<ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>, any>,
+  F7 extends UnaryFn<ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>, any>,
+  F8 extends UnaryFn<ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>, any>,
+  F9 extends UnaryFn<ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>, any>,
+  F10 extends UnaryFn<ApplyValue<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>, any>
+>(
+  input: NonFunction<A> | SideEffect<EIn>,
+  ab: ValidateFn<F1, A>,
+  bc: ValidateFn<F2, ApplyValue<F1, A>>,
+  cd: ValidateFn<F3, ApplyValue<F2, ApplyValue<F1, A>>>,
+  de: ValidateFn<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>,
+  ef: ValidateFn<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>,
+  fg: ValidateFn<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>,
+  gh: ValidateFn<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>,
+  hi: ValidateFn<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>,
+  ij: ValidateFn<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>,
+  jk: ValidateFn<F10, ApplyValue<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>>
+): StrictResultValueWithInput<ApplyValue<F10, ApplyValue<F9, ApplyValue<F8, ApplyValue<F7, ApplyValue<F6, ApplyValue<F5, ApplyValue<F4, ApplyValue<F3, ApplyValue<F2, ApplyValue<F1, A>>>>>>>>>>, [F1, F2, F3, F4, F5, F6, F7, F8, F9, F10], EIn>;
 function pipeSideEffectStrict<A, Fns extends [UnaryFn<any, any>, ...UnaryFn<any, any>[]]>(
   input: NonFunction<A>,
   ...funcs: PipeCheckWithInput<A, Fns>

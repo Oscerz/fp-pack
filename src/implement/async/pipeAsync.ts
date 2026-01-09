@@ -14,7 +14,8 @@ type FnReturn<F> = F extends (...args: any[]) => infer R ? R : never;
 type FnValue<F> = Awaited<FnReturn<F>>;
 
 type ValidateFn<Fn extends AsyncOrSync<any, any>, Expected> =
-  NoInfer<Expected> extends FnInput<Fn> ? Fn : Fn & PipeError<Expected, FnInput<Fn>>;
+  (Fn extends (a: NoInfer<Expected>) => any ? Fn : Fn & PipeError<Expected, FnInput<Fn>>) &
+    ((a: NoInfer<Expected>) => any);
 type PipeCheckResult<Fns extends [AnyFn, ...AnyFn[]]> =
   Fns extends [infer F, infer G, ...infer Rest]
     ? F extends AnyFn
@@ -60,159 +61,91 @@ type PipeCheckWithInput<Input, Fns extends [AnyFn, ...AnyFn[]]> =
     : PipeError<unknown, unknown>;
 
 function pipeAsync<A>(input: NonFunction<A>): Promise<A>;
-function pipeAsync<A, F1 extends AsyncOrSync<A, any>>(
+function pipeAsync<A, B>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>
-): Promise<FnValue<F1>>;
-function pipeAsync<A, F1 extends AsyncOrSync<A, any>, F2 extends AsyncOrSync<FnValue<F1>, any>>(
+  ab: AsyncOrSync<A, B>
+): Promise<B>;
+function pipeAsync<A, B, C>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>
-): Promise<FnValue<F2>>;
-function pipeAsync<
-  A,
-  F1 extends AsyncOrSync<A, any>,
-  F2 extends AsyncOrSync<FnValue<F1>, any>,
-  F3 extends AsyncOrSync<FnValue<F2>, any>
->(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<B, C>
+): Promise<C>;
+function pipeAsync<A, B, C, D>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>
-): Promise<FnValue<F3>>;
-function pipeAsync<
-  A,
-  F1 extends AsyncOrSync<A, any>,
-  F2 extends AsyncOrSync<FnValue<F1>, any>,
-  F3 extends AsyncOrSync<FnValue<F2>, any>,
-  F4 extends AsyncOrSync<FnValue<F3>, any>
->(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<B, C>,
+  cd: AsyncOrSync<C, D>
+): Promise<D>;
+function pipeAsync<A, B, C, D, E>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>
-): Promise<FnValue<F4>>;
-function pipeAsync<
-  A,
-  F1 extends AsyncOrSync<A, any>,
-  F2 extends AsyncOrSync<FnValue<F1>, any>,
-  F3 extends AsyncOrSync<FnValue<F2>, any>,
-  F4 extends AsyncOrSync<FnValue<F3>, any>,
-  F5 extends AsyncOrSync<FnValue<F4>, any>
->(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<B, C>,
+  cd: AsyncOrSync<C, D>,
+  de: AsyncOrSync<D, E>
+): Promise<E>;
+function pipeAsync<A, B, C, D, E, F>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>
-): Promise<FnValue<F5>>;
-function pipeAsync<
-  A,
-  F1 extends AsyncOrSync<A, any>,
-  F2 extends AsyncOrSync<FnValue<F1>, any>,
-  F3 extends AsyncOrSync<FnValue<F2>, any>,
-  F4 extends AsyncOrSync<FnValue<F3>, any>,
-  F5 extends AsyncOrSync<FnValue<F4>, any>,
-  F6 extends AsyncOrSync<FnValue<F5>, any>
->(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<B, C>,
+  cd: AsyncOrSync<C, D>,
+  de: AsyncOrSync<D, E>,
+  ef: AsyncOrSync<E, F>
+): Promise<F>;
+function pipeAsync<A, B, C, D, E, F, G>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>
-): Promise<FnValue<F6>>;
-function pipeAsync<
-  A,
-  F1 extends AsyncOrSync<A, any>,
-  F2 extends AsyncOrSync<FnValue<F1>, any>,
-  F3 extends AsyncOrSync<FnValue<F2>, any>,
-  F4 extends AsyncOrSync<FnValue<F3>, any>,
-  F5 extends AsyncOrSync<FnValue<F4>, any>,
-  F6 extends AsyncOrSync<FnValue<F5>, any>,
-  F7 extends AsyncOrSync<FnValue<F6>, any>
->(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<B, C>,
+  cd: AsyncOrSync<C, D>,
+  de: AsyncOrSync<D, E>,
+  ef: AsyncOrSync<E, F>,
+  fg: AsyncOrSync<F, G>
+): Promise<G>;
+function pipeAsync<A, B, C, D, E, F, G, H>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>
-): Promise<FnValue<F7>>;
-function pipeAsync<
-  A,
-  F1 extends AsyncOrSync<A, any>,
-  F2 extends AsyncOrSync<FnValue<F1>, any>,
-  F3 extends AsyncOrSync<FnValue<F2>, any>,
-  F4 extends AsyncOrSync<FnValue<F3>, any>,
-  F5 extends AsyncOrSync<FnValue<F4>, any>,
-  F6 extends AsyncOrSync<FnValue<F5>, any>,
-  F7 extends AsyncOrSync<FnValue<F6>, any>,
-  F8 extends AsyncOrSync<FnValue<F7>, any>
->(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<B, C>,
+  cd: AsyncOrSync<C, D>,
+  de: AsyncOrSync<D, E>,
+  ef: AsyncOrSync<E, F>,
+  fg: AsyncOrSync<F, G>,
+  gh: AsyncOrSync<G, H>
+): Promise<H>;
+function pipeAsync<A, B, C, D, E, F, G, H, I>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>,
-  hi: ValidateFn<F8, FnValue<F7>>
-): Promise<FnValue<F8>>;
-function pipeAsync<
-  A,
-  F1 extends AsyncOrSync<A, any>,
-  F2 extends AsyncOrSync<FnValue<F1>, any>,
-  F3 extends AsyncOrSync<FnValue<F2>, any>,
-  F4 extends AsyncOrSync<FnValue<F3>, any>,
-  F5 extends AsyncOrSync<FnValue<F4>, any>,
-  F6 extends AsyncOrSync<FnValue<F5>, any>,
-  F7 extends AsyncOrSync<FnValue<F6>, any>,
-  F8 extends AsyncOrSync<FnValue<F7>, any>,
-  F9 extends AsyncOrSync<FnValue<F8>, any>
->(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<B, C>,
+  cd: AsyncOrSync<C, D>,
+  de: AsyncOrSync<D, E>,
+  ef: AsyncOrSync<E, F>,
+  fg: AsyncOrSync<F, G>,
+  gh: AsyncOrSync<G, H>,
+  hi: AsyncOrSync<H, I>
+): Promise<I>;
+function pipeAsync<A, B, C, D, E, F, G, H, I, J>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>,
-  hi: ValidateFn<F8, FnValue<F7>>,
-  ij: ValidateFn<F9, FnValue<F8>>
-): Promise<FnValue<F9>>;
-function pipeAsync<
-  A,
-  F1 extends AsyncOrSync<A, any>,
-  F2 extends AsyncOrSync<FnValue<F1>, any>,
-  F3 extends AsyncOrSync<FnValue<F2>, any>,
-  F4 extends AsyncOrSync<FnValue<F3>, any>,
-  F5 extends AsyncOrSync<FnValue<F4>, any>,
-  F6 extends AsyncOrSync<FnValue<F5>, any>,
-  F7 extends AsyncOrSync<FnValue<F6>, any>,
-  F8 extends AsyncOrSync<FnValue<F7>, any>,
-  F9 extends AsyncOrSync<FnValue<F8>, any>,
-  F10 extends AsyncOrSync<FnValue<F9>, any>
->(
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<B, C>,
+  cd: AsyncOrSync<C, D>,
+  de: AsyncOrSync<D, E>,
+  ef: AsyncOrSync<E, F>,
+  fg: AsyncOrSync<F, G>,
+  gh: AsyncOrSync<G, H>,
+  hi: AsyncOrSync<H, I>,
+  ij: AsyncOrSync<I, J>
+): Promise<J>;
+function pipeAsync<A, B, C, D, E, F, G, H, I, J, K>(
   input: NonFunction<A>,
-  ab: ValidateFn<F1, A>,
-  bc: ValidateFn<F2, FnValue<F1>>,
-  cd: ValidateFn<F3, FnValue<F2>>,
-  de: ValidateFn<F4, FnValue<F3>>,
-  ef: ValidateFn<F5, FnValue<F4>>,
-  fg: ValidateFn<F6, FnValue<F5>>,
-  gh: ValidateFn<F7, FnValue<F6>>,
-  hi: ValidateFn<F8, FnValue<F7>>,
-  ij: ValidateFn<F9, FnValue<F8>>,
-  jk: ValidateFn<F10, FnValue<F9>>
-): Promise<FnValue<F10>>;
+  ab: AsyncOrSync<A, B>,
+  bc: AsyncOrSync<B, C>,
+  cd: AsyncOrSync<C, D>,
+  de: AsyncOrSync<D, E>,
+  ef: AsyncOrSync<E, F>,
+  fg: AsyncOrSync<F, G>,
+  gh: AsyncOrSync<G, H>,
+  hi: AsyncOrSync<H, I>,
+  ij: AsyncOrSync<I, J>,
+  jk: AsyncOrSync<J, K>
+): Promise<K>;
 function pipeAsync<A, Fns extends [AsyncOrSync<any, any>, ...AsyncOrSync<any, any>[]]>(
   input: NonFunction<A>,
   ...funcs: PipeCheckWithInput<A, Fns>
