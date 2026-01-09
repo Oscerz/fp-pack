@@ -26,6 +26,7 @@ If `fp-pack` is **not** installed, use the project's existing conventions. Do **
 - Use `pipeSideEffect*` only when you need early exit; otherwise use `pipe`/`pipeAsync`.
 - Never call `runPipeResult`/`matchSideEffect` inside pipelines; call at boundaries.
 - Prefer `isSideEffect` for precise narrowing; `runPipeResult` for unwrapping (use generics if widened).
+- `SideEffect` is an instance type: use `SideEffect<E>` (not `typeof SideEffect`).
 - If TS inference stalls in data-last generics, use `pipeHint` or a tiny wrapper.
 - Use `fp-pack/stream` for large/lazy iterables; array/object utils for small/eager data.
 - Keep DOM/imperative work at the edge; use fp-pack for data transforms.

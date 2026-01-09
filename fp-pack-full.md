@@ -160,6 +160,8 @@ const withPipeHint = pipe(
 For regular error handling, standard try-catch or error propagation is perfectly fine.
 If you want precise SideEffect unions across branches, use `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict`.
 
+**Type note:** `SideEffect` is an instance type — use `SideEffect<E>` (not `typeof SideEffect`).
+
 ```typescript
 // MOST CASES: Just use pipe with regular error handling
 import { pipe, map, filter } from 'fp-pack';
