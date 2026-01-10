@@ -11,6 +11,10 @@ export const PipeWithDeps = () => (
       Bind dependencies once and run a pipe with deps-aware steps
     </p>
 
+    <div class="mb-8 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-900 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-100">
+      <strong class="font-semibold">Note:</strong> This utility is new and has limited real-world test coverage.
+    </div>
+
     <hr class="border-t border-gray-200 dark:border-gray-700 my-10" />
 
     <h2 class="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4">
