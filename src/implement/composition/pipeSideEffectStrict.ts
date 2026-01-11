@@ -16,7 +16,7 @@ type FnReturn<F> = F extends (...args: any[]) => infer R ? R : never;
 type FnValue<F> = NonSideEffect<FnReturn<F>>;
 
 type ValidateFn<Fn extends UnaryFn<any, any>, Expected> =
-  (Fn extends (a: NoInfer<Expected>) => any ? Fn : Fn & PipeError<Expected, FnInput<Fn>>) &
+  ([Expected] extends [FnInput<Fn>] ? Fn : Fn & PipeError<Expected, FnInput<Fn>>) &
     ((a: NoInfer<Expected>) => any);
 type PipeCheckResult<Fns extends [AnyFn, ...AnyFn[]]> =
   Fns extends [infer F, infer G, ...infer Rest]
@@ -70,6 +70,20 @@ type PipeSideEffectStrictFrom<Fns extends [FromFn<any>, ...UnaryFn<any, any>[]]>
   LastFn<Fns>,
   Fns
 >;
+type PipeFns11 = [
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  UnaryFn<any, any>,
+  ...UnaryFn<any, any>[]
+];
 
 type PipeCheckWithInput<Input, Fns extends [AnyFn, ...AnyFn[]]> =
   Fns extends [infer F, ...infer Rest]
@@ -84,179 +98,179 @@ function pipeSideEffectStrict<A>(input: NonFunction<A>): A;
 function pipeSideEffectStrict<A, EIn>(input: NonFunction<A> | SideEffect<EIn>): A | SideEffect<EIn>;
 function pipeSideEffectStrict<A, B>(
   input: NonFunction<A>,
-  ab: (value: A) => B
+  ab: UnaryFn<A, B>
 ): StrictResultValueChain<B, [B]>;
 function pipeSideEffectStrict<A, EIn, B>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B
+  ab: UnaryFn<A, B>
 ): StrictResultValueChainWithInput<B, [B], EIn>;
 function pipeSideEffectStrict<A, B, C>(
   input: NonFunction<A>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>
 ): StrictResultValueChain<C, [B, C]>;
 function pipeSideEffectStrict<A, EIn, B, C>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>
 ): StrictResultValueChainWithInput<C, [B, C], EIn>;
 function pipeSideEffectStrict<A, B, C, D>(
   input: NonFunction<A>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>
 ): StrictResultValueChain<D, [B, C, D]>;
 function pipeSideEffectStrict<A, EIn, B, C, D>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>
 ): StrictResultValueChainWithInput<D, [B, C, D], EIn>;
 function pipeSideEffectStrict<A, B, C, D, E>(
   input: NonFunction<A>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>
 ): StrictResultValueChain<E, [B, C, D, E]>;
 function pipeSideEffectStrict<A, EIn, B, C, D, E>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>
 ): StrictResultValueChainWithInput<E, [B, C, D, E], EIn>;
 function pipeSideEffectStrict<A, B, C, D, E, F>(
   input: NonFunction<A>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>
 ): StrictResultValueChain<F, [B, C, D, E, F]>;
 function pipeSideEffectStrict<A, EIn, B, C, D, E, F>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>
 ): StrictResultValueChainWithInput<F, [B, C, D, E, F], EIn>;
 function pipeSideEffectStrict<A, B, C, D, E, F, G>(
   input: NonFunction<A>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>
 ): StrictResultValueChain<G, [B, C, D, E, F, G]>;
 function pipeSideEffectStrict<A, EIn, B, C, D, E, F, G>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>
 ): StrictResultValueChainWithInput<G, [B, C, D, E, F, G], EIn>;
 function pipeSideEffectStrict<A, B, C, D, E, F, G, H>(
   input: NonFunction<A>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G,
-  gh: (value: NonSideEffect<G>) => H
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>,
+  gh: UnaryFn<NonSideEffect<NoInfer<G>>, H>
 ): StrictResultValueChain<H, [B, C, D, E, F, G, H]>;
 function pipeSideEffectStrict<A, EIn, B, C, D, E, F, G, H>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G,
-  gh: (value: NonSideEffect<G>) => H
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>,
+  gh: UnaryFn<NonSideEffect<NoInfer<G>>, H>
 ): StrictResultValueChainWithInput<H, [B, C, D, E, F, G, H], EIn>;
 function pipeSideEffectStrict<A, B, C, D, E, F, G, H, I>(
   input: NonFunction<A>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G,
-  gh: (value: NonSideEffect<G>) => H,
-  hi: (value: NonSideEffect<H>) => I
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>,
+  gh: UnaryFn<NonSideEffect<NoInfer<G>>, H>,
+  hi: UnaryFn<NonSideEffect<NoInfer<H>>, I>
 ): StrictResultValueChain<I, [B, C, D, E, F, G, H, I]>;
 function pipeSideEffectStrict<A, EIn, B, C, D, E, F, G, H, I>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G,
-  gh: (value: NonSideEffect<G>) => H,
-  hi: (value: NonSideEffect<H>) => I
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>,
+  gh: UnaryFn<NonSideEffect<NoInfer<G>>, H>,
+  hi: UnaryFn<NonSideEffect<NoInfer<H>>, I>
 ): StrictResultValueChainWithInput<I, [B, C, D, E, F, G, H, I], EIn>;
 function pipeSideEffectStrict<A, B, C, D, E, F, G, H, I, J>(
   input: NonFunction<A>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G,
-  gh: (value: NonSideEffect<G>) => H,
-  hi: (value: NonSideEffect<H>) => I,
-  ij: (value: NonSideEffect<I>) => J
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>,
+  gh: UnaryFn<NonSideEffect<NoInfer<G>>, H>,
+  hi: UnaryFn<NonSideEffect<NoInfer<H>>, I>,
+  ij: UnaryFn<NonSideEffect<NoInfer<I>>, J>
 ): StrictResultValueChain<J, [B, C, D, E, F, G, H, I, J]>;
 function pipeSideEffectStrict<A, EIn, B, C, D, E, F, G, H, I, J>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G,
-  gh: (value: NonSideEffect<G>) => H,
-  hi: (value: NonSideEffect<H>) => I,
-  ij: (value: NonSideEffect<I>) => J
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>,
+  gh: UnaryFn<NonSideEffect<NoInfer<G>>, H>,
+  hi: UnaryFn<NonSideEffect<NoInfer<H>>, I>,
+  ij: UnaryFn<NonSideEffect<NoInfer<I>>, J>
 ): StrictResultValueChainWithInput<J, [B, C, D, E, F, G, H, I, J], EIn>;
 function pipeSideEffectStrict<A, B, C, D, E, F, G, H, I, J, K>(
   input: NonFunction<A>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G,
-  gh: (value: NonSideEffect<G>) => H,
-  hi: (value: NonSideEffect<H>) => I,
-  ij: (value: NonSideEffect<I>) => J,
-  jk: (value: NonSideEffect<J>) => K
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>,
+  gh: UnaryFn<NonSideEffect<NoInfer<G>>, H>,
+  hi: UnaryFn<NonSideEffect<NoInfer<H>>, I>,
+  ij: UnaryFn<NonSideEffect<NoInfer<I>>, J>,
+  jk: UnaryFn<NonSideEffect<NoInfer<J>>, K>
 ): StrictResultValueChain<K, [B, C, D, E, F, G, H, I, J, K]>;
 function pipeSideEffectStrict<A, EIn, B, C, D, E, F, G, H, I, J, K>(
   input: NonFunction<A> | SideEffect<EIn>,
-  ab: (value: A) => B,
-  bc: (value: NonSideEffect<B>) => C,
-  cd: (value: NonSideEffect<C>) => D,
-  de: (value: NonSideEffect<D>) => E,
-  ef: (value: NonSideEffect<E>) => F,
-  fg: (value: NonSideEffect<F>) => G,
-  gh: (value: NonSideEffect<G>) => H,
-  hi: (value: NonSideEffect<H>) => I,
-  ij: (value: NonSideEffect<I>) => J,
-  jk: (value: NonSideEffect<J>) => K
+  ab: UnaryFn<A, B>,
+  bc: UnaryFn<NonSideEffect<NoInfer<B>>, C>,
+  cd: UnaryFn<NonSideEffect<NoInfer<C>>, D>,
+  de: UnaryFn<NonSideEffect<NoInfer<D>>, E>,
+  ef: UnaryFn<NonSideEffect<NoInfer<E>>, F>,
+  fg: UnaryFn<NonSideEffect<NoInfer<F>>, G>,
+  gh: UnaryFn<NonSideEffect<NoInfer<G>>, H>,
+  hi: UnaryFn<NonSideEffect<NoInfer<H>>, I>,
+  ij: UnaryFn<NonSideEffect<NoInfer<I>>, J>,
+  jk: UnaryFn<NonSideEffect<NoInfer<J>>, K>
 ): StrictResultValueChainWithInput<K, [B, C, D, E, F, G, H, I, J, K], EIn>;
-function pipeSideEffectStrict<A, Fns extends [UnaryFn<any, any>, ...UnaryFn<any, any>[]]>(
+function pipeSideEffectStrict<A, Fns extends PipeFns11>(
   input: NonFunction<A>,
   ...funcs: PipeCheckWithInput<A, Fns>
 ): StrictResult<LastFn<Fns>, Fns>;
-function pipeSideEffectStrict<A, EIn, Fns extends [UnaryFn<any, any>, ...UnaryFn<any, any>[]]>(
+function pipeSideEffectStrict<A, EIn, Fns extends PipeFns11>(
   input: NonFunction<A> | SideEffect<EIn>,
   ...funcs: PipeCheckWithInput<A, Fns>
 ): StrictResultWithInput<LastFn<Fns>, Fns, EIn>;

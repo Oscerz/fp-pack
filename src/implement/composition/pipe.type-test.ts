@@ -765,6 +765,15 @@ pipeAsyncSideEffect((value: number) => value + 1)();
 // @ts-expect-error input required for direct pipeAsyncSideEffectStrict call
 pipeAsyncSideEffectStrict((value: number) => value + 1)();
 
+const strictMismatchFn1 = (id: number) => id;
+const strictMismatchFn2 = (userName: string) => userName;
+const strictMismatchFn3 = (userName: string) => userName.toLowerCase();
+
+// @ts-expect-error mismatched types in pipeSideEffectStrict
+pipeSideEffectStrict(1, strictMismatchFn1, strictMismatchFn2);
+// @ts-expect-error mismatched types in pipeSideEffectStrict with explicit annotation
+pipeSideEffectStrict(1, strictMismatchFn1, strictMismatchFn3);
+
 type AppState = {
   todos: number[];
   filter: string;
