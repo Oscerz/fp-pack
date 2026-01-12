@@ -8,6 +8,8 @@ import { Guide } from '@/pages/Guide';
 import { Guide_ko } from '@/pages/Guide_ko';
 import { TypeUsage } from '@/pages/TypeUsage';
 import { TypeUsage_ko } from '@/pages/TypeUsage_ko';
+import { PipeChoiceGuide } from '@/pages/PipeChoiceGuide';
+import { PipeChoiceGuide_ko } from '@/pages/PipeChoiceGuide_ko';
 import { AIAgentSkills } from '@/pages/AIAgentSkills';
 import { AIAgentSkills_ko } from '@/pages/AIAgentSkills_ko';
 import { AIAgentAddon } from '@/pages/AIAgentAddon';
@@ -323,6 +325,8 @@ const routes: Record<string, PageComponent> = {
   '/ko/guide': Guide_ko,
   '/guide/type-usage': TypeUsage,
   '/ko/guide/type-usage': TypeUsage_ko,
+  '/guide/pipe-choice-guide': PipeChoiceGuide,
+  '/ko/guide/pipe-choice-guide': PipeChoiceGuide_ko,
   '/ai-agent-skills': AIAgentSkills,
   '/ko/ai-agent-skills': AIAgentSkills_ko,
   '/ai-agent-addon': AIAgentAddon,

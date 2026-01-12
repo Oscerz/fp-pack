@@ -4,6 +4,7 @@ import typescript from 'highlight.js/lib/languages/typescript';
 import javascript from 'highlight.js/lib/languages/javascript';
 import bash from 'highlight.js/lib/languages/bash';
 import yaml from 'highlight.js/lib/languages/yaml';
+import markdown from 'highlight.js/lib/languages/markdown'; // Import markdown language
 
 hljs.registerLanguage('typescript', typescript);
 hljs.registerLanguage('tsx', typescript);
@@ -11,6 +12,7 @@ hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('js', javascript);
 hljs.registerLanguage('bash', bash);
 hljs.registerLanguage('yaml', yaml);
+hljs.registerLanguage('markdown', markdown); // Register markdown language
 
 interface CodeBlockProps {
   code: string;
