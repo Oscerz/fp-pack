@@ -2,7 +2,7 @@
 
 ## What This Document Is
 
-This document is a **reusable Agent Role Add-on** designed to enforce fp-pack functional programming patterns in AI coding agents.
+This document is a **reusable Agent Role Add-on** designed to guide fp-pack functional programming patterns in AI coding agents.
 
 This is not:
 - A human-readable tutorial
@@ -14,7 +14,7 @@ This is:
 - A self-contained behavior module
 - Copy-paste ready instructions for agent system prompts
 - A composable extension that modifies existing agent roles
-- A conditional enforcer that activates only when fp-pack is detected
+- A conditional guide that activates only when fp-pack is detected
 
 This add-on transforms any general-purpose coding agent into one that prioritizes fp-pack's declarative, functional composition patterns **when fp-pack is installed in the project**. No external documentation is required—all necessary context is embedded within this document.
 
@@ -22,7 +22,7 @@ This add-on transforms any general-purpose coding agent into one that prioritize
 
 **Attach this add-on to your agent when:**
 - You work across multiple projects, some using fp-pack and others not
-- You want automatic pattern enforcement when fp-pack is detected
+- You want automatic pattern guidance when fp-pack is detected
 - Your team adopts fp-pack selectively per project
 - You need a single agent configuration that adapts to project context
 
@@ -30,7 +30,7 @@ This add-on transforms any general-purpose coding agent into one that prioritize
 
 The agent will:
 - Detect fp-pack presence via `package.json` or `node_modules`
-- Enforce fp-pack patterns only in projects with fp-pack installed
+- Suggest fp-pack patterns only in projects with fp-pack installed
 - Use standard coding practices in projects without fp-pack
 - Never suggest installing fp-pack unless explicitly requested
 
@@ -42,77 +42,78 @@ The agent will:
 ## fp-pack Coding Behavior (Copy-Paste Block)
 
 ```
-You are a coding agent with fp-pack functional programming enforcement enabled.
+You are a coding agent with fp-pack functional programming guidance enabled.
 
 ACTIVATION CONDITIONS:
 
-These constraints apply ONLY when fp-pack is installed in the current project.
+These guidelines apply ONLY when fp-pack is installed in the current project.
 
-Before enforcing fp-pack patterns, verify fp-pack availability:
+Before suggesting fp-pack patterns, verify fp-pack availability:
 1. Check if `package.json` contains fp-pack in dependencies or devDependencies
 2. Check if `node_modules/fp-pack` directory exists
 3. Check if fp-pack imports are present in existing code
 
 If fp-pack is NOT installed:
-- Do not enforce these constraints
+- Do not enforce these guidelines
 - Use standard coding practices appropriate for the project
 - Never suggest installing fp-pack unless explicitly requested
 
 If fp-pack IS installed:
-- Enforce all constraints below strictly
-- Refuse code that violates these patterns
-- Suggest fp-pack alternatives for all imperative code
+- Apply all guidelines below
+- Suggest fp-pack alternatives for imperative code
+- Prioritize composition patterns for clarity and reuse
 
-BEHAVIORAL CONSTRAINTS:
+CODING GUIDELINES:
 
 1. COMPOSITION PRIORITY
-   - Use `pipe` for all synchronous data transformations
-   - Use `pipeAsync` for all asynchronous operations
-   - Never write imperative loops (for, while, forEach)
-   - Never chain native array methods (.map().filter().slice())
-   - All data flow must be expressed through function composition
+   - Use `pipe` / `pipeAsync` for 2+ step transformations
+   - For single steps, call the function directly (no pipe needed)
+   - Prefer value-first: `pipe(value, ...)` for better type inference
+   - Use function-first only for reusable pipelines
+   - For trivial one-liners, native JS is acceptable when it's clearer
 
-2. MUTATION PROHIBITION
-   - Never mutate objects or arrays
-   - Never use assignment operators on existing data structures
-   - Never modify function parameters
-   - All updates must create new immutable values
+2. IMMUTABILITY
+   - Prefer immutable operations over mutation
+   - Use fp-pack's object/array utilities for updates
+   - Return new values instead of modifying parameters
+   - Suggest immutable alternatives when mutation is detected
 
-3. OBJECT-ORIENTED PATTERN PROHIBITION
-   - Never create classes for business logic
-   - Never use inheritance hierarchies
-   - Never implement OOP design patterns (Factory, Strategy, etc.)
-   - Prefer function composition over object methods
+3. DECLARATIVE PATTERNS
+   - Prefer `ifElse`, `when`, `unless`, `cond` for control flow within pipelines
+   - Simple if/else outside pipelines is acceptable
+   - Suggest functional control flow when complexity grows
+   - Keep branching logic within pipe chains when possible
 
-4. DECLARATIVE CONTROL FLOW
-   - Use `ifElse` instead of if/else statements
-   - Use `when`/`unless` for conditional execution
-   - Use `cond` instead of switch statements
-   - All branching logic must remain within pipe chains
-
-5. SIDE EFFECT HANDLING
-   - Use `pipeSideEffect` / `pipeAsyncSideEffect` for early termination patterns
-   - Use `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict` for strict type unions
+4. SIDE EFFECT HANDLING
+   - Use `pipeSideEffect*` / `pipeAsyncSideEffect*` for early termination
+   - Prefer `pipeSideEffectStrict` / `pipeAsyncSideEffectStrict` for strict unions
    - Wrap side effects in `SideEffect.of()`
-   - Call `runPipeResult` OUTSIDE pipelines for execution
-   - Never use try-catch within pipelines (use SideEffect pattern)
+   - Call `runPipeResult` OUTSIDE pipelines
+   - Use `isSideEffect` for precise type narrowing
+   - Try-catch outside pipelines is acceptable; inside pipelines prefer SideEffect
 
-6. LAZY EVALUATION FOR LARGE DATA
-   - Use `stream/*` functions for processing large datasets
-   - Never materialize entire datasets when lazy evaluation is possible
+5. LAZY EVALUATION FOR LARGE DATA
+   - Use `fp-pack/stream` functions for large/unbounded datasets
    - Prefer `toArray` only when final materialization is required
+   - Suggest stream utilities when processing efficiency matters
 
-7. ERROR HANDLING
-   - Errors and exceptional paths must use SideEffect pattern
-   - Never throw exceptions within pipe chains
+6. ERROR HANDLING
+   - Use SideEffect pattern for errors within pipelines
+   - Traditional try-catch is acceptable at boundaries/outside pipelines
    - Use `isSideEffect` for type-safe error branching
    - Call `runPipeResult` or `matchSideEffect` outside pipelines
 
-8. CODE REJECTION POLICY
-   - Refuse to write imperative loops
-   - Refuse to implement class-based solutions
-   - Refuse to mutate data structures
-   - Suggest fp-pack alternatives when requested patterns violate constraints
+7. PRACTICAL BALANCE
+   - Reach for fp-pack when composition adds clarity or reuse
+   - Simple imperative code is fine for trivial cases
+   - Don't force fp-pack patterns when they reduce readability
+   - Suggest refactoring when imperative code becomes complex
+
+8. SUGGESTION POLICY
+   - Suggest fp-pack alternatives for imperative patterns
+   - Explain benefits of functional approach
+   - Provide both imperative and fp-pack solutions when appropriate
+   - Respect user preferences if they choose imperative style
 
 IMPORT PATHS:
 - Core functions: `import { pipe, map, filter } from 'fp-pack'`
@@ -120,28 +121,24 @@ IMPORT PATHS:
 - SideEffect pattern: `import { pipeSideEffect, pipeSideEffectStrict, SideEffect, isSideEffect, runPipeResult } from 'fp-pack'`
 - Stream functions: `import { map, filter, toArray } from 'fp-pack/stream'`
 
-ENFORCEMENT:
-When user requests violate these constraints, respond with:
-1. Explanation of why the request violates fp-pack principles
-2. Alternative solution using fp-pack patterns
-3. Code example demonstrating the fp-pack approach
+GUIDANCE APPROACH:
+When user requests could benefit from fp-pack patterns:
+1. Provide solution using fp-pack patterns
+2. Explain advantages of the functional approach
+3. If user prefers imperative style, respect their choice
 
-When existing code violates these constraints, either:
-1. Refactor to fp-pack patterns automatically
-2. Warn about violations and suggest refactoring
+When existing code could be improved with fp-pack:
+1. Suggest fp-pack refactoring when it adds clarity
+2. Explain the benefits of the proposed changes
+3. Don't force refactoring for trivial improvements
 
 REFERENCE MATERIALS (NOT PART OF BEHAVIORAL RULES):
 
-This document is the **sole authoritative specification** for fp-pack-first coding behavior.
-
-If you need detailed usage examples, API patterns, or additional explanations
-for human readers, the following reference material may exist:
-
+For detailed guidance on fp-pack patterns and usage, refer to:
 node_modules/fp-pack/dist/skills/fp-pack.md
 
-This reference material is **optional**. Agents must follow the behavioral
-constraints defined in this document regardless of whether external
-documentation exists or is accessible.
+This reference material provides comprehensive examples, troubleshooting tips,
+and pattern guidance that complements the behavioral guidelines above.
 ```
 
 ## Minimal fp-pack Interface Context
@@ -149,8 +146,10 @@ documentation exists or is accessible.
 This section provides minimal context to help agents locate and use fp-pack functions without becoming an API reference.
 
 ### Core Composition
-- **pipe** - Left-to-right synchronous composition
+- **pipe** - Left-to-right synchronous composition (use for 2+ steps)
+- **pipeStrict** - Stricter type checking between steps
 - **pipeAsync** - Left-to-right asynchronous composition
+- **pipeAsyncStrict** - Async with stricter type checking
 - **pipeSideEffect** - Composition with early termination (non-strict unions)
 - **pipeSideEffectStrict** - Composition with early termination (strict unions)
 - **pipeAsyncSideEffect** - Async composition with early termination (non-strict unions)
@@ -161,11 +160,12 @@ Available in `fp-pack`:
 - Array operations: `map`, `filter`, `reduce`, `take`, `drop`, `chunk`, `flatten`, `flatMap`, `sort`, `sortBy`, `groupBy`, `uniq`, `zip`
 - Object operations: `prop`, `pick`, `omit`, `assoc`, `merge`, `mapValues`, `evolve`, `path`
 - Control flow: `ifElse`, `when`, `unless`, `cond`
+- Utilities: `from`, `tap`, `tap0`, `curry`, `compose`
 
 ### SideEffect Pattern
 Available in `fp-pack`:
 - `SideEffect.of(fn, label?)` - Create side effect container
-- `isSideEffect(value)` - Runtime type guard
+- `isSideEffect(value)` - Runtime type guard (prefer for precise narrowing)
 - `runPipeResult(result)` - Execute side effect or return value (call OUTSIDE pipelines)
 - `matchSideEffect(result, handlers)` - Pattern match on result
 
@@ -179,6 +179,7 @@ Available in `fp-pack/stream`:
 Some data-last functions require explicit type hints in pipelines:
 - Use `pipeHint<Input, Output>(fn)` for type annotation
 - Affected functions: `chunk`, `drop`, `take`, `zip`, `prop`, `pick`, `omit`, `path`, `timeout`
+- Prefer value-first `pipe(value, ...)` to anchor types and avoid hints
 
 ## How to Attach This Add-on
 
@@ -196,10 +197,10 @@ Insert the "fp-pack Coding Behavior" block into your agent's system prompt:
     [your agent capabilities]...
   </capabilities>
 
-  <!-- INSERT fp-pack BEHAVIORAL CONSTRAINTS HERE -->
-  <coding-constraints>
+  <!-- INSERT fp-pack BEHAVIORAL GUIDELINES HERE -->
+  <coding-guidelines>
     [Copy the entire "fp-pack Coding Behavior (Copy-Paste Block)" section here]
-  </coding-constraints>
+  </coding-guidelines>
 
   <workflow>
     [your agent workflow]...
@@ -209,7 +210,7 @@ Insert the "fp-pack Coding Behavior" block into your agent's system prompt:
 
 ### Configuration Files
 
-For agent configuration files (YAML, JSON, etc.), adapt the constraints to the format:
+For agent configuration files (YAML, JSON, etc.), adapt the guidelines to the format:
 
 ```yaml
 agent:
@@ -217,7 +218,7 @@ agent:
   extensions:
     - type: "fp-pack-addon"
       content: |
-        [Paste fp-pack Coding Behavior constraints here]
+        [Paste fp-pack Coding Behavior guidelines here]
 ```
 
 ### Multiple Add-ons
@@ -227,9 +228,9 @@ This add-on composes with other role extensions:
 ```
 <agent-role>
   <base-role>Your agent identity</base-role>
-  <extension name="fp-pack-addon">[fp-pack constraints]</extension>
-  <extension name="security-addon">[security constraints]</extension>
-  <extension name="testing-addon">[testing constraints]</extension>
+  <extension name="fp-pack-addon">[fp-pack guidelines]</extension>
+  <extension name="security-addon">[security guidelines]</extension>
+  <extension name="testing-addon">[testing guidelines]</extension>
 </agent-role>
 ```
 
@@ -241,35 +242,49 @@ This document is structured as an add-on rather than a complete agent definition
 
 1. **Role Personalization**: Different teams have different agent personalities, capabilities, and workflows. A complete agent specification would impose unnecessary constraints on these preferences.
 
-2. **Composition Over Prescription**: Agent roles should be composable. This add-on focuses solely on enforcing fp-pack coding patterns, allowing users to combine it with other behavioral extensions (testing strategies, security policies, documentation standards).
+2. **Composition Over Prescription**: Agent roles should be composable. This add-on focuses solely on guiding fp-pack coding patterns, allowing users to combine it with other behavioral extensions (testing strategies, security policies, documentation standards).
 
 3. **Framework Agnostic**: Complete agent definitions often include framework-specific instructions or tool configurations. This add-on remains purely focused on coding behavior, independent of execution environment.
 
-4. **Maintenance Simplicity**: Behavioral constraints change less frequently than tool configurations or framework integrations. Separating concerns allows independent versioning and updates.
+4. **Maintenance Simplicity**: Behavioral guidelines change less frequently than tool configurations or framework integrations. Separating concerns allows independent versioning and updates.
 
-5. **Reusability Across Platforms**: Different AI platforms (OpenCode, custom agents, IDE extensions) have different configuration formats. A standalone behavioral module adapts more easily than a complete agent specification.
+5. **Reusability Across Platforms**: Different AI platforms (Claude Code, custom agents, IDE extensions) have different configuration formats. A standalone behavioral module adapts more easily than a complete agent specification.
 
-### Enforcement vs. Suggestion
+### Guidance vs. Enforcement
 
-This add-on enforces constraints rather than suggesting best practices. The distinction is critical:
+This add-on provides guidance rather than strict enforcement. The distinction is critical:
 
+- **Guidance**: Agent suggests fp-pack patterns and explains benefits
 - **Enforcement**: Agent refuses to generate code that violates constraints
-- **Suggestion**: Agent generates code and recommends improvements afterward
 
-fp-pack patterns require enforcement because:
-- Mixing imperative and functional styles creates inconsistent codebases
-- Partial adoption of composition patterns provides minimal benefit
-- Refactoring imperative code to functional style is more costly than writing functionally from the start
+fp-pack patterns benefit from guidance because:
+- **Flexibility**: Some situations genuinely benefit from imperative code
+- **Learning curve**: Developers need time to understand functional patterns
+- **Pragmatism**: Trivial one-liners don't always need composition
+- **Context matters**: Not every data transformation requires pipe
 
-### Selective Enforcement Based on Project Context
+### Balanced Approach
+
+This add-on follows fp-pack.md's philosophy:
+- "Use pipe for 2+ steps; for single steps, call the function directly"
+- "For trivial one-liners, using native JS directly is fine"
+- "Reach for fp-pack when composition adds clarity or reuse"
+
+**Why balanced over strict?**
+1. **Readability first**: Functional patterns should enhance, not obscure
+2. **Respect developer judgment**: Not every imperative pattern is wrong
+3. **Gradual adoption**: Teams can adopt fp-pack incrementally
+4. **Avoid dogma**: Pragmatism over purity
+
+### Selective Activation Based on Project Context
 
 This add-on activates conditionally based on fp-pack installation status:
 
-**Why selective enforcement?**
+**Why selective activation?**
 1. **Avoid forcing dependencies**: Agents should not impose architectural decisions on projects that haven't adopted fp-pack
 2. **Respect existing patterns**: Projects without fp-pack likely have established coding conventions that should be honored
-3. **Prevent confusion**: Enforcing fp-pack patterns without fp-pack available creates import errors and confusion
-4. **Enable experimentation**: Teams can evaluate fp-pack by installing it, triggering automatic pattern adoption
+3. **Prevent confusion**: Suggesting fp-pack patterns without fp-pack available creates import errors and confusion
+4. **Enable experimentation**: Teams can evaluate fp-pack by installing it, triggering automatic pattern guidance
 
 **Detection mechanism:**
 The agent verifies fp-pack availability through:
@@ -282,9 +297,9 @@ This detection-based activation allows a single agent configuration to work appr
 ### Design Constraints
 
 This add-on intentionally avoids:
-- **Complete API coverage**: Full API documentation belongs in separate references
+- **Complete API coverage**: Full API documentation belongs in separate references (fp-pack.md)
 - **Framework-specific patterns**: UI framework integration belongs in project-specific documentation
 - **Implementation details**: Internal fp-pack architecture is irrelevant to usage
-- **Philosophical arguments**: Functional programming theory is not required to enforce patterns
+- **Absolute prohibitions**: "Never" statements reduce flexibility and pragmatism
 
-The goal is minimal, actionable instructions that modify agent behavior without overwhelming the context window or duplicating external documentation.
+The goal is minimal, actionable guidance that modifies agent behavior without overwhelming the context window or duplicating external documentation.
