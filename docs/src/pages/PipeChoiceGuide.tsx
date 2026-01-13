@@ -54,8 +54,14 @@ export const PipeChoiceGuide = () => (
               <span class="flex-shrink-0 text-amber-600 dark:text-amber-400 text-xl">⚖️</span>
               <div>
                 <p class="font-medium text-amber-900 dark:text-amber-100 mb-2">The Trade-off</p>
+                <p class="text-amber-800 dark:text-amber-200 text-sm mb-3">
+                  In practice, when you rely on TypeScript&apos;s natural inference, the default <code class="text-sm">pipe</code> catches many mismatches well.
+                </p>
+                <p class="text-amber-800 dark:text-amber-200 text-sm mb-3">
+                  However, when users inappropriately use explicit type annotations, in some edge cases (especially when reverse inference is involved) it may allow intermediate type mismatches to keep the pipeline flowing instead of collapsing to <code class="text-sm">never</code>.
+                </p>
                 <p class="text-amber-800 dark:text-amber-200 text-sm m-0">
-                  To prioritize inference, it must be more permissive. This isn&apos;t because your generics are &quot;wrong&quot;—it&apos;s largely a limitation of TypeScript&apos;s inference model. In practice, the default <code class="text-sm">pipe</code> still catches many mismatches, but in some edge cases (especially when reverse inference is involved) it can allow a pipeline to keep flowing instead of collapsing to <code class="text-sm">never</code>, at the cost of potentially missing an intermediate mismatch. When this happens, it&apos;s often a mismatch that is easy to notice (e.g., <code class="text-sm">number</code> &rarr; <code class="text-sm">string</code>), but it&apos;s not guaranteed to be only &quot;obvious&quot; cases. If you need strict, step-by-step validation, use the <code class="text-sm">Strict</code> variants.
+                  Such mismatches often appear in relatively clear forms (e.g., <code class="text-sm">number</code> &rarr; <code class="text-sm">string</code>), but it&apos;s not guaranteed they will always be obvious. If you want to sacrifice TypeScript&apos;s natural inference benefits and strictly validate types step-by-step with complex explicit annotations, use the <code class="text-sm">Strict</code> variants.
                 </p>
               </div>
             </div>
@@ -98,8 +104,11 @@ export const PipeChoiceGuide = () => (
               <span class="flex-shrink-0 text-amber-600 dark:text-amber-400 text-xl">⚖️</span>
               <div>
                 <p class="font-medium text-amber-900 dark:text-amber-100 mb-2">The Trade-off</p>
-                <p class="text-amber-800 dark:text-amber-200 text-sm m-0">
+                <p class="text-amber-800 dark:text-amber-200 text-sm mb-3">
                   This strictness can sometimes interfere with TypeScript's ability to infer types across a complex generic pipeline, forcing you to provide explicit type hints where the default <code class="text-sm">pipe</code> would not have required them. (Like any TypeScript API, <code class="text-sm">any</code> can still bypass checks.)
+                </p>
+                <p class="text-amber-700 dark:text-amber-300 text-xs italic m-0">
+                  Note: Relying on inference (without explicit annotations) is usually more natural and provides better DX for most users. However, incorrect or unnecessary explicit type annotations can override TypeScript's natural inference, potentially causing some intermediate mismatches to only be detected at pipeline boundaries.
                 </p>
               </div>
             </div>

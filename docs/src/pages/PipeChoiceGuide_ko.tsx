@@ -54,8 +54,14 @@ export const PipeChoiceGuide_ko = () => (
               <span class="flex-shrink-0 text-amber-600 dark:text-amber-400 text-xl">⚖️</span>
               <div>
                 <p class="font-medium text-amber-900 dark:text-amber-100 mb-2">절충점</p>
+                <p class="text-amber-800 dark:text-amber-200 text-sm mb-3">
+                  실제로 TypeScript의 자연스러운 추론에 맡기면 기본 <code class="text-sm">pipe</code>는 많은 타입 불일치를 잘 잡아냅니다.
+                </p>
+                <p class="text-amber-800 dark:text-amber-200 text-sm mb-3">
+                  하지만 사용자가 명시적 타입 어노테이션을 부적절하게 사용하는 경우, 일부 엣지 케이스(특히 역추론이 개입되는 경우)에서는 <code class="text-sm">never</code>로 무너지는 것을 피하고 파이프라인을 끝까지 흘려보내기 위해 중간 타입 불일치를 허용할 수 있습니다.
+                </p>
                 <p class="text-amber-800 dark:text-amber-200 text-sm m-0">
-                  추론을 우선시하기 위해 더 너그러워야 합니다. 이는 제네릭이 &quot;잘못됐다&quot;기보다 TypeScript 추론 모델의 한계에 가깝습니다. 실제로 기본 <code class="text-sm">pipe</code>도 많은 타입 불일치를 잘 잡아내지만, 일부 엣지 케이스(특히 역추론이 개입되는 경우)에서는 <code class="text-sm">never</code>로 무너지는 것을 피하고 파이프라인을 끝까지 흘려보내기 위해 중간 타입 불일치를 놓칠 수 있습니다. 이런 경우는 비교적 눈에 띄는 불일치(<code class="text-sm">number</code> &rarr; <code class="text-sm">string</code> 등)로 드러나는 편이지만, 반드시 &quot;쉬운 형태&quot;만 놓친다고 보장할 수는 없습니다. 단계별 타입 검증이 반드시 필요하다면 <code class="text-sm">Strict</code> 변형을 사용하세요.
+                  이런 불일치는 비교적 명확한 형태(<code class="text-sm">number</code> &rarr; <code class="text-sm">string</code> 등)로 드러나지만, 항상 그렇다고 보장할 수는 없습니다. TypeScript의 자연스러운 추론 이점을 포기하고, 복잡한 명시적 어노테이션을 직접 작성하면서까지 단계별 타입을 엄격하게 검증하고 싶다면 <code class="text-sm">Strict</code> 변형을 사용하세요.
                 </p>
               </div>
             </div>
@@ -98,8 +104,11 @@ export const PipeChoiceGuide_ko = () => (
               <span class="flex-shrink-0 text-amber-600 dark:text-amber-400 text-xl">⚖️</span>
               <div>
                 <p class="font-medium text-amber-900 dark:text-amber-100 mb-2">절충점</p>
-                <p class="text-amber-800 dark:text-amber-200 text-sm m-0">
+                <p class="text-amber-800 dark:text-amber-200 text-sm mb-3">
                   이 엄격함은 때때로 TypeScript가 복잡한 제네릭 파이프라인에서 타입을 추론하는 능력을 방해하여, 기본 <code class="text-sm">pipe</code>가 필요하지 않았을 명시적 타입 힌트를 추가하도록 강요할 수 있습니다. (또한 <code class="text-sm">any</code>는 어떤 타입 검사도 우회할 수 있습니다.)
+                </p>
+                <p class="text-amber-700 dark:text-amber-300 text-xs italic m-0">
+                  참고: (명시적 어노테이션 없이) 추론에 의존하는 것이 대부분의 사용자에게 더 자연스럽고 더 나은 DX를 제공합니다. 하지만 잘못되었거나 불필요한 명시적 타입 어노테이션은 TypeScript의 자연스러운 추론을 덮어쓸 수 있으며, 일부 중간 불일치가 파이프라인 경계에서만 감지될 수 있습니다.
                 </p>
               </div>
             </div>
