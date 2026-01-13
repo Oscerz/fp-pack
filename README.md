@@ -6,14 +6,14 @@
   **A practical functional toolkit for JavaScript and TypeScript.**
 </div>
 
-Written in TypeScript with full type safety, fp-pack works seamlessly in both JavaScript and TypeScript projects.
+The core philosophy of `fp-pack` is simple: **if you know functions, pipes, and currying, you're ready to use it.** It’s a pipe-first toolkit for everyday code—approachable, zero-deps, and tree-shakeable.
 
-fp-pack is a focused collection of functional programming utilities designed for real-world applications.
-It emphasizes **function composition, immutability, and declarative code** through `pipe` and `pipeAsync`, while remaining approachable for everyday developers.
+At a glance:
+- **Composition-first** APIs centered around `pipe` / `pipeAsync`.
+- **TypeScript-native** utilities with strong inference (pipelines often work without manual type annotations).
+- **Optional SideEffect** pipelines for early exits when you need them (`pipeSideEffect` / `pipeAsyncSideEffect`).
 
-The concept is simple: if you understand functions, pipes, and currying, you can use fp-pack immediately.
-
-There's no framework and no heavy abstractions—just well-chosen helpers that make functional style easier to adopt and maintain in production code.
+If you want functional composition without a lot of ceremony, `fp-pack` is designed to be a practical starting point that still scales to larger codebases.
 
 ---
 
