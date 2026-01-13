@@ -11,7 +11,7 @@ The core philosophy of `fp-pack` is simple: **if you know functions, pipes, and 
 At a glance:
 - **Composition-first** APIs centered around `pipe` / `pipeAsync`.
 - **TypeScript-native** utilities with strong inference (pipelines often work without manual type annotations).
-- **Optional SideEffect** pipelines for early exits when you need them (`pipeSideEffect` / `pipeAsyncSideEffect`).
+- **Optional SideEffect** pipelines for early exits when you need them (`pipeSideEffect` / `pipeAsyncSideEffect`) — no wrapper ceremony.
 
 If you want functional composition without a lot of ceremony, `fp-pack` is designed to be a practical starting point that still scales to larger codebases.
 
