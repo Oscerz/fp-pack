@@ -821,6 +821,7 @@ fp-pack draws inspiration from excellent functional programming libraries in the
 - **[Ramda](https://ramdajs.com/)** - A practical functional library that pioneered many of the patterns we use today
 - **[Remeda](https://remedajs.com/)** - Strongly influential TypeScript-first utility patterns and ergonomics
 - **[lodash/fp](https://lodash.com/docs/4.17.15#fp)** - Data-last, auto-curried utility style for functional composition
+- **[fp-ts](https://gcanti.github.io/fp-ts/)** - Advanced functional abstractions (e.g. Reader patterns) that influenced parts of this project
 - **[Rambda](https://github.com/selfrefactor/rambda)** - Lightweight Ramda-inspired functional utilities
 - **[FxJS](https://github.com/marpple/FxJS)** and **[FxTS](https://github.com/marpple/FxTS)** - Inspired by their exceptional combination of lazy evaluation and functional tooling patterns
 
